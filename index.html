@@ -290,8 +290,9 @@ async function loadPlayerCareer(p,box){
    if(bio.draft?.year)p.draft={year:bio.draft.year,round:bio.draft.round,selection:bio.draft.selection};
    if(bio.headshot?.href)p.photoUrl=bio.headshot.href;
   }
-  const exp=Math.max(1,Math.min(25,Number(p.experience)||8));
-  const years=Array.from({length:exp},(_,i)=>2027-i);
+  const expValue=Number(p.experience);
+  const seasonsToLoad=Number.isFinite(expValue)?Math.max(1,Math.min(26,expValue+1)):Math.max(1,Math.min(26,(Number(p.age)||26)-17));
+  const years=Array.from({length:seasonsToLoad},(_,i)=>2027-i);
   const rows=[];
   for(let i=0;i<years.length;i+=4){
    const chunk=years.slice(i,i+4);
