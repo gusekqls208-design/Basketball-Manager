@@ -298,9 +298,9 @@ async function syncOfficialRosters(){
   });
   const settled=await Promise.allSettled(requests);
   const live=settled.filter(x=>x.status==="fulfilled").map(x=>x.value);
-  const useLive=live.length===30;
-  const sourceTeams=useLive?live:database.players.reduce((m,p)=>{if(!m.has(p.team))m.set(p.team,[]);m.get(p.team).push(p);return m},new Map());
-  if(sourceTeams.size!==30)throw new Error("30개 구단 데이터 누락 ("+sourceTeams.size+"/30)");
+  const liveByTeam=new Map(live.map(x=>[x.abbr,x.athletes]));
+  const staticByTeam=database.players.reduce((m,p)=>{if(!m.has(p.team))m.set(p.team,[]);m.get(p.team).push(p);return m},new Map());
+  if(staticByTeam.size!==30)throw new Error("30개 구단 데이터 누락 ("+staticByTeam.size+"/30)");
   let total=0;const allNames=new Set();
   for(const team of state.clubs){
    const isLive=liveByTeam.has(team.id);const records=isLive?liveByTeam.get(team.id):(staticByTeam.get(team.id)||[]);
@@ -321,8 +321,8 @@ async function syncOfficialRosters(){
     p.ageApprox=isLive?false:!!a.ageApprox;
     p.height=isLive?Math.round(Number(a.height||78)*2.54):(Number(a.height)||200);
     p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);
-    p.jersey=(useLive?a.jersey:a.jersey)||"";
-    p.photoUrl=stat?.headshot||(useLive?a.headshot?.href:"")||"";
+    p.jersey=a.jersey||"";
+    p.photoUrl=stat?.headshot||(isLive?a.headshot?.href:"")||"";
     if(stat){p.attrs={...stat.attrs};p.hidden={...stat.hidden};p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings"}
     else p.ratingsSource="individual scouting estimate";
     if(isLive){
