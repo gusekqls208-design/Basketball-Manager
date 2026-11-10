@@ -202,7 +202,7 @@ if (enrique && !matchedSourceNames.has(norm("Enrique Freeman"))) {
 
 for (const s of sources) if (!matchedSourceNames.has(norm(s.name))) unmatchedSource.push(s.name);
 for (const p of db.players) {
-  if (!p.ratingsStatus) {
+  if (!p.ratingsStatus || p.ratingsStatus === "unverified") {
     p.ratingsStatus = "unverified";
     p.ratingsSource = "No verified NBA 2K27 rating found; provisional age/position-based estimate";
     p.ratingsScale = "unverified provisional estimate; not a direct 2K rating";
