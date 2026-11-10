@@ -2,7 +2,7 @@
 /**
  * Sync current NBA 2K27 ratings into the Basketball Manager roster.
  * Source: NBA 2K API public endpoint (weekly 2K27 ratings data).
- * Only direct 2K attributes are overwritten. Non-2K mental/role proxies remain
+ * Only direct 2K attributes are overwritten. Defensive Rebound is the sole rebound input. LeBron block uses a documented career-peak override. Non-2K mental/role proxies remain
  * explicitly documented; players absent from the 2K current roster are not guessed.
  */
 import fs from "node:fs/promises";
