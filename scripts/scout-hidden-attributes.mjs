@@ -176,6 +176,39 @@ await mapLimit(targets,5,async p=>{
     completed++;
   }catch(e){failed.push({name:p.name,error:String(e.message||e)});}
 });
+const internationalCareer={
+  "Tarik Biberovic":[
+    {year:2026,gp:41,expectedGames:38,league:"EuroLeague",team:"Fenerbahçe",pts:11.3,reb:3.0,ast:1.3,stl:.4,blk:.1},
+    {year:2025,gp:37,expectedGames:34,league:"EuroLeague",team:"Fenerbahçe",pts:10.4,reb:3.1,ast:1.4,stl:.5,blk:.2},
+    {year:2024,gp:31,expectedGames:34,league:"EuroLeague",team:"Fenerbahçe",pts:7.0,reb:2.2,ast:.7,stl:.3,blk:0},
+    {year:2023,gp:12,expectedGames:34,league:"EuroLeague",team:"Fenerbahçe",pts:2.9,reb:.9,ast:.3,stl:.5,blk:0},
+    {year:2022,gp:12,expectedGames:34,league:"EuroLeague",team:"Fenerbahçe",pts:1.4,reb:.4,ast:.3,stl:.3,blk:.1},
+    {year:2021,gp:16,expectedGames:34,league:"EuroLeague",team:"Fenerbahçe",pts:2.9,reb:1.5,ast:.3,stl:.2,blk:0},
+    {year:2020,gp:6,expectedGames:28,league:"EuroLeague",team:"Fenerbahçe",pts:2.3,reb:1.7,ast:1.0,stl:0,blk:.2},
+    {year:2019,gp:8,expectedGames:30,league:"EuroLeague",team:"Fenerbahçe",pts:2.3,reb:1.5,ast:.1,stl:.1,blk:0}
+  ],
+  "Khalifa Diop":[
+    {year:2026,gp:28,expectedGames:38,league:"EuroLeague",team:"Baskonia",pts:4.0,reb:4.2,ast:.6,stl:.5,blk:.6},
+    {year:2025,gp:32,expectedGames:34,league:"EuroLeague",team:"Baskonia",pts:4.1,reb:3.6,ast:.5,stl:.3,blk:.5},
+    {year:2024,gp:13,expectedGames:34,league:"EuroLeague",team:"Baskonia",pts:2.8,reb:1.9,ast:.3,stl:.2,blk:.2},
+    {year:2023,gp:22,expectedGames:18,league:"EuroCup",team:"Gran Canaria",pts:8.2,reb:4.9,ast:.6,stl:.6,blk:.8},
+    {year:2022,gp:17,expectedGames:18,league:"EuroCup",team:"Gran Canaria",pts:5.5,reb:3.6,ast:.8,stl:.5,blk:.7},
+    {year:2021,gp:14,expectedGames:18,league:"EuroCup",team:"Gran Canaria",pts:2.5,reb:1.6,ast:.4,stl:.5,blk:.3},
+    {year:2019,gp:1,expectedGames:34,league:"EuroLeague",team:"Gran Canaria",pts:3.0,reb:4.0,ast:0,stl:1.0,blk:0}
+  ]
+};
+for(const p of db.players){
+  const intl=internationalCareer[p.name];
+  if(intl&&!p.hiddenScoutedAt){
+    scoreHidden(p,intl);
+    p.careerSource="Basketball-Reference International / EuroLeague·EuroCup season stats";
+    p.hiddenSource="유럽 주요 대회 시즌 기록 기반 일괄 스카우팅 · 클러치·부상 진단 이력은 중립값";
+    p.hiddenEvidence.injuryProneness="EuroLeague/EuroCup 시즌별 출전 경기 ÷ 대회별 예정 경기 기반 추정(의료 부상기록 아님)";
+    p.hiddenEvidence.consistency="EuroLeague/EuroCup 다년간 평균 득점 변동 + 시즌별 출전율";
+    p.hiddenScoutingStatus="international-career-records";
+  }
+}
+failed=failed.filter(x=>!db.players.find(p=>p.name===x.name)?.hiddenScoutedAt);
 for(const p of db.players){
   p.hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:10,...(p.hidden||{})};
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
@@ -189,7 +222,7 @@ for(const p of db.players){
 const scouted=db.players.filter(p=>p.hiddenScoutedAt).length;
 console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,players:db.players.length,targets:targets.length,scouted,failed:failed.length,sampleFailures:failed.slice(0,30),unscouted:db.players.filter(p=>!p.hiddenScoutedAt).map(p=>({name:p.name,team:p.teamAbbr,age:p.age,experience:p.experience,espnId:p.espnId,status:p.hiddenScoutingStatus}))}));
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
-db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
+db.hiddenScouting={version:1,source:"ESPN NBA/NCAA + EuroLeague/EuroCup career season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from league games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
 db.updatedAt=new Date().toISOString();
 await fs.writeFile(FILE,JSON.stringify(db,null,2)+"\n");
 console.log(JSON.stringify({players:db.players.length,scouted,failed:failed.length,failedNames:failed.map(x=>x.name)},null,2));
