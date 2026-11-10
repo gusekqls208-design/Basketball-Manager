@@ -564,7 +564,7 @@ function showGame(id){
  window.broadcastTimer=null;m.paused=false;
  document.body.classList.add("broadcast-mode");
  const main=document.getElementById("main");
- main.innerHTML='<iframe title="3D basketball broadcast" src="court3d.html?build=4" style="display:block;width:100%;height:calc(100dvh - 66px);min-height:600px;border:0;background:#080d16"></iframe>';
+ main.innerHTML='<iframe title="3D basketball broadcast" src="court3d.html?build=6" style="display:block;width:100%;height:calc(100dvh - 66px);min-height:600px;border:0;background:#080d16"></iframe>';
 }
 function exitBroadcast(){if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;if(window.liveMatch&&!window.liveMatch.ended)window.liveMatch.paused=true;document.body.classList.remove("broadcast-mode");nav("schedule")}
 function toggleBroadcast(){const m=window.liveMatch;if(!m)return;m.paused=!m.paused;const b=document.getElementById("broadcastPause");if(b)b.textContent=m.paused?"▶ 재개":"Ⅱ 일시정지"}
