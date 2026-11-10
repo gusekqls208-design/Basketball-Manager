@@ -199,14 +199,27 @@ function courtSVG(p){
  return '<svg viewBox="0 0 220 190" style="width:100%;max-width:270px;background:#b77a43;border-radius:8px;border:1px solid #d7a36b"><rect x="8" y="8" width="204" height="174" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M30 182V130A80 80 0 0 1 190 130V182 M75 182V102H145V182 M75 102A35 35 0 0 0 145 102 M8 8H212" fill="none" stroke="#f7e5ca" stroke-width="2"/><circle cx="110" cy="165" r="7" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M92 153H128" stroke="#f7e5ca" stroke-width="3"/><path d="M96 165A14 14 0 0 0 124 165" fill="none" stroke="#f7e5ca" stroke-width="1.5"/>'+pos.map(k=>{let [x,y]=spots[k],v=scores[k],c=v>=12?"#78c69a":v>=9?"#f28a2e":"#55514c";return '<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+c+'" stroke="#fff" stroke-width="1.8"/><text x="'+x+'" y="'+(y+3)+'" fill="#17120d" font-size="8" font-weight="900" text-anchor="middle">'+k+'</text>'}).join("")+'</svg>'
 }
 function parseEspnStatCategory(data){
- const cats=data?.categories||data?.statCategories||[];
- const out={};
- for(const c of cats){
-  const labels=c.labels||c.names||[];
-  const vals=c.totals||c.values||[];
-  labels.forEach((label,i)=>{const key=String(label||"").toUpperCase().replace(/[^A-Z0-9%]/g,"");const value=Number(String(vals[i]??"").replace(/,/g,""));if(key&&Number.isFinite(value))out[key]=value;});
- }
- return out;
+ const cats=Array.isArray(data?.categories)?data.categories:(Array.isArray(data?.statCategories)?data.statCategories:[]);
+ const candidates=cats.map(c=>{
+  const labels=Array.isArray(c?.labels)?c.labels:(Array.isArray(c?.names)?c.names:[]);
+  const vals=Array.isArray(c?.totals)?c.totals:(Array.isArray(c?.values)?c.values:[]);
+  const out={};
+  labels.forEach((label,i)=>{const key=String(label||"").toUpperCase().replace(/[^A-Z0-9%]/g,"");const raw=String(vals[i]??"").replace(/,/g,"").trim();const value=Number(raw);if(key&&raw!==""&&Number.isFinite(value))out[key]=value;});
+  const name=String(c?.name||c?.displayName||"").toLowerCase();
+  const score=(out.GP!=null?3:0)+(out.PTS!=null?3:0)+(out.REB!=null?1:0)+(out.AST!=null?1:0)+(/average|averages|general/.test(name)?4:0)-(/total/.test(name)?5:0);
+  return{out,score};
+ }).filter(x=>Object.keys(x.out).length);
+ candidates.sort((a,b)=>b.score-a.score);
+ return candidates[0]?.out||{};
+}
+function careerPercent(v){
+ const n=Number(v);
+ if(!Number.isFinite(n))return "—";
+ return (Math.abs(n)<=1?n*100:n).toFixed(1)+"%";
+}
+function renderCareerHistory(p,list){
+ const rows=Array.isArray(p.career)?p.career:[];
+ list.innerHTML=rows.length?'<div class="career-table-wrap"><table class="career-table"><thead><tr><th>시즌</th><th>소속팀</th><th>출전 경기</th><th>출전시간</th><th>득점</th><th>리바운드</th><th>어시스트</th><th>턴오버</th><th>스틸</th><th>블록</th><th>야투 성공률</th><th>3점 성공률</th><th>자유투 성공률</th></tr></thead><tbody>'+rows.map(c=>'<tr><td>'+c.season+'</td><td>'+c.team+'</td><td>'+Number(c.gp||0)+'경기</td><td>'+Number(c.min||0).toFixed(1)+'분</td><td>'+Number(c.pts||0).toFixed(1)+'점</td><td>'+Number(c.reb||0).toFixed(1)+'개</td><td>'+Number(c.ast||0).toFixed(1)+'개</td><td>'+Number(c.to||0).toFixed(1)+'개</td><td>'+Number(c.stl||0).toFixed(1)+'개</td><td>'+Number(c.blk||0).toFixed(1)+'개</td><td>'+careerPercent(c.fg)+'</td><td>'+careerPercent(c.three)+'</td><td>'+careerPercent(c.ft)+'</td></tr>').join("")+'</tbody></table></div><div class="muted small career-note">득점·리바운드·어시스트·턴오버·스틸·블록·출전시간은 경기당 평균 · 슈팅 성공률은 백분율(%)</div>':'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 ESPN 기록 제공 범위 밖의 선수일 수 있습니다.</span>';
 }
 function clampRating(v){return Math.max(1,Math.min(20,Math.round(v)))}
 function statToRating(v,lo,hi){return clampRating(4+16*Math.max(0,Math.min(1,(v-lo)/(hi-lo))))}
@@ -290,8 +303,8 @@ function parseEspnGameLogTotals(data,gp){
  }catch(e){return null}
 }
 async function loadPlayerCareer(p,box){
- if(p.careerLoaded&&(p.career||[]).length&&p.career.every(c=>c.to!=null&&c.min!=null)){if(!p.hiddenEvidence?.injuryProneness)updateHiddenEvidence(p,p.career||[]);return;}
  const list=box.querySelector("#careerHistoryList");if(!list)return;
+ if(p.careerLoaded&&(p.career||[]).length&&p.career.every(c=>c.to!=null&&c.min!=null)){if(!p.hiddenEvidence?.injuryProneness)updateHiddenEvidence(p,p.career||[]);renderCareerHistory(p,list);return;}
  let athleteId=p.espnId?String(p.espnId):"";
  if(!athleteId&&p.teamAbbr&&ESPN_TEAM_IDS[p.teamAbbr]){
   try{const rr=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+ESPN_TEAM_IDS[p.teamAbbr]+"/roster?season=2027",{cache:"no-store"});if(rr.ok){const rp=await rr.json();const hit=(rp.athletes||[]).find(x=>cleanPlayerKey(x.displayName)===cleanPlayerKey(p.name));if(hit){athleteId=String(hit.id);p.espnId=athleteId;persist()}}}catch(e){}
@@ -352,7 +365,7 @@ async function loadPlayerCareer(p,box){
   box.querySelectorAll('.hidden-values > div').forEach((el,i)=>{const keys=['consistency','importantMatches','injuryProneness','potential'];const b=el.querySelector('b');if(b&&keys[i])b.textContent=keys[i]==="potential"&&(Number(p.age)>26||p.ageApprox)?"-":(p.hidden?.[keys[i]]??10);});
   if(list.isConnected){
    const bioBits=[p.college?"출신 대학 "+p.college:"",p.draft?"드래프트 "+p.draft.year+"년 "+p.draft.round+"라운드 "+p.draft.selection순위:""].filter(Boolean).join(" · ");
-   list.innerHTML=(bioBits?'<div class="career-meta">'+bioBits+'</div>':"")+(p.career.length?'<div class="career-table-wrap"><table class="career-table"><thead><tr><th>시즌</th><th>소속팀</th><th>출전 경기</th><th>출전시간</th><th>득점</th><th>리바운드</th><th>어시스트</th><th>턴오버</th><th>스틸</th><th>블록</th><th>야투 성공률</th><th>3점 성공률</th><th>자유투 성공률</th></tr></thead><tbody>'+p.career.map(c=>'<tr><td>'+c.season+'</td><td>'+c.team+'</td><td>'+c.gp+'경기</td><td>'+Number(c.min||0).toFixed(1)+'분</td><td>'+Number(c.pts||0).toFixed(1)+'점</td><td>'+Number(c.reb||0).toFixed(1)+'개</td><td>'+Number(c.ast||0).toFixed(1)+'개</td><td>'+Number(c.to||0).toFixed(1)+'개</td><td>'+Number(c.stl||0).toFixed(1)+'개</td><td>'+Number(c.blk||0).toFixed(1)+'개</td><td>'+(Number(c.fg||0)*100).toFixed(1)+'%</td><td>'+(Number(c.three||0)*100).toFixed(1)+'%</td><td>'+(Number(c.ft||0)*100).toFixed(1)+'%</td></tr>').join("")+'</tbody></table></div><div class="muted small career-note">득점·리바운드·어시스트·턴오버·스틸·블록·출전시간은 경기당 평균 · 슈팅 성공률은 백분율(%)</div>':'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 ESPN 기록 제공 범위 밖의 선수일 수 있습니다.</span>');
+   list.innerHTML=(bioBits?'<div class="career-meta">'+bioBits+'</div>':"");renderCareerHistory(p,list);
    const facts=box.querySelector(".profile-facts");
    if(facts){const cells=facts.querySelectorAll("div");if(cells[1])cells[1].innerHTML='<span>나이</span><b>'+p.age+'세</b>';if(cells[2])cells[2].innerHTML='<span>신체</span><b>'+p.height+'cm / '+p.weight+'kg</b>';}
    const head=box.querySelector(".profile-top .small.muted");if(head)head.textContent=p.pos+' · '+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role;
