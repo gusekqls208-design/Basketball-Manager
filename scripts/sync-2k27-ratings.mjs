@@ -152,16 +152,16 @@ const db = JSON.parse(await fs.readFile(FILE, "utf8"));
 const sources = await fetchAll();
 const byName = new Map(sources.map(s => [norm(s.name), s]));
 const aliases = {
-  "mo bamba": "Mohamed Bamba",
-  "jimmy butler iii": "Jimmy Butler",
-  "nic claxton": "Nicolas Claxton",
-  "ronald holland ii": "Ron Holland",
-  "bronny james": "Bronny James Jr.",
-  "svi mykhailiuk": "Sviatoslav Mykhailiuk",
-  "labaron philon": "Labaron Philon Jr.",
-  "alex sarr": "Alexandre Sarr",
-  "bub carrington": "Carlton Carrington",
-  "rob dillingham": "Robert Dillingham",
+  "mobamba": "Mohamed Bamba",
+  "jimmybutleriii": "Jimmy Butler",
+  "nicclaxton": "Nicolas Claxton",
+  "ronaldhollandii": "Ron Holland",
+  "bronnyjames": "Bronny James Jr.",
+  "svimykhailiuk": "Sviatoslav Mykhailiuk",
+  "labaronphilon": "Labaron Philon Jr.",
+  "alexsarr": "Alexandre Sarr",
+  "bubcarrington": "Carlton Carrington",
+  "robdillingham": "Robert Dillingham",
 };
 let matched = 0;
 const matchedSourceNames = new Set();
