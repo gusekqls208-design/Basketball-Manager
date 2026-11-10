@@ -6,7 +6,7 @@ const r=await fetch(url,{headers:{
  "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
  "x-nba-stats-origin":"stats",
  "x-nba-stats-token":"true"
-}});
+},signal:AbortSignal.timeout(15000)});
 console.log("NBA_STATS_HTTP",r.status,r.headers.get("content-type"));
 const text=await r.text();
 console.log("NBA_STATS_BODY_HEAD",text.slice(0,1000));
