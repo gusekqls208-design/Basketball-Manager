@@ -38,6 +38,24 @@ function parseStats(data){
   }
   return out;
 }
+function aggregateEvents(events){
+  const rows=(events||[]).filter(e=>Array.isArray(e?.stats));
+  const gp=rows.length;
+  if(!gp)return {gp:0,pts:0,reb:0,ast:0,stl:0,blk:0};
+  const sumAt=i=>rows.reduce((n,e)=>n+(Number(String(e.stats[i]??"").replace(/,/g,""))||0),0);
+  return {gp,pts:sumAt(13)/gp,reb:sumAt(7)/gp,ast:sumAt(8)/gp,blk:sumAt(9)/gp,stl:sumAt(10)/gp};
+}
+function parseGameLogSeason(data,year,league,expectedGames){
+  const types=data?.seasonTypes||[];
+  const regular=types.find(st=>/(regular season| season)$/i.test(st.displayName||"")&&!/(postseason|preseason)/i.test(st.displayName||""));
+  const postseason=types.find(st=>/postseason/i.test(st.displayName||""));
+  const regularEvents=(regular?.categories||[]).flatMap(c=>c.events||[]);
+  let reg=aggregateEvents(regularEvents);
+  if(!reg.gp&&data?.events&&typeof data.events==="object")reg=aggregateEvents(Object.values(data.events));
+  const playoffEvents=(postseason?.categories||[]).filter(c=>c.type==="event").flatMap(c=>c.events||[]);
+  const po=aggregateEvents(playoffEvents);
+  return {...reg,year,expectedGames,league,team:regular?.displayTeam||postseason?.displayTeam||"",playoffs:po.gp?po:null};
+}
 function seasonGames(year){
   if(year===1999)return 50;
   if(year===2012)return 66;
