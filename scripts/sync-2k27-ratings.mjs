@@ -143,6 +143,7 @@ function applyPlayer(p, source) {
   p.ratingsScale = "2K27 0-100 mapped to game 1-20 by round(value/5); OVR retained on 0-99";
   p.ratingsUpdatedAt = today;
   p.ratingsStatus = "2K-direct-27";
+  p.screenSource = "2K27 has no separate Screen rating; this field remains a scouting proxy";
   p.hiddenSource = potential !== null
     ? "2K27 potential mapped; other hidden attributes remain unscouted neutral baseline"
     : "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
@@ -207,6 +208,7 @@ for (const p of db.players) {
     p.ratingsScale = "unverified provisional estimate; not a direct 2K rating";
     p.ratingsConfidence = "low";
     p.ratingsUpdatedAt = today;
+    p.screenSource = "No verified 2K27 source; Screen remains a provisional scouting estimate";
     p.hiddenSource = "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
   }
 }
@@ -238,6 +240,7 @@ db.ratingsCoverage = {
   source2K27Rows: sources.length,
   accelerationProxy: "2K27 direct acceleration where available; otherwise Speed with Ball proxy",
   hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
+  screenAttributeCoverage: "No separate 2K27 Screen rating; scouting proxy retained",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
