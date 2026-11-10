@@ -96,10 +96,12 @@ function applyPlayer(p, source) {
     workRate: ["hustle"],
     leadership: ["intangibles", "intangible"],
     determination: ["hustle"],
-    flair: ["drawFoul"],
+    flair: ["intangibles", "intangible"],
+    aggression: ["hustle"],
+    screen: ["strength"],
     aggression: ["hustle"],
     speed: ["speed"],
-    acceleration: ["acceleration", "speedWithBall"],
+    acceleration: ["speedWithBall"],
     agility: ["agility"],
     jumping: ["vertical"],
     strength: ["strength"],
@@ -134,7 +136,7 @@ function applyPlayer(p, source) {
   if (weight) p.weight = weight;
 
   const potential = pick(a, "potential") ?? asNum(source.potential);
-  if (potential !== null) p.hidden = { ...(p.hidden || {}), potential: to20(potential) };
+  p.hidden = { ...(p.hidden || {}), potential: to20(potential) ?? 10 };
 
   p.ratingsSource = source.manualSource || "NBA 2K27 current roster (NBA 2K API; sourced from 2KRatings)";
   p.ratingsSourceUrl = source.manualUrl || (source.slug ? "https://nba2kapi.com/players/" + source.slug : "https://nba2kapi.com");
@@ -147,7 +149,7 @@ function applyPlayer(p, source) {
   p.screenSource = "No separate 2K27 Screen category; mapped to the direct 2K Strength rating";
   p.hiddenSource = potential !== null
     ? "2K27 potential mapped; other hidden attributes remain unscouted neutral baseline"
-    : "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
+    : "No 2K27 Potential rating; neutral baseline 10; other hidden attributes remain unscouted neutral baseline";
 }
 
 const db = JSON.parse(await fs.readFile(FILE, "utf8"));
@@ -215,6 +217,11 @@ for (const p of db.players) {
 }
 if (matched < 450) throw new Error("Safety stop: matched only " + matched + " of " + sources.length + " 2K27 players to game roster");
 
+// Do not invent ratings for players absent from NBA 2K27. Keep the game roster strictly 2K-rated.
+const excludedUnverified = db.players.filter(p => p.ratingsStatus !== "2K-direct-27").map(p => p.name);
+db.players = db.players.filter(p => p.ratingsStatus === "2K-direct-27");
+db.count = db.players.length;
+
 const counts = {};
 for (const p of db.players) counts[p.ratingsStatus || "unverified"] = (counts[p.ratingsStatus || "unverified"] || 0) + 1;
 const unverified = db.players.filter(p => !p.ratingsStatus || p.ratingsStatus === "unverified").map(p => p.name);
@@ -222,8 +229,8 @@ const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p =
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 current roster ratings synced from NBA 2K API public endpoint; ${matched} of ${db.players.length} game-roster players matched; unmatched players retain prior verified source or remain unverified`;
-db.ratingNotes = "1-20 scale. Player ratings use NBA 2K27 source attributes mapped from 0-100 by rounding rating/5. Dunk uses the direct Driving Dunk rating only; rebound uses Defensive Rebound only. Game-only fields without a separate 2K rating use the closest named 2K source attribute; no career-stat or height-based ability estimates are used. Players absent from the 2K27 source remain explicitly unverified and are not presented as direct 2K ratings.";
-db.ratingsMethod = "NBA 2K27 source of truth: NBA 2K API current-roster endpoint (2KRatings data), with verified free agents supplemented from 2kAuction. Source ratings are mapped to the game 1-20 scale by Math.round(value/5). Dunk = direct Driving Dunk; rebound = Defensive Rebound. No career-stat, height-based, or manually invented ability calculations are used. Where the game has a field with no exact 2K category, it uses the closest available 2K attribute and remains identified as a game-field mapping. Players absent from 2K27 remain unverified rather than receiving fabricated 2K ratings.";
+db.ratingNotes = "Only players with verified NBA 2K27 ratings are included. 2K27 source attributes map from 0-100 to game 1-20 by rounding rating/5; OVR remains direct 2K OVR. Dunk = Driving Dunk; rebound = Defensive Rebound; acceleration = Speed with Ball; balance = Agility; screen = Strength; aggression = Hustle. No career-stat, height-based, legacy, or invented ability formulas are used. Players without 2K27 ratings are excluded.";
+db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. 0-100 source attributes map to game 1-20 by Math.round(value/5), and OVR is copied directly. Game-specific fields with no exact 2K category use explicitly documented closest direct 2K attributes. Players without verified 2K27 data are excluded, never filled with legacy estimates.";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
   sourceRows: sources.length,
@@ -231,6 +238,7 @@ db.ratingsCoverage = {
   source2K26Rows: counts["2K-direct"] || 0,
   ratingsCounts: counts,
   playersTotal: db.players.length,
+  excludedUnverifiedNames: excludedUnverified,
   playersWith2KRatings: db.players.filter(p => String(p.ratingsStatus || "").startsWith("2K-direct")).length,
   unverifiedPlayers: unverified.length,
   unverifiedNames: unverified,
@@ -240,10 +248,10 @@ db.ratingsCoverage = {
   manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
   dunkMapping: "Direct Driving Dunk only; no blended rating",
-  accelerationMapping: "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value",
-  hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
+  accelerationMapping: "Direct 2K27 Speed with Ball (no separate Acceleration rating)",
+  hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct 2K27 only, otherwise neutral baseline 10",
   screenAttributeCoverage: "Screen maps to direct 2K Strength; aggression maps to direct 2K Hustle",
-  allPlayersEvaluatedByDirect2K: matched === db.players.length,
+  allPlayersEvaluatedByDirect2K: db.players.every(p => p.ratingsStatus === "2K-direct-27"),
   unmatched2K27SourceNames: unmatchedSource,
 };
 delete db.ratingsCoverage.dunkFormula;
