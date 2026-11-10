@@ -213,7 +213,8 @@ async function bulkScoutAllPlayers(){
  const btn=document.getElementById("bulkScoutBtn"),status=document.getElementById("bulkScoutStatus");
  if(window.bulkScoutRunning)return;window.bulkScoutRunning=true;
  if(btn){btn.disabled=true;btn.textContent="전체 스카우팅 진행 중…"}
- const setStatus=t=>{if(status)status.textContent=t};
+ let toast=document.getElementById("bulkScoutToast");if(!toast){toast=document.createElement("div");toast.id="bulkScoutToast";toast.style.cssText="position:fixed;z-index:120;left:50%;bottom:18px;transform:translateX(-50%);width:min(680px,calc(100vw - 28px));padding:12px 15px;background:#30271f;border:1px solid #8a5b32;border-radius:9px;color:#f5f1e9;font-size:12px;box-shadow:0 8px 30px #0009";document.body.appendChild(toast)}
+ const setStatus=t=>{if(status)status.textContent=t;if(toast)toast.textContent=t};
  const all=state.clubs.flatMap(t=>(t.players||[]).filter(p=>p.realData).map(p=>({p,team:t.id||p.teamAbbr||p.team})));
  const unique=[...new Map(all.map(x=>[String(x.p.id),x])).values()],rosterMap=new Map();
  const teamsToLoad=[...new Set(unique.map(x=>x.team).filter(x=>ESPN_TEAM_IDS[x]))];let rosterDone=0;
@@ -230,8 +231,9 @@ async function bulkScoutAllPlayers(){
  }
  await Promise.all(Array.from({length:8},playerWorker));state.bulkScoutingVersion=1;persist();window.bulkScoutRunning=false;
  if(btn){btn.disabled=false;btn.textContent="전체 선수 능력치 다시 산정"}
- setStatus("완료: "+unique.length+"명 중 "+updated+"명 통계 반영 · "+failed+"명 기록 미확인. 속력·가속력·점프력과 히든 능력치는 박스스코어로 검증할 수 없어 별도 근거가 필요합니다.");
+ setStatus("전체 선수 스카우팅 완료: "+unique.length+"명 중 "+updated+"명 통계 반영 · "+failed+"명 기록 미확인. 속력·가속력·점프력·히든은 별도 측정/스카우팅 근거가 필요합니다.");
  render(document.querySelector(".nav.active")?.dataset.page||"roster");
+ setTimeout(()=>{const n=document.getElementById("bulkScoutToast");if(n)n.remove()},15000);
 }
 function applyStatsScouting(p,st){
  const g=st||{},a=p.attrs||{},gp=Number(g.GP)||0;if(gp<5)return false;
