@@ -367,7 +367,7 @@ async function loadPlayerCareer(p,box){
    if(facts){const cells=facts.querySelectorAll("div");if(cells[1])cells[1].innerHTML='<span>나이</span><b>'+p.age+'세</b>';if(cells[2])cells[2].innerHTML='<span>신체</span><b>'+p.height+'cm / '+p.weight+'kg</b>';}
    const head=box.querySelector(".profile-top .small.muted");if(head)head.textContent=p.pos+' · '+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role;
    const portrait=box.querySelector(".player-portrait span");if(portrait)portrait.textContent=p.pos+' · #'+(p.jersey||"--");
-   const ovr=box.querySelector(".player-portrait strong");if(ovr)ovr.innerHTML=p.ovr+' <small>'+(p.ratingsStatus==='unverified'?'임시':'OVR')+'</small>'';
+   const ovr=box.querySelector(".player-portrait strong");if(ovr)ovr.innerHTML=p.ovr+' <small>'+(p.ratingsStatus==="unverified"?"임시":"OVR")+'</small>'';
    const hiddenLabel=box.querySelector(".hidden-strip .sectionbar .small");if(hiddenLabel)hiddenLabel.textContent=p.hiddenSource||"미스카우팅 · 중립값";
    const hiddenValues=box.querySelectorAll(".hidden-values > div");const hiddenKeys=["consistency","importantMatches","pressure","professionalism","injuryProneness","naturalFitness","adaptability","potential"];hiddenValues.forEach((el,i)=>{const key=hiddenKeys[i];const b=el.querySelector("b");if(key&&b)b.textContent=p.hidden?.[key]??10;});
    const attrs=box.querySelectorAll(".fm-attr b");let vals=Object.values(p.attrs||{});attrs.forEach((el,i)=>{if(vals[i]!=null)el.textContent=vals[i]});
