@@ -1,5 +1,6 @@
-const url="https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/1966/gamelog?season=2026";
-const r=await fetch(url,{headers:{"Accept":"application/json","User-Agent":"BasketballManager-HiddenScout/1.0"},signal:AbortSignal.timeout(15000)});
-console.log("HTTP",r.status);
-const d=await r.json();
-console.log("SHAPE",JSON.stringify({keys:Object.keys(d),eventsType:typeof d.events,eventsArray:Array.isArray(d.events),events:JSON.stringify(d.events).slice(0,2000),seasonTypes:JSON.stringify(d.seasonTypes).slice(0,4000),labels:d.labels,names:d.names}));
+for(const season of [2026,2025]){
+ const url="https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/1966/gamelog?season="+season;
+ const r=await fetch(url,{headers:{"Accept":"application/json","User-Agent":"BasketballManager-HiddenScout/1.0"},signal:AbortSignal.timeout(15000)});
+ const d=await r.json();
+ console.log("SEASON_SHAPE",season,JSON.stringify({filter:d.filters?.find(x=>x.name==="season")?.value,eventCount:Object.keys(d.events||{}).length,seasonTypes:(d.seasonTypes||[]).map(st=>({displayName:st.displayName,displayTeam:st.displayTeam,categories:(st.categories||[]).map(c=>({displayName:c.displayName,type:c.type,splitType:c.splitType,totals:c.totals})),summary:st.summary?.stats?.[0]?.stats}))}));
+}
