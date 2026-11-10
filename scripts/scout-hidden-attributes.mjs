@@ -19,6 +19,21 @@ async function getJson(url, tries=4) {
   }
   throw last||new Error("Request failed: "+url);
 }
+async function fetchSpecialEventIds(){
+  const dates=["20100214","20110220","20120226","20130217","20140216","20150215","20160214","20170219","20180218","20190217","20200216","20210307","20220220","20230219","20240218","20250216","20260215","20231209","20241217","20251216"];
+  const ids=new Set();
+  await mapLimit(dates,3,async date=>{
+    try{
+      const data=await getJson("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+date);
+      for(const e of data?.events||[]){
+        const notes=(e.competitions||[]).flatMap(c=>c.notes||[]).map(n=>n.headline||n.text||"").join(" ");
+        const label=(e.name||"")+" "+(e.shortName||"")+" "+notes;
+        if(/all.?star|nba cup championship|in-season tournament championship/i.test(label))ids.add(String(e.id));
+      }
+    }catch{}
+  });
+  return ids;
+}
 async function mapLimit(items,limit,fn){
   const out=new Array(items.length);let next=0;
   await Promise.all(Array.from({length:limit},async()=>{
@@ -46,13 +61,15 @@ function aggregateEvents(events){
   const sumAt=i=>rows.reduce((n,e)=>n+(Number(String(e.stats[i]??"").replace(/,/g,""))||0),0);
   return {gp,pts:sumAt(13)/gp,reb:sumAt(7)/gp,ast:sumAt(8)/gp,blk:sumAt(9)/gp,stl:sumAt(10)/gp};
 }
-function parseGameLogSeason(data,year,league,expectedGames){
+function parseGameLogSeason(data,year,league,expectedGames,specialEventIds=new Set()){
   const types=data?.seasonTypes||[];
   const regular=types.find(st=>/(regular season| season)$/i.test(st.displayName||"")&&!/(postseason|preseason|play.?in)/i.test(st.displayName||""));
   const postseason=types.find(st=>/postseason/i.test(st.displayName||""));
-  const regularEvents=(regular?.categories||[]).flatMap(c=>c.events||[]);
+  const playInIds=new Set(types.filter(st=>/play.?in/i.test(st.displayName||"")).flatMap(st=>(st.categories||[]).flatMap(c=>c.events||[])).map(e=>String(e.eventId||e.id||"")));
+  const excluded=new Set([...specialEventIds,...playInIds]);
+  const regularEvents=(regular?.categories||[]).flatMap(c=>c.events||[]).filter(e=>!excluded.has(String(e.eventId||e.id||"")));
   let reg=aggregateEvents(regularEvents);
-  if(!reg.gp&&data?.events&&typeof data.events==="object")reg=aggregateEvents(Object.values(data.events));
+  if(!reg.gp&&data?.events&&typeof data.events==="object")reg=aggregateEvents(Object.values(data.events).filter(e=>!excluded.has(String(e.eventId||e.id||""))));
   const playoffEvents=(postseason?.categories||[]).filter(c=>c.type==="event").flatMap(c=>c.events||[]);
   const po=aggregateEvents(playoffEvents);
   return {...reg,year,expectedGames,league,team:regular?.displayTeam||postseason?.displayTeam||"",playoffs:po.gp?po:null};
@@ -163,6 +180,7 @@ for(const p of db.players){
   for(const k of ["consistency","importantMatches","pressure","injuryProneness"])delete p.hiddenEvidence[k];
 }
 const internationalNames=new Set(["Tarik Biberovic","Khalifa Diop"]);
+const specialEventIds=await fetchSpecialEventIds();
 const targets=db.players.filter(p=>p.espnId&&!internationalNames.has(p.name));
 if(targets.length<500)throw new Error("ESPN ID coverage too low: "+targets.length+"/"+db.players.length);
 let completed=0,failed=[];
@@ -178,7 +196,7 @@ await mapLimit(targets,5,async p=>{
     const rows=[];
     for(const year of years){
       const data=await getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+p.espnId+"/gamelog?season="+year);
-      const row=parseGameLogSeason(data,year,"NBA",seasonGames(year));
+      const row=parseGameLogSeason(data,year,"NBA",seasonGames(year),specialEventIds);
       if(row.gp>0)rows.push(row);
       await sleep(110);
     }
@@ -187,7 +205,7 @@ await mapLimit(targets,5,async p=>{
       const firstYear=Math.max(2018,2026-Math.max(1,age-18));
       for(let year=2026;year>=firstYear;year--){
         const data=await getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/gamelog?season="+year);
-        const row=parseGameLogSeason(data,year,"NCAA",32);
+        const row=parseGameLogSeason(data,year,"NCAA",32,specialEventIds);
         if(row.gp>0)rows.push(row);
         await sleep(150);
       }
