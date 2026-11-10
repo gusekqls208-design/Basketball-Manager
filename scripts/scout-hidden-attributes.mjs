@@ -120,7 +120,7 @@ await mapLimit(unmatched,2,async p=>{
   }catch{}
 });
 const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt);
-if(targets.length<500)throw new Error("ESPN ID coverage too low: "+targets.length+"/"+db.players.length);
+if(!targets.length)throw new Error("No remaining ESPN career records to scout");
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
   try{
