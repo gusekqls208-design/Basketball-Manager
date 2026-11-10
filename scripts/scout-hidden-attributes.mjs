@@ -115,11 +115,13 @@ await mapLimit(unmatched,2,async p=>{
     const q=await getJson("https://site.web.api.espn.com/apis/search/v2?query="+encodeURIComponent(p.name)+"&limit=10&sport=basketball");
     const arr=collectSearchCandidates(q);
     const hit=arr.find(a=>norm(a.displayName||a.fullName||a.name||a.shortName)===norm(p.name));
-    const id=hit?.id||String(hit?.uid||"").match(/a:(\\d+)/)?.[1];
+    const uid=String(hit?.uid||"");
+    const id=uid.match(/a:(\d+)/)?.[1]||(/^\d+$/.test(String(hit?.id||""))?String(hit.id):null);
     if(id)p.espnId=String(id);
   }catch{}
 });
-const knownNoCareer=new Set(db.hiddenScouting?.failedNames||[]);\nconst targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt&&!knownNoCareer.has(p.name));
+const knownNoCareer=new Set(db.hiddenScouting?.failedNames||[]);
+const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt&&!knownNoCareer.has(p.name));
 if(!targets.length)throw new Error("No remaining ESPN career records to scout");
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
