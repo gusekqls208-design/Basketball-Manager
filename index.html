@@ -536,7 +536,7 @@ function power(t){let p=t.players.slice(0,8);let base=p.reduce((s,x)=>s+x.ovr*.1
 function playNext(){
  const g=nextGame();if(!g)return;
  const home=club(g.home),away=club(g.away);
- window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,paused:false,ended:false,homeLine:home.players.slice(0,5),awayLine:away.players.slice(0,5),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,timeoutOverlay:false};
+ window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,paused:false,ended:false,homeLine:home.players.slice(0,5),awayLine:away.players.slice(0,5),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,tactic:state.tactics?.off||"균형",timeoutOverlay:false};
  const m=window.liveMatch;
  for(const p of [...home.players,...away.players])m.stats[p.id]={pts:0,reb:0,ast:0,stl:0,blk:0,tov:0,fga:0,fgm:0,threeA:0,threeM:0,min:0};
  showGame(g.id);
@@ -602,7 +602,7 @@ function moveLivePlayer(p,x,y,action){const el=document.getElementById("liveP_"+
 function animateBallPass(from,to){const ball=document.getElementById("liveBall"),a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!ball||!a||!b)return;ball.style.left=a.style.left;ball.style.top=a.style.top;requestAnimationFrame(()=>{ball.style.left=b.style.left;ball.style.top=b.style.top})}
 function resolveLiveShot(m,offense,defense,atkClub){
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense[0],three=Math.random()<.42,attrs=shooter.attrs||{},defAttrs=defender.attrs||{};
- const hit=Math.random()<Math.max(.22,Math.min(.78,.43+(Number(three?attrs.three:attrs.mid)-10)*.012+(Number(attrs.decisions)-10)*.004-(Number(defAttrs.perimeter)-10)*.004+(m.tactic==="3점슛 중심"&&three?.08:0)+(m.tactic==="림 어택"&&!three?.05:0)));
+ const hit=Math.random()<Math.max(.22,Math.min(.78,.43+(Number(three?attrs.three:attrs.mid)-10)*.012+(Number(attrs.decisions)-10)*.004-(Number(defAttrs.perimeter)-10)*.004+(m.tactic==="3점슛 중심"&&three ? .08 : 0)+(m.tactic==="림 어택"&&!three ? .05 : 0)));
  const side=m.possHome?"home":"away",other=m.possHome?"away":"home",stats=m.stats[shooter.id];stats.fga++;if(three)stats.threeA++;
  if(Math.random()<.08){m.fouls[other]++;liveComment(defender.name+"의 파울입니다. 공격 동작에서 접촉이 있었습니다.");}
  if(hit){const pts=three?3:2;stats.pts+=pts;stats.fgm++;if(three)stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;const assister=offense.find(p=>p.id!==shooter.id);if(assister&&Math.random()<.62)m.stats[assister.id].ast++;liveComment(shooter.name+" 성공! "+(three?"3점슛":"골밑 마무리")+"로 "+pts+"점을 보탭니다.","score");m.possHome=!m.possHome;m.shotClock=24;}
