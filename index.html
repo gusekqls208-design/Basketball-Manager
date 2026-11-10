@@ -208,7 +208,7 @@ function parseEspnStatCategory(data){
 }
 function clampRating(v){return Math.max(1,Math.min(20,Math.round(v)))}
 function statToRating(v,lo,hi){return clampRating(4+16*Math.max(0,Math.min(1,(v-lo)/(hi-lo))))}
-async async function bulkScoutAllPlayers(){
+async function bulkScoutAllPlayers(){
  const status=document.getElementById("bulkScoutStatus");
  if(status)status.textContent="NBA 2K27 능력치만 사용합니다. 기존 통계 기반 재산정은 비활성화되었습니다.";
  const btn=document.getElementById("bulkScoutBtn");
