@@ -309,6 +309,8 @@ async function loadPlayerCareer(p,box){
    const head=box.querySelector(".profile-top .small.muted");if(head)head.textContent=p.pos+' · '+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role;
    const portrait=box.querySelector(".player-portrait span");if(portrait)portrait.textContent=p.pos+' · #'+(p.jersey||"--");
    const ovr=box.querySelector(".player-portrait strong");if(ovr)ovr.innerHTML=p.ovr+' <small>OVR</small>';
+   const hiddenLabel=box.querySelector(".hidden-strip .sectionbar .small");if(hiddenLabel)hiddenLabel.textContent=p.hiddenSource||"미스카우팅 · 중립값";
+   const hiddenValues=box.querySelectorAll(".hidden-values > div");const hiddenKeys=["consistency","importantMatches","pressure","professionalism","injuryProneness","naturalFitness","adaptability","potential"];hiddenValues.forEach((el,i)=>{const key=hiddenKeys[i];const b=el.querySelector("b");if(key&&b)b.textContent=p.hidden?.[key]??10;});
    const attrs=box.querySelectorAll(".fm-attr b");let vals=Object.values(p.attrs||{});attrs.forEach((el,i)=>{if(vals[i]!=null)el.textContent=vals[i]});
   }
  }catch(e){
@@ -360,7 +362,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=5)return;
+ if(!state?.clubs||state.rosterSourceVersion>=6)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
