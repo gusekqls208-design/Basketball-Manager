@@ -39,7 +39,8 @@ function parseStats(data){
   return out;
 }
 function aggregateEvents(events){
-  const rows=(events||[]).filter(e=>Array.isArray(e?.stats));
+  const seen=new Set();
+  const rows=(events||[]).filter(e=>{if(!Array.isArray(e?.stats)||!(Number(e.stats[0])>0))return false;const id=String(e.eventId||e.id||"");if(id&&seen.has(id))return false;if(id)seen.add(id);return true;});
   const gp=rows.length;
   if(!gp)return {gp:0,pts:0,reb:0,ast:0,stl:0,blk:0};
   const sumAt=i=>rows.reduce((n,e)=>n+(Number(String(e.stats[i]??"").replace(/,/g,""))||0),0);
@@ -47,7 +48,7 @@ function aggregateEvents(events){
 }
 function parseGameLogSeason(data,year,league,expectedGames){
   const types=data?.seasonTypes||[];
-  const regular=types.find(st=>/(regular season| season)$/i.test(st.displayName||"")&&!/(postseason|preseason)/i.test(st.displayName||""));
+  const regular=types.find(st=>/(regular season| season)$/i.test(st.displayName||"")&&!/(postseason|preseason|play.?in)/i.test(st.displayName||""));
   const postseason=types.find(st=>/postseason/i.test(st.displayName||""));
   const regularEvents=(regular?.categories||[]).flatMap(c=>c.events||[]);
   let reg=aggregateEvents(regularEvents);
