@@ -102,15 +102,24 @@ for(const p of db.players){
   if(hit){p.espnId=hit.id;p.teamAbbr=hit.team;}
   else unmatched.push(p);
 }
-await mapLimit(unmatched,3,async p=>{
+function collectSearchCandidates(value,out=[]){
+  if(Array.isArray(value)){for(const x of value)collectSearchCandidates(x,out);return out;}
+  if(!value||typeof value!=="object")return out;
+  const name=value.displayName||value.fullName||value.name||value.shortName;
+  if(name&&(value.id||value.uid))out.push(value);
+  for(const v of Object.values(value))if(v&&typeof v==="object")collectSearchCandidates(v,out);
+  return out;
+}
+await mapLimit(unmatched,2,async p=>{
   try{
-    const q=await getJson("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/athletes?limit=1000&search="+encodeURIComponent(p.name));
-    const arr=q?.items||q?.athletes||[];
-    const hit=arr.find(a=>norm(a.displayName||a.fullName)===norm(p.name));
-    if(hit?.id)p.espnId=String(hit.id);
+    const q=await getJson("https://site.web.api.espn.com/apis/search/v2?query="+encodeURIComponent(p.name)+"&limit=10&sport=basketball");
+    const arr=collectSearchCandidates(q);
+    const hit=arr.find(a=>norm(a.displayName||a.fullName||a.name||a.shortName)===norm(p.name));
+    const id=hit?.id||String(hit?.uid||"").match(/a:(\\d+)/)?.[1];
+    if(id)p.espnId=String(id);
   }catch{}
 });
-const targets=db.players.filter(p=>p.espnId);
+const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt);
 if(targets.length<500)throw new Error("ESPN ID coverage too low: "+targets.length+"/"+db.players.length);
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
@@ -146,11 +155,15 @@ for(const p of db.players){
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
   p.hiddenEvidence=p.hiddenEvidence||{};
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
+  p.hiddenReviewedAt=new Date().toISOString();
+  if(p.hiddenScoutedAt)p.hiddenScoutingStatus="career-records";
+  else if(p.espnId)p.hiddenScoutingStatus="no-NBA-career-records";
+  else p.hiddenScoutingStatus="ESPN-id-unresolved";
 }
 const scouted=db.players.filter(p=>p.hiddenScoutedAt).length;
 console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,players:db.players.length,targets:targets.length,scouted,failed:failed.length,sampleFailures:failed.slice(0,12)}));
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
-db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,scoutedPlayers:scouted,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
+db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>p.hiddenScoutingStatus!=="career-records").length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
 db.updatedAt=new Date().toISOString();
 await fs.writeFile(FILE,JSON.stringify(db,null,2)+"\n");
 console.log(JSON.stringify({players:db.players.length,scouted,failed:failed.length,failedNames:failed.map(x=>x.name)},null,2));
