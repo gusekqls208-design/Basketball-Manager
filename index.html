@@ -108,20 +108,13 @@ if(state?.clubs){
   p.attrs={...defaults,...p.attrs};
   p.hidden={...hidden,...(p.hidden||{})};
   if((state.hiddenDistributionVersion||0)<1){
-   const key=(p.name||"Player")+"|"+(t.id||"");
-   let seed=key.split("").reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
-   const roll=(n,min,max)=>{seed=(seed*1664525+1013904223)>>>0;return min+(seed%(max-min+1))};
    const current=Math.max(5,Math.min(20,Math.round((+p.ovr||55)/5)));
-   p.hidden={
-    consistency:roll(1,6,18),
-    importantMatches:roll(2,5,19),
-    pressure:roll(3,5,19),
-    professionalism:roll(4,5,20),
-    injuryProneness:roll(5,2,18),
-    naturalFitness:roll(6,5,19),
-    adaptability:roll(7,5,19),
-    potential:Math.max(current,roll(8,Math.max(9,current),20))
-   };
+   // Unknown mental/medical attributes must not be randomized and presented as scouting facts.
+   // Neutral values mean "unscouted"; potential defaults to current ability until evidence exists.
+   if(!p.hiddenSource||p.hiddenSource==="scouting estimate"){
+    p.hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:current};
+    p.hiddenSource="unscouted neutral baseline";
+   }
   }
   p.traits=p.traits||[p.trait||"균형형"];p.trait=p.trait||p.traits[0];
   p.origin=p.origin||"league";p.relationship=p.relationship??50;
@@ -136,7 +129,7 @@ if(state?.clubs){
   if((state.realPlayerDataVersion||0)<3)applyRealPlayerProfile(p);
  }));
  // Version 3 previously forced Kawhi Leonard into Toronto. Removed: roster membership must come from the official team roster dataset, never a hard-coded exception.
- state.attrDistributionVersion=3;state.hiddenDistributionVersion=1;state.realPlayerDataVersion=3;persist();
+ state.attrDistributionVersion=3;state.hiddenDistributionVersion=2;state.realPlayerDataVersion=4;persist();
 }
 function load(){try{return JSON.parse(localStorage.getItem("bm_save_v1"))}catch(e){return null}}
 function persist(){localStorage.setItem("bm_save_v1",JSON.stringify(state))}
@@ -159,7 +152,7 @@ function nav(page){document.querySelectorAll(".nav").forEach(b=>b.classList.togg
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>nav(b.dataset.page));
 function render(page="home"){if(!state){renderSetup();return}document.getElementById("teamhead").textContent=my().name;document.getElementById("moneyhead").textContent=money(state.cash);let m=document.getElementById("main");({home:homePage,roster:rosterPage,schedule:schedulePage,standings:standingsPage,tactics:tacticsPage,market:marketPage,office:officePage,save:savePage}[page]||homePage)(m)}
 function renderSetup(){document.getElementById("sidebar").classList.add("hidden");document.getElementById("teamhead").textContent="프랜차이즈 선택";document.getElementById("main").innerHTML='<div class="setup"><div class="setupintro"><div class="eyebrow">YOUR FRANCHISE. YOUR LEGACY.</div><h1>BUILD A DYNASTY.</h1><p>30개 NBA 프랜차이즈 중 한 팀을 선택해 단장 겸 감독으로 커리어를 시작하세요. 50경기 정규시즌, 플레이오프, 드래프트와 선수 시장이 기다립니다.</p><div class="notice">초기 플레이 가능한 빌드입니다. 구단 선택과 경기 엔진부터 구현했으며, 2026–27 현행 NBA 30개 구단 선수단을 불러옵니다. 실제 선수 정보와 사진이 적용되며, 능력치는 경기 기록 기반 게임용 스카우팅 추정치입니다.</div></div><div class="sectionbar"><h2>SELECT YOUR FRANCHISE</h2><span class="small muted">30 TEAMS · 2 CONFERENCES</span></div><div class="teamgrid">'+teams.map(t=>'<button class="teamtile" onclick="startClub(\''+t[0]+'\')"><b>'+t[1]+'</b><small>'+t[2]+' · '+t[3]+'</small></button>').join("")+'</div></div>'}
-async function startClub(id){state=createLeague(id);persist();document.getElementById("sidebar").classList.remove("hidden");document.getElementById("main").innerHTML='<div class="notice">2026–27 실제 NBA 선수단 30개 구단 데이터를 불러오는 중입니다. 적용이 끝나면 구단 화면이 열립니다…</div>';await syncOfficialRosters();if(state.rosterSourceVersion>=5)nav("home")}
+async function startClub(id){state=createLeague(id);persist();document.getElementById("sidebar").classList.remove("hidden");document.getElementById("main").innerHTML='<div class="notice">2026–27 실제 NBA 선수단 30개 구단 데이터를 불러오는 중입니다. 적용이 끝나면 구단 화면이 열립니다…</div>';await syncOfficialRosters();if(state.rosterSourceVersion>=6)nav("home")}
 function head(k,title,desc,action=""){return '<div class="pagehead"><div><div class="eyebrow">'+k+'</div><h1>'+title+'</h1><div class="small muted">'+desc+'</div></div>'+action+'</div>'}
 function nextGame(){return state.schedule.find(g=>!g.played&&(g.home===state.teamId||g.away===state.teamId))}
 function homePage(m){let t=my(),g=nextGame(),wins=t.w,loss=t.l,played=wins+loss;let roster=[...t.players].sort((a,b)=>b.ovr-a.ovr);m.innerHTML=head("FRONT OFFICE / OVERVIEW","구단 대시보드",state.season+" 시즌 · "+(state.round)+" 라운드 진행 중")+'<div class="grid"><div class="card"><h3>전적</h3><div class="metric">'+wins+' - '+loss+'</div><div class="metric-sub">승률 '+(played?(wins/played*100).toFixed(1):"0.0")+'% · '+played+'/50 경기</div></div><div class="card"><h3>팀 전력</h3><div class="metric">'+Math.round(roster.slice(0,8).reduce((s,p)=>s+p.ovr,0)/8)+'</div><div class="metric-sub">상위 8인 평균 OVR</div></div><div class="card"><h3>구단 예산</h3><div class="metric">'+money(state.cash)+'</div><div class="metric-sub">가용 예산 · 선수단 급여 별도</div></div><div class="card"><h3>리그 순위</h3><div class="metric">'+(standings().findIndex(x=>x.id===t.id)+1)+'위</div><div class="metric-sub">'+t.conf+' 컨퍼런스</div></div></div><div class="section"><div class="sectionbar"><h2>NEXT MATCH</h2><span class="pill">'+(g?"ROUND "+g.round:"시즌 종료")+'</span></div>'+(g?'<div class="matchbox"><div><div class="small muted">'+(g.home===t.id?"HOME":"AWAY")+'</div><div class="club">'+(g.home===t.id?t.name:teamName(g.home))+'</div></div><div><div class="score">VS</div><button class="btn primary" onclick="playNext()">경기 진행하기 →</button></div><div><div class="small muted">'+(g.away===t.id?"HOME":"AWAY")+'</div><div class="club">'+(g.away===t.id?t.name:teamName(g.away))+'</div></div></div>':'<div class="card empty">정규시즌 모든 경기를 마쳤습니다.</div>')+'</div><div class="section" style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px"><div class="card"><div class="sectionbar"><h2>KEY PLAYERS</h2><button class="btn ghost" onclick="nav(\'roster\')">선수단 보기</button></div>'+roster.slice(0,5).map(p=>'<div class="click-row" onclick="editPlayer(\''+p.id+'\')" style="display:flex;justify-content:space-between;padding:8px 10px;border-top:1px solid #39332b;border-radius:5px"><span><b>'+p.name+'</b> <span class="muted">'+p.pos+'</span></span><span class="rating" style="color:'+ovrColor(p.ovr)+'">'+p.ovr+' OVR</span></div>').join("")+'</div><div class="card"><div class="sectionbar"><h2>COACH REPORT</h2><span class="pill">REPORT</span></div><p class="small muted" style="line-height:1.8">감독님, 선수단 컨디션과 전술 적합도를 확인하세요. 경기 중 우리 팀 교체는 자동으로 진행되지 않습니다. 교체가 필요하면 코치가 알림을 띄우고 최종 결정은 감독님이 내립니다.</p><button class="btn" onclick="nav(\'tactics\')">전술 센터 열기</button></div></div>'}
@@ -233,9 +226,10 @@ function applyStatsScouting(p,st){
  set("pass",statToRating(ast,0,9));
  set("passTech",statToRating(ast/(to||1),.3,4.5));
  set("perimeter",statToRating(stl+min*.012,.1,2.3)+(pos==="PG"||pos==="SG"?1:0));
- set("interior",statToRating(blk+reb*.12,.1,3.5)+(pos==="C"||pos==="PF"?1:0));
+ set("interior",statToRating(blk+reb*.12,.1,3.0)+(pos==="C"||pos==="PF"?1:0));
  set("steal",statToRating(stl,.1,2));
- set("block",statToRating(blk,.05,2.5));
+ // Blocks are a scarce event: elite rim protectors should reach the top end.
+ set("block",statToRating(blk,.05,1.55));
  set("rebound",statToRating(reb,.5,13));
  set("screen",statToRating(reb+min*.04,1,14)+(pos==="C"||pos==="PF"?1:0));
  set("anticipation",statToRating(stl+blk,.1,3));
@@ -256,15 +250,16 @@ function applyStatsScouting(p,st){
  set("speed",speedBase-(h-190)*.09);
  set("acceleration",speedBase-(h-190)*.10);
  set("agility",speedBase-(h-190)*.08);
- set("jumping",statToRating(blk+reb*.12,.1,3.5)+(pos==="C"||pos==="PF"?1:0));
+ set("jumping",statToRating(blk+reb*.12,.1,3.0)+(pos==="C"||pos==="PF"?1:0));
  set("strength",statToRating(w,70,125));
  set("stamina",statToRating(min,8,38));
  set("balance",statToRating(w/h,.35,.62));
  p.attrs=a;
  const weightMap=pos==="PG"?["handle","pass","passTech","vision","decisions","speed","three","perimeter"]:pos==="SG"?["three","handle","mid","perimeter","agility","offBall","speed","decisions"]:pos==="SF"?["mid","perimeter","rebound","three","layup","agility","strength","decisions"]:pos==="PF"?["rebound","strength","interior","post","dunk","screen","block","positioning"]:["interior","rebound","block","strength","close","screen","jumping","positioning"];
  p.ovr=clampRating(weightMap.reduce((sum,k)=>sum+(a[k]||0),0)/weightMap.length)*5;
- p.ratingsSource="ESPN season statistics based scouting estimate";
+ p.ratingsSource="ESPN season statistics + position-specific scouting model (estimate)";
  p.ratingsUpdatedAt=new Date().toISOString();
+ p.ratingsEstimated=true;
  return true;
 }
 async function loadPlayerCareer(p,box){
@@ -442,7 +437,7 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=5;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
+  state.rosterSourceVersion=6;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
   state.rosterSyncedAt=new Date().toISOString();persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
