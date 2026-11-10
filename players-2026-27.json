@@ -103,7 +103,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 17,
         "three": 17,
         "ft": 17,
@@ -136,7 +136,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -217,7 +217,7 @@
         "jumping": 14,
         "strength": 19,
         "stamina": 14,
-        "balance": 16
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -349,7 +349,7 @@
       "attrs": {
         "close": 14,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 17,
         "three": 13,
         "ft": 17,
@@ -382,7 +382,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -466,7 +466,7 @@
         "jumping": 14,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -550,7 +550,7 @@
         "jumping": 12,
         "strength": 15,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -634,7 +634,7 @@
         "jumping": 13,
         "strength": 7,
         "stamina": 16,
-        "balance": 11
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -685,7 +685,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -718,7 +718,7 @@
         "jumping": 14,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -769,7 +769,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 17,
         "three": 17,
         "ft": 17,
@@ -802,7 +802,7 @@
         "jumping": 16,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -886,7 +886,7 @@
         "jumping": 16,
         "strength": 17,
         "stamina": 18,
-        "balance": 16
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -967,7 +967,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 16,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -1018,7 +1018,7 @@
       "attrs": {
         "close": 15,
         "layup": 10,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -1051,7 +1051,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -1102,7 +1102,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -1135,7 +1135,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -1183,7 +1183,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 10,
+        "dunk": 9,
         "mid": 10,
         "three": 16,
         "ft": 14,
@@ -1216,7 +1216,7 @@
         "jumping": 13,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -1300,7 +1300,7 @@
         "jumping": 17,
         "strength": 19,
         "stamina": 20,
-        "balance": 18
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -1351,7 +1351,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 15,
         "three": 17,
         "ft": 16,
@@ -1384,7 +1384,7 @@
         "jumping": 17,
         "strength": 16,
         "stamina": 17,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -1512,7 +1512,7 @@
       "attrs": {
         "close": 17,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 18,
         "three": 15,
         "ft": 16,
@@ -1629,7 +1629,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -1680,7 +1680,7 @@
       "attrs": {
         "close": 20,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 17,
         "three": 13,
         "ft": 13,
@@ -1713,7 +1713,7 @@
         "jumping": 16,
         "strength": 17,
         "stamina": 15,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -1794,7 +1794,7 @@
         "jumping": 17,
         "strength": 16,
         "stamina": 17,
-        "balance": 16
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -1842,7 +1842,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 15,
@@ -1875,7 +1875,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -1926,7 +1926,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 17,
         "ft": 18,
@@ -1959,7 +1959,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 19,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -2043,7 +2043,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 16,
-        "balance": 12
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -2173,7 +2173,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 17,
         "ft": 18,
@@ -2206,7 +2206,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -2257,7 +2257,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 9,
         "three": 14,
         "ft": 14,
@@ -2341,7 +2341,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 13,
         "three": 16,
         "ft": 17,
@@ -2509,7 +2509,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 16,
         "three": 14,
         "ft": 15,
@@ -2542,7 +2542,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -2670,7 +2670,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 17,
         "three": 16,
         "ft": 14,
@@ -2703,7 +2703,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 19,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -2787,7 +2787,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 16,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -2835,7 +2835,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 15,
         "three": 16,
         "ft": 18,
@@ -2868,7 +2868,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -2919,7 +2919,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -2952,7 +2952,7 @@
         "jumping": 13,
         "strength": 11,
         "stamina": 16,
-        "balance": 11
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -3003,7 +3003,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -3036,7 +3036,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 17,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -3117,7 +3117,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -3165,7 +3165,7 @@
       "attrs": {
         "close": 17,
         "layup": 11,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -3198,7 +3198,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 16,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -3249,7 +3249,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 16,
         "three": 17,
         "ft": 18,
@@ -3282,7 +3282,7 @@
         "jumping": 11,
         "strength": 8,
         "stamina": 17,
-        "balance": 11
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -3333,7 +3333,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 15,
         "three": 16,
         "ft": 17,
@@ -3414,7 +3414,7 @@
       "attrs": {
         "close": 20,
         "layup": 10,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 14,
         "three": 14,
         "ft": 14,
@@ -3447,7 +3447,7 @@
         "jumping": 13,
         "strength": 17,
         "stamina": 16,
-        "balance": 12
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -3528,7 +3528,7 @@
         "jumping": 12,
         "strength": 13,
         "stamina": 16,
-        "balance": 10
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -3576,7 +3576,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 17,
         "ft": 15,
@@ -3609,7 +3609,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -3660,7 +3660,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -3693,7 +3693,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -3825,7 +3825,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 19,
         "three": 17,
         "ft": 17,
@@ -3858,7 +3858,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 19,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -4019,7 +4019,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 18,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -4070,7 +4070,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 15,
         "three": 15,
         "ft": 16,
@@ -4103,7 +4103,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -4154,7 +4154,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 13,
         "three": 14,
         "ft": 14,
@@ -4187,7 +4187,7 @@
         "jumping": 14,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -4345,7 +4345,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -4396,7 +4396,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 17,
@@ -4429,7 +4429,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -4480,7 +4480,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 13,
         "three": 16,
         "ft": 16,
@@ -4513,7 +4513,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 19,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -4648,7 +4648,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 15,
         "three": 16,
         "ft": 18,
@@ -4681,7 +4681,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -4732,7 +4732,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -4765,7 +4765,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 18,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -4816,7 +4816,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 11,
         "three": 16,
         "ft": 17,
@@ -4849,7 +4849,7 @@
         "jumping": 17,
         "strength": 17,
         "stamina": 19,
-        "balance": 16
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -4897,7 +4897,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -4930,7 +4930,7 @@
         "jumping": 15,
         "strength": 15,
         "stamina": 18,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -5014,7 +5014,7 @@
         "jumping": 10,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -5065,7 +5065,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 8,
         "three": 16,
         "ft": 15,
@@ -5098,7 +5098,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -5149,7 +5149,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 17,
+        "dunk": 19,
         "mid": 18,
         "three": 17,
         "ft": 16,
@@ -5182,7 +5182,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 19,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -5266,7 +5266,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 18,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -5317,7 +5317,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 11,
         "three": 11,
         "ft": 10,
@@ -5350,7 +5350,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 16,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -5401,7 +5401,7 @@
       "attrs": {
         "close": 16,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -5434,7 +5434,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -5518,7 +5518,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 20,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -5566,7 +5566,7 @@
       "attrs": {
         "close": 12,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 18,
         "mid": 15,
         "three": 15,
         "ft": 14,
@@ -5599,7 +5599,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -5650,7 +5650,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 17,
         "three": 16,
         "ft": 16,
@@ -5683,7 +5683,7 @@
         "jumping": 10,
         "strength": 16,
         "stamina": 18,
-        "balance": 14
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -5731,7 +5731,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 14,
         "ft": 14,
@@ -5764,7 +5764,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 19,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -5815,7 +5815,7 @@
       "attrs": {
         "close": 18,
         "layup": 10,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -5848,7 +5848,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -5899,7 +5899,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 18,
         "three": 15,
         "ft": 17,
@@ -5932,7 +5932,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 19,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -6064,7 +6064,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 17,
+        "dunk": 18,
         "mid": 16,
         "three": 15,
         "ft": 16,
@@ -6181,7 +6181,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 16,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -6232,7 +6232,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 16,
         "ft": 18,
@@ -6265,7 +6265,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -6316,7 +6316,7 @@
       "attrs": {
         "close": 18,
         "layup": 10,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 12,
         "three": 18,
         "ft": 14,
@@ -6349,7 +6349,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 18,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -6588,7 +6588,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 16,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -6669,7 +6669,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 16,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -6753,7 +6753,7 @@
         "jumping": 11,
         "strength": 13,
         "stamina": 17,
-        "balance": 10
+        "balance": 6
       },
       "hidden": {
         "consistency": 10,
@@ -6804,7 +6804,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -6837,7 +6837,7 @@
         "jumping": 19,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -6888,7 +6888,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 14,
@@ -6921,7 +6921,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -6973,7 +6973,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 17,
         "three": 15,
         "ft": 16,
@@ -7006,7 +7006,7 @@
         "jumping": 19,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -7090,7 +7090,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -7171,7 +7171,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 17,
-        "balance": 14
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -7222,7 +7222,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -7255,7 +7255,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 17,
-        "balance": 16
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -7306,7 +7306,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 18,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -7339,7 +7339,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 18,
-        "balance": 16
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -7423,7 +7423,7 @@
         "jumping": 13,
         "strength": 13,
         "stamina": 16,
-        "balance": 12
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -7507,7 +7507,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -7642,7 +7642,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 17,
@@ -7675,7 +7675,7 @@
         "jumping": 13,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -7759,7 +7759,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 16,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -7810,7 +7810,7 @@
       "attrs": {
         "close": 13,
         "layup": 13,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 14,
         "ft": 15,
@@ -7843,7 +7843,7 @@
         "jumping": 15,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -7894,7 +7894,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 17,
         "ft": 18,
@@ -7927,7 +7927,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 20,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -8011,7 +8011,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -8059,7 +8059,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 13,
         "three": 14,
         "ft": 13,
@@ -8092,7 +8092,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -8143,7 +8143,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 13,
         "three": 15,
         "ft": 13,
@@ -8176,7 +8176,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -8227,7 +8227,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 13,
         "three": 15,
         "ft": 16,
@@ -8260,7 +8260,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -8393,7 +8393,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 17,
         "three": 14,
         "ft": 18,
@@ -8426,7 +8426,7 @@
         "jumping": 15,
         "strength": 9,
         "stamina": 16,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -8477,7 +8477,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 15,
         "ft": 14,
@@ -8510,7 +8510,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -8561,7 +8561,7 @@
       "attrs": {
         "close": 19,
         "layup": 13,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 16,
         "three": 15,
         "ft": 14,
@@ -8594,7 +8594,7 @@
         "jumping": 12,
         "strength": 16,
         "stamina": 16,
-        "balance": 13
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -8726,7 +8726,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 14,
         "three": 14,
         "ft": 12,
@@ -8759,7 +8759,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -8840,7 +8840,7 @@
         "jumping": 17,
         "strength": 15,
         "stamina": 18,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -8924,7 +8924,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 15,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -9005,7 +9005,7 @@
         "jumping": 18,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -9053,7 +9053,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 13,
@@ -9086,7 +9086,7 @@
         "jumping": 19,
         "strength": 9,
         "stamina": 16,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -9137,7 +9137,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -9170,7 +9170,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 19,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -9221,7 +9221,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -9254,7 +9254,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -9305,7 +9305,7 @@
       "attrs": {
         "close": 13,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -9338,7 +9338,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -9389,7 +9389,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -9422,7 +9422,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 19,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -9473,7 +9473,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -9590,7 +9590,7 @@
         "jumping": 14,
         "strength": 6,
         "stamina": 16,
-        "balance": 11
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -9639,7 +9639,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 19,
         "three": 17,
         "ft": 16,
@@ -9672,7 +9672,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 19,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -9756,7 +9756,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 20,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -9891,7 +9891,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -9924,7 +9924,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -9975,7 +9975,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 14,
         "three": 10,
         "ft": 12,
@@ -10008,7 +10008,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 18,
-        "balance": 16
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -10092,7 +10092,7 @@
         "jumping": 17,
         "strength": 18,
         "stamina": 17,
-        "balance": 17
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -10143,7 +10143,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 15,
         "three": 14,
         "ft": 15,
@@ -10176,7 +10176,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -10227,7 +10227,7 @@
       "attrs": {
         "close": 15,
         "layup": 10,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 14,
         "three": 17,
         "ft": 17,
@@ -10260,7 +10260,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -10311,7 +10311,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 12,
         "three": 16,
         "ft": 17,
@@ -10344,7 +10344,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -10395,7 +10395,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -10428,7 +10428,7 @@
         "jumping": 15,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -10476,7 +10476,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 18,
         "three": 14,
         "ft": 17,
@@ -10509,7 +10509,7 @@
         "jumping": 15,
         "strength": 15,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -10671,7 +10671,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 17,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -10722,7 +10722,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 13,
         "ft": 13,
@@ -10803,7 +10803,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -10836,7 +10836,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -10888,7 +10888,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 18,
         "three": 16,
         "ft": 11,
@@ -10972,7 +10972,7 @@
       "attrs": {
         "close": 13,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 14,
         "ft": 17,
@@ -11005,7 +11005,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -11056,7 +11056,7 @@
       "attrs": {
         "close": 15,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -11089,7 +11089,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -11140,7 +11140,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -11173,7 +11173,7 @@
         "jumping": 17,
         "strength": 8,
         "stamina": 18,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -11258,7 +11258,7 @@
         "jumping": 15,
         "strength": 17,
         "stamina": 16,
-        "balance": 14
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -11306,7 +11306,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 18,
         "three": 17,
         "ft": 15,
@@ -11339,7 +11339,7 @@
         "jumping": 19,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -11390,7 +11390,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 15,
         "three": 15,
         "ft": 17,
@@ -11475,7 +11475,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -11508,7 +11508,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 19,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -11641,7 +11641,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 17,
         "three": 15,
         "ft": 15,
@@ -11674,7 +11674,7 @@
         "jumping": 17,
         "strength": 16,
         "stamina": 18,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -11725,7 +11725,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 18,
         "three": 18,
         "ft": 17,
@@ -11758,7 +11758,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -11842,7 +11842,7 @@
         "jumping": 16,
         "strength": 19,
         "stamina": 15,
-        "balance": 15
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -11890,7 +11890,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 14,
         "three": 16,
         "ft": 16,
@@ -11923,7 +11923,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -11974,7 +11974,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 15,
         "ft": 10,
@@ -12007,7 +12007,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -12058,7 +12058,7 @@
       "attrs": {
         "close": 20,
         "layup": 19,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 19,
         "three": 18,
         "ft": 18,
@@ -12091,7 +12091,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 19,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -12175,7 +12175,7 @@
         "jumping": 17,
         "strength": 19,
         "stamina": 18,
-        "balance": 16
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -12223,7 +12223,7 @@
       "attrs": {
         "close": 18,
         "layup": 13,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 16,
         "three": 15,
         "ft": 15,
@@ -12256,7 +12256,7 @@
         "jumping": 18,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -12307,7 +12307,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 11,
         "three": 16,
         "ft": 15,
@@ -12340,7 +12340,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 17,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -12391,7 +12391,7 @@
       "attrs": {
         "close": 20,
         "layup": 12,
-        "dunk": 15,
+        "dunk": 14,
         "mid": 16,
         "three": 15,
         "ft": 16,
@@ -12424,7 +12424,7 @@
         "jumping": 13,
         "strength": 17,
         "stamina": 16,
-        "balance": 12
+        "balance": 6
       },
       "hidden": {
         "consistency": 10,
@@ -12472,7 +12472,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 18,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -12505,7 +12505,7 @@
         "jumping": 18,
         "strength": 11,
         "stamina": 17,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -12556,7 +12556,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 17,
+        "dunk": 19,
         "mid": 18,
         "three": 18,
         "ft": 16,
@@ -12589,7 +12589,7 @@
         "jumping": 19,
         "strength": 13,
         "stamina": 19,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -12640,7 +12640,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -12673,7 +12673,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -12724,7 +12724,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 13,
         "three": 12,
         "ft": 14,
@@ -12757,7 +12757,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 16,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -12808,7 +12808,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 12,
         "three": 16,
         "ft": 14,
@@ -12841,7 +12841,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -12925,7 +12925,7 @@
         "jumping": 12,
         "strength": 19,
         "stamina": 14,
-        "balance": 16
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -12973,7 +12973,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 14,
         "three": 14,
         "ft": 15,
@@ -13006,7 +13006,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -13057,7 +13057,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 14,
         "ft": 14,
@@ -13090,7 +13090,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -13174,7 +13174,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -13222,7 +13222,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 17,
@@ -13255,7 +13255,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -13306,7 +13306,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 10,
         "three": 6,
         "ft": 8,
@@ -13339,7 +13339,7 @@
         "jumping": 5,
         "strength": 16,
         "stamina": 14,
-        "balance": 10
+        "balance": 5
       },
       "hidden": {
         "consistency": 10,
@@ -13387,7 +13387,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -13420,7 +13420,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 17,
-        "balance": 14
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -13504,7 +13504,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 17,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -13555,7 +13555,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 13,
         "three": 15,
         "ft": 13,
@@ -13588,7 +13588,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -13639,7 +13639,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 18,
         "three": 14,
         "ft": 18,
@@ -13672,7 +13672,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 18,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -13832,7 +13832,7 @@
         "jumping": 15,
         "strength": 15,
         "stamina": 17,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -13883,7 +13883,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 17,
         "three": 16,
         "ft": 16,
@@ -13916,7 +13916,7 @@
         "jumping": 17,
         "strength": 9,
         "stamina": 18,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -13967,7 +13967,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -14051,7 +14051,7 @@
       "attrs": {
         "close": 20,
         "layup": 19,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 18,
         "three": 16,
         "ft": 15,
@@ -14084,7 +14084,7 @@
         "jumping": 17,
         "strength": 9,
         "stamina": 19,
-        "balance": 14
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -14135,7 +14135,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 13,
         "three": 13,
         "ft": 13,
@@ -14168,7 +14168,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -14253,7 +14253,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -14304,7 +14304,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 13,
         "three": 6,
         "ft": 14,
@@ -14337,7 +14337,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 15,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -14385,7 +14385,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -14418,7 +14418,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -14469,7 +14469,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 18,
         "three": 17,
         "ft": 17,
@@ -14502,7 +14502,7 @@
         "jumping": 17,
         "strength": 8,
         "stamina": 19,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -14550,7 +14550,7 @@
       "attrs": {
         "close": 20,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 9,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -14583,7 +14583,7 @@
         "jumping": 10,
         "strength": 14,
         "stamina": 16,
-        "balance": 11
+        "balance": 8
       },
       "hidden": {
         "consistency": 10,
@@ -14634,7 +14634,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -14667,7 +14667,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -14718,7 +14718,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -14751,7 +14751,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -14802,7 +14802,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 17,
         "three": 17,
         "ft": 17,
@@ -14835,7 +14835,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 19,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -14886,7 +14886,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 8,
         "three": 15,
         "ft": 15,
@@ -14919,7 +14919,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -14970,7 +14970,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -15003,7 +15003,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -15054,7 +15054,7 @@
       "attrs": {
         "close": 19,
         "layup": 20,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 20,
         "three": 16,
         "ft": 18,
@@ -15087,7 +15087,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 20,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -15171,7 +15171,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -15222,7 +15222,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 15,
         "three": 17,
         "ft": 17,
@@ -15255,7 +15255,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -15336,7 +15336,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -15387,7 +15387,7 @@
       "attrs": {
         "close": 16,
         "layup": 11,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 11,
         "three": 6,
         "ft": 11,
@@ -15420,7 +15420,7 @@
         "jumping": 11,
         "strength": 17,
         "stamina": 18,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -15468,7 +15468,7 @@
       "attrs": {
         "close": 14,
         "layup": 12,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 14,
         "three": 13,
         "ft": 15,
@@ -15501,7 +15501,7 @@
         "jumping": 10,
         "strength": 14,
         "stamina": 16,
-        "balance": 10
+        "balance": 6
       },
       "hidden": {
         "consistency": 10,
@@ -15549,7 +15549,7 @@
       "attrs": {
         "close": 17,
         "layup": 6,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 16,
         "ft": 10,
@@ -15582,7 +15582,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -15666,7 +15666,7 @@
         "jumping": 11,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -15717,7 +15717,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 18,
+        "dunk": 19,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -15750,7 +15750,7 @@
         "jumping": 18,
         "strength": 16,
         "stamina": 19,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -15885,7 +15885,7 @@
       "attrs": {
         "close": 17,
         "layup": 8,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 15,
@@ -15918,7 +15918,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -16002,7 +16002,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 16,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -16137,7 +16137,7 @@
       "attrs": {
         "close": 15,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 17,
         "three": 16,
         "ft": 15,
@@ -16170,7 +16170,7 @@
         "jumping": 18,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -16221,7 +16221,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -16254,7 +16254,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -16305,7 +16305,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 18,
@@ -16338,7 +16338,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -16389,7 +16389,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 15,
         "ft": 17,
@@ -16422,7 +16422,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -16719,7 +16719,7 @@
       "attrs": {
         "close": 20,
         "layup": 19,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 18,
         "three": 17,
         "ft": 17,
@@ -16752,7 +16752,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 19,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -16836,7 +16836,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 17,
-        "balance": 12
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -16920,7 +16920,7 @@
         "jumping": 11,
         "strength": 14,
         "stamina": 17,
-        "balance": 11
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -16968,7 +16968,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -17001,7 +17001,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -17052,7 +17052,7 @@
       "attrs": {
         "close": 18,
         "layup": 19,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -17085,7 +17085,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 20,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -17136,7 +17136,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 18,
         "three": 16,
         "ft": 15,
@@ -17169,7 +17169,7 @@
         "jumping": 17,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -17220,7 +17220,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -17253,7 +17253,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -17304,7 +17304,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -17337,7 +17337,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -17388,7 +17388,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 16,
@@ -17421,7 +17421,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 16,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -17505,7 +17505,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -17589,7 +17589,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 19,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -17640,7 +17640,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 14,
@@ -17673,7 +17673,7 @@
         "jumping": 14,
         "strength": 15,
         "stamina": 20,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -17724,7 +17724,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 17,
+        "dunk": 16,
         "mid": 16,
         "three": 11,
         "ft": 12,
@@ -17757,7 +17757,7 @@
         "jumping": 14,
         "strength": 18,
         "stamina": 16,
-        "balance": 15
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -17805,7 +17805,7 @@
       "attrs": {
         "close": 19,
         "layup": 12,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 18,
         "ft": 18,
@@ -17838,7 +17838,7 @@
         "jumping": 12,
         "strength": 13,
         "stamina": 17,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -17889,7 +17889,7 @@
       "attrs": {
         "close": 11,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 14,
         "three": 16,
         "ft": 16,
@@ -17922,7 +17922,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 18,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -17973,7 +17973,7 @@
       "attrs": {
         "close": 20,
         "layup": 16,
-        "dunk": 17,
+        "dunk": 18,
         "mid": 14,
         "three": 12,
         "ft": 14,
@@ -18006,7 +18006,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -18054,7 +18054,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 18,
         "mid": 16,
         "three": 15,
         "ft": 17,
@@ -18087,7 +18087,7 @@
         "jumping": 18,
         "strength": 11,
         "stamina": 19,
-        "balance": 14
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -18138,7 +18138,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 16,
         "three": 15,
         "ft": 13,
@@ -18171,7 +18171,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -18298,7 +18298,7 @@
       "attrs": {
         "close": 20,
         "layup": 19,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 18,
         "three": 17,
         "ft": 18,
@@ -18331,7 +18331,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -18382,7 +18382,7 @@
       "attrs": {
         "close": 17,
         "layup": 9,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -18415,7 +18415,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -18466,7 +18466,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 10,
         "three": 18,
         "ft": 16,
@@ -18499,7 +18499,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 18,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -18583,7 +18583,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 16,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -18634,7 +18634,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 15,
         "three": 16,
         "ft": 14,
@@ -18662,12 +18662,12 @@
         "flair": 11,
         "aggression": 12,
         "speed": 12,
-        "acceleration": 15,
+        "acceleration": 11,
         "agility": 13,
         "jumping": 14,
         "strength": 10,
         "stamina": 18,
-        "balance": 11
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -18796,7 +18796,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 16,
         "three": 17,
         "ft": 17,
@@ -18829,7 +18829,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 16,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -18880,7 +18880,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 13,
         "three": 14,
         "ft": 16,
@@ -18913,7 +18913,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 18,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -19082,7 +19082,7 @@
         "jumping": 15,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -19133,7 +19133,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 13,
         "three": 15,
         "ft": 14,
@@ -19251,7 +19251,7 @@
         "jumping": 14,
         "strength": 18,
         "stamina": 14,
-        "balance": 16
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -19335,7 +19335,7 @@
         "jumping": 14,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -19386,7 +19386,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 16,
         "ft": 19,
@@ -19419,7 +19419,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -19470,7 +19470,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 13,
         "three": 16,
         "ft": 15,
@@ -19503,7 +19503,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -19587,7 +19587,7 @@
         "jumping": 12,
         "strength": 14,
         "stamina": 16,
-        "balance": 12
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -19668,7 +19668,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 16,
-        "balance": 12
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -19749,7 +19749,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -19828,7 +19828,7 @@
         "flair": 9,
         "aggression": 14,
         "speed": 12,
-        "acceleration": 17,
+        "acceleration": 9,
         "agility": 11,
         "jumping": 16,
         "strength": 10,
@@ -19884,7 +19884,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 18,
         "three": 16,
         "ft": 16,
@@ -19917,7 +19917,7 @@
         "jumping": 14,
         "strength": 6,
         "stamina": 18,
-        "balance": 12
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -19998,7 +19998,7 @@
         "jumping": 18,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -20079,7 +20079,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -20131,7 +20131,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 19,
         "three": 16,
         "ft": 16,
@@ -20164,7 +20164,7 @@
         "jumping": 15,
         "strength": 8,
         "stamina": 19,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -20215,7 +20215,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 12,
@@ -20248,7 +20248,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -20332,7 +20332,7 @@
         "jumping": 16,
         "strength": 7,
         "stamina": 18,
-        "balance": 12
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -20416,7 +20416,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 14,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -20467,7 +20467,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 16,
         "three": 15,
         "ft": 15,
@@ -20500,7 +20500,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -20632,7 +20632,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 14,
         "three": 15,
         "ft": 17,
@@ -20665,7 +20665,7 @@
         "jumping": 18,
         "strength": 8,
         "stamina": 16,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -20716,7 +20716,7 @@
       "attrs": {
         "close": 14,
         "layup": 13,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 14,
@@ -20749,7 +20749,7 @@
         "jumping": 17,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -20917,7 +20917,7 @@
         "jumping": 18,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -20965,7 +20965,7 @@
       "attrs": {
         "close": 12,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 17,
         "ft": 18,
@@ -20998,7 +20998,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 19,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -21049,7 +21049,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -21082,7 +21082,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -21219,7 +21219,7 @@
       "attrs": {
         "close": 10,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -21252,7 +21252,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 16,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -21303,7 +21303,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -21387,7 +21387,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 14,
         "ft": 14,
@@ -21499,12 +21499,12 @@
         "flair": 8,
         "aggression": 11,
         "speed": 11,
-        "acceleration": 14,
+        "acceleration": 9,
         "agility": 10,
         "jumping": 14,
         "strength": 15,
         "stamina": 18,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -21552,7 +21552,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 17,
         "three": 17,
         "ft": 16,
@@ -21585,7 +21585,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -21664,12 +21664,12 @@
         "flair": 18,
         "aggression": 7,
         "speed": 15,
-        "acceleration": 11,
+        "acceleration": 15,
         "agility": 15,
         "jumping": 12,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -21720,7 +21720,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 18,
         "three": 17,
         "ft": 16,
@@ -21753,7 +21753,7 @@
         "jumping": 16,
         "strength": 9,
         "stamina": 16,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -21804,7 +21804,7 @@
       "attrs": {
         "close": 10,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 15,
         "three": 14,
         "ft": 17,
@@ -21837,7 +21837,7 @@
         "jumping": 15,
         "strength": 8,
         "stamina": 16,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -21921,7 +21921,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -21972,7 +21972,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 14,
         "three": 14,
         "ft": 16,
@@ -22005,7 +22005,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -22056,7 +22056,7 @@
       "attrs": {
         "close": 17,
         "layup": 18,
-        "dunk": 18,
+        "dunk": 19,
         "mid": 18,
         "three": 16,
         "ft": 16,
@@ -22089,7 +22089,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -22249,7 +22249,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -22300,7 +22300,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 14,
         "three": 14,
         "ft": 14,
@@ -22333,7 +22333,7 @@
         "jumping": 18,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -22538,7 +22538,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 20,
         "three": 16,
         "ft": 17,
@@ -22571,7 +22571,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -22736,7 +22736,7 @@
         "jumping": 13,
         "strength": 19,
         "stamina": 19,
-        "balance": 16
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -22784,7 +22784,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 11,
         "ft": 11,
@@ -22817,7 +22817,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -22868,7 +22868,7 @@
       "attrs": {
         "close": 13,
         "layup": 12,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 14,
         "ft": 16,
@@ -22901,7 +22901,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 16,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -22985,7 +22985,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -23036,7 +23036,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 15,
         "ft": 13,
@@ -23069,7 +23069,7 @@
         "jumping": 12,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -23120,7 +23120,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 16,
         "ft": 12,
@@ -23153,7 +23153,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 16,
-        "balance": 11
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -23237,7 +23237,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -23318,7 +23318,7 @@
         "jumping": 11,
         "strength": 7,
         "stamina": 18,
-        "balance": 11
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -23366,7 +23366,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 16,
@@ -23399,7 +23399,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -23567,7 +23567,7 @@
         "jumping": 17,
         "strength": 17,
         "stamina": 18,
-        "balance": 15
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -23615,7 +23615,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 14,
         "three": 15,
         "ft": 14,
@@ -23648,7 +23648,7 @@
         "jumping": 14,
         "strength": 13,
         "stamina": 17,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -23732,7 +23732,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 17,
-        "balance": 11
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -23780,7 +23780,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 16,
@@ -23864,7 +23864,7 @@
       "attrs": {
         "close": 14,
         "layup": 13,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 17,
         "ft": 17,
@@ -23981,7 +23981,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 15,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -24106,7 +24106,7 @@
       "attrs": {
         "close": 20,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 19,
         "ft": 19,
@@ -24139,7 +24139,7 @@
         "jumping": 12,
         "strength": 8,
         "stamina": 18,
-        "balance": 11
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -24190,7 +24190,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -24223,7 +24223,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 16,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -24274,7 +24274,7 @@
       "attrs": {
         "close": 19,
         "layup": 9,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 15,
         "three": 14,
         "ft": 14,
@@ -24307,7 +24307,7 @@
         "jumping": 12,
         "strength": 16,
         "stamina": 18,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -24355,7 +24355,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -24388,7 +24388,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -24439,7 +24439,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 18,
         "three": 16,
         "ft": 14,
@@ -24472,7 +24472,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 18,
-        "balance": 11
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -24523,7 +24523,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 14,
         "three": 19,
         "ft": 17,
@@ -24556,7 +24556,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -24607,7 +24607,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 16,
         "three": 16,
         "ft": 14,
@@ -24640,7 +24640,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -24769,7 +24769,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 15,
         "three": 14,
         "ft": 14,
@@ -24802,7 +24802,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 19,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -24853,7 +24853,7 @@
       "attrs": {
         "close": 17,
         "layup": 13,
-        "dunk": 13,
+        "dunk": 12,
         "mid": 13,
         "three": 14,
         "ft": 16,
@@ -24886,7 +24886,7 @@
         "jumping": 12,
         "strength": 15,
         "stamina": 17,
-        "balance": 11
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -24934,7 +24934,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -24967,7 +24967,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -25018,7 +25018,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 14,
@@ -25051,7 +25051,7 @@
         "jumping": 18,
         "strength": 15,
         "stamina": 18,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -25219,7 +25219,7 @@
         "jumping": 15,
         "strength": 15,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -25267,7 +25267,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -25300,7 +25300,7 @@
         "jumping": 18,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -25351,7 +25351,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 11,
         "three": 15,
         "ft": 15,
@@ -25384,7 +25384,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -25435,7 +25435,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 17,
         "three": 15,
         "ft": 16,
@@ -25468,7 +25468,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -25519,7 +25519,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 17,
+        "dunk": 19,
         "mid": 16,
         "three": 17,
         "ft": 18,
@@ -25552,7 +25552,7 @@
         "jumping": 19,
         "strength": 10,
         "stamina": 20,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -25603,7 +25603,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 18,
+        "dunk": 19,
         "mid": 12,
         "three": 14,
         "ft": 9,
@@ -25636,7 +25636,7 @@
         "jumping": 20,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -25687,7 +25687,7 @@
       "attrs": {
         "close": 18,
         "layup": 13,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 17,
         "three": 17,
         "ft": 16,
@@ -25771,7 +25771,7 @@
       "attrs": {
         "close": 20,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 19,
         "three": 18,
         "ft": 18,
@@ -25804,7 +25804,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 17,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -25888,7 +25888,7 @@
         "jumping": 12,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -25939,7 +25939,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 17,
         "three": 16,
         "ft": 13,
@@ -25972,7 +25972,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -26023,7 +26023,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 19,
         "three": 19,
         "ft": 19,
@@ -26056,7 +26056,7 @@
         "jumping": 18,
         "strength": 13,
         "stamina": 19,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -26140,7 +26140,7 @@
         "jumping": 13,
         "strength": 15,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -26221,7 +26221,7 @@
         "jumping": 13,
         "strength": 16,
         "stamina": 17,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -26269,7 +26269,7 @@
       "attrs": {
         "close": 19,
         "layup": 11,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 15,
         "three": 17,
         "ft": 15,
@@ -26302,7 +26302,7 @@
         "jumping": 12,
         "strength": 18,
         "stamina": 18,
-        "balance": 15
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -26350,7 +26350,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -26434,7 +26434,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 18,
         "three": 15,
         "ft": 15,
@@ -26467,7 +26467,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -26551,7 +26551,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -26794,7 +26794,7 @@
         "jumping": 14,
         "strength": 15,
         "stamina": 17,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -26845,7 +26845,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -26878,7 +26878,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -26929,7 +26929,7 @@
       "attrs": {
         "close": 13,
         "layup": 17,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 14,
         "three": 15,
         "ft": 17,
@@ -26962,7 +26962,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -27013,7 +27013,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 14,
         "three": 14,
         "ft": 15,
@@ -27046,7 +27046,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -27097,7 +27097,7 @@
       "attrs": {
         "close": 16,
         "layup": 12,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 13,
         "three": 9,
         "ft": 11,
@@ -27130,7 +27130,7 @@
         "jumping": 11,
         "strength": 14,
         "stamina": 18,
-        "balance": 12
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -27211,7 +27211,7 @@
         "jumping": 12,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -27295,7 +27295,7 @@
         "jumping": 11,
         "strength": 14,
         "stamina": 17,
-        "balance": 12
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -27346,7 +27346,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 14,
         "ft": 15,
@@ -27379,7 +27379,7 @@
         "jumping": 15,
         "strength": 17,
         "stamina": 17,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -27430,7 +27430,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 17,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -27463,7 +27463,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 17,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -27514,7 +27514,7 @@
       "attrs": {
         "close": 13,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 13,
         "three": 16,
         "ft": 12,
@@ -27547,7 +27547,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -27598,7 +27598,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -27631,7 +27631,7 @@
         "jumping": 13,
         "strength": 11,
         "stamina": 16,
-        "balance": 10
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -27682,7 +27682,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 13,
         "ft": 11,
@@ -27715,7 +27715,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -27843,7 +27843,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 15,
         "three": 15,
         "ft": 17,
@@ -27876,7 +27876,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -27960,7 +27960,7 @@
         "jumping": 13,
         "strength": 15,
         "stamina": 16,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -28011,7 +28011,7 @@
       "attrs": {
         "close": 17,
         "layup": 19,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 18,
         "three": 18,
         "ft": 18,
@@ -28044,7 +28044,7 @@
         "jumping": 16,
         "strength": 9,
         "stamina": 20,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -28095,7 +28095,7 @@
       "attrs": {
         "close": 16,
         "layup": 13,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 13,
         "three": 13,
         "ft": 14,
@@ -28123,12 +28123,12 @@
         "flair": 9,
         "aggression": 10,
         "speed": 15,
-        "acceleration": 15,
+        "acceleration": 14,
         "agility": 16,
         "jumping": 15,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -28179,7 +28179,7 @@
       "attrs": {
         "close": 12,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 18,
         "three": 17,
         "ft": 16,
@@ -28212,7 +28212,7 @@
         "jumping": 16,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -28263,7 +28263,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 15,
         "three": 17,
         "ft": 17,
@@ -28296,7 +28296,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -28380,7 +28380,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 20,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -28464,7 +28464,7 @@
         "jumping": 13,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -28512,7 +28512,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 18,
         "three": 17,
         "ft": 17,
@@ -28545,7 +28545,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 17,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -28596,7 +28596,7 @@
       "attrs": {
         "close": 17,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -28629,7 +28629,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -28758,7 +28758,7 @@
       "attrs": {
         "close": 14,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -28791,7 +28791,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -28839,7 +28839,7 @@
       "attrs": {
         "close": 11,
         "layup": 13,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 14,
         "three": 17,
         "ft": 16,
@@ -28872,7 +28872,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -28923,7 +28923,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -28956,7 +28956,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -29007,7 +29007,7 @@
       "attrs": {
         "close": 17,
         "layup": 14,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 14,
         "three": 18,
         "ft": 17,
@@ -29040,7 +29040,7 @@
         "jumping": 12,
         "strength": 10,
         "stamina": 16,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -29091,7 +29091,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -29252,7 +29252,7 @@
       "attrs": {
         "close": 14,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 12,
         "three": 13,
         "ft": 13,
@@ -29285,7 +29285,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -29413,7 +29413,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -29446,7 +29446,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 19,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -29497,7 +29497,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 17,
         "three": 15,
         "ft": 15,
@@ -29530,7 +29530,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -29581,7 +29581,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -29614,7 +29614,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -29665,7 +29665,7 @@
       "attrs": {
         "close": 14,
         "layup": 12,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 14,
         "three": 15,
         "ft": 17,
@@ -29749,7 +29749,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 17,
         "three": 16,
         "ft": 16,
@@ -29782,7 +29782,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -29866,7 +29866,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -29917,7 +29917,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 17,
         "three": 16,
         "ft": 19,
@@ -29950,7 +29950,7 @@
         "jumping": 13,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -30001,7 +30001,7 @@
       "attrs": {
         "close": 20,
         "layup": 16,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 16,
         "three": 16,
         "ft": 13,
@@ -30034,7 +30034,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -30115,7 +30115,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 15,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -30166,7 +30166,7 @@
       "attrs": {
         "close": 20,
         "layup": 19,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 18,
         "three": 18,
         "ft": 17,
@@ -30199,7 +30199,7 @@
         "jumping": 19,
         "strength": 12,
         "stamina": 19,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -30283,7 +30283,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -30334,7 +30334,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 11,
         "three": 14,
         "ft": 14,
@@ -30367,7 +30367,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -30418,7 +30418,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 18,
@@ -30451,7 +30451,7 @@
         "jumping": 18,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -30502,7 +30502,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 17,
         "ft": 15,
@@ -30586,7 +30586,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 12,
         "three": 15,
         "ft": 15,
@@ -30619,7 +30619,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -30670,7 +30670,7 @@
       "attrs": {
         "close": 16,
         "layup": 18,
-        "dunk": 16,
+        "dunk": 19,
         "mid": 16,
         "three": 14,
         "ft": 18,
@@ -30703,7 +30703,7 @@
         "jumping": 19,
         "strength": 10,
         "stamina": 19,
-        "balance": 15
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -30831,7 +30831,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -30915,7 +30915,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 15,
         "ft": 17,
@@ -30948,7 +30948,7 @@
         "jumping": 12,
         "strength": 10,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -30999,7 +30999,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 18,
         "three": 19,
         "ft": 18,
@@ -31032,7 +31032,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 19,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -31083,7 +31083,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 15,
         "three": 15,
         "ft": 16,
@@ -31116,7 +31116,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -31167,7 +31167,7 @@
       "attrs": {
         "close": 18,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 15,
         "three": 13,
         "ft": 14,
@@ -31200,7 +31200,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -31251,7 +31251,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 13,
@@ -31284,7 +31284,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 17,
-        "balance": 16
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -31335,7 +31335,7 @@
       "attrs": {
         "close": 18,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 17,
         "three": 17,
         "ft": 18,
@@ -31368,7 +31368,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -31453,7 +31453,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 17,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -31537,7 +31537,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -31621,7 +31621,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 16,
-        "balance": 11
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -31830,7 +31830,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 17,
@@ -31863,7 +31863,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -31947,7 +31947,7 @@
         "jumping": 14,
         "strength": 7,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -31995,7 +31995,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -32028,7 +32028,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -32163,7 +32163,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -32196,7 +32196,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 18,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -32328,7 +32328,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 14,
         "mid": 15,
         "three": 14,
         "ft": 15,
@@ -32489,7 +32489,7 @@
       "attrs": {
         "close": 19,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 18,
         "three": 16,
         "ft": 11,
@@ -32522,7 +32522,7 @@
         "jumping": 10,
         "strength": 18,
         "stamina": 17,
-        "balance": 14
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -32570,7 +32570,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -32603,7 +32603,7 @@
         "jumping": 14,
         "strength": 15,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -32651,7 +32651,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 11,
@@ -32684,7 +32684,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -32816,7 +32816,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 15,
         "three": 15,
         "ft": 17,
@@ -32849,7 +32849,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -32900,7 +32900,7 @@
       "attrs": {
         "close": 13,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 12,
         "three": 15,
         "ft": 16,
@@ -32933,7 +32933,7 @@
         "jumping": 16,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -33065,7 +33065,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 14,
@@ -33098,7 +33098,7 @@
         "jumping": 13,
         "strength": 13,
         "stamina": 16,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -33182,7 +33182,7 @@
         "jumping": 14,
         "strength": 15,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -33230,7 +33230,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 17,
         "three": 15,
         "ft": 15,
@@ -33263,7 +33263,7 @@
         "jumping": 19,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -33466,7 +33466,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 14,
         "ft": 12,
@@ -33499,7 +33499,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -33634,7 +33634,7 @@
       "attrs": {
         "close": 12,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 15,
         "three": 14,
         "ft": 14,
@@ -33667,7 +33667,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -33718,7 +33718,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 15,
         "three": 15,
         "ft": 16,
@@ -33751,7 +33751,7 @@
         "jumping": 14,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -33799,7 +33799,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 14,
@@ -33832,7 +33832,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -33883,7 +33883,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 15,
         "ft": 15,
@@ -33911,12 +33911,12 @@
         "flair": 12,
         "aggression": 11,
         "speed": 16,
-        "acceleration": 16,
+        "acceleration": 14,
         "agility": 15,
         "jumping": 16,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -33967,7 +33967,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -34000,7 +34000,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -34051,7 +34051,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -34084,7 +34084,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34135,7 +34135,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -34168,7 +34168,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -34220,7 +34220,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -34253,7 +34253,7 @@
         "jumping": 13,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -34304,7 +34304,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 16,
         "three": 15,
         "ft": 16,
@@ -34337,7 +34337,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -34388,7 +34388,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 16,
         "three": 15,
         "ft": 16,
@@ -34421,7 +34421,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 16,
-        "balance": 12
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34472,7 +34472,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -34505,7 +34505,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34556,7 +34556,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 16,
@@ -34589,7 +34589,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34640,7 +34640,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 12,
         "mid": 16,
         "three": 9,
         "ft": 13,
@@ -34673,7 +34673,7 @@
         "jumping": 11,
         "strength": 16,
         "stamina": 16,
-        "balance": 12
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -34721,7 +34721,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 13,
         "three": 15,
         "ft": 18,
@@ -34754,7 +34754,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34805,7 +34805,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 15,
         "three": 16,
         "ft": 11,
@@ -34838,7 +34838,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -34886,7 +34886,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 19,
         "three": 15,
         "ft": 18,
@@ -34919,7 +34919,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -34970,7 +34970,7 @@
       "attrs": {
         "close": 18,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 16,
         "three": 17,
         "ft": 17,
@@ -35003,7 +35003,7 @@
         "jumping": 18,
         "strength": 14,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -35087,7 +35087,7 @@
         "jumping": 13,
         "strength": 17,
         "stamina": 17,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -35138,7 +35138,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 18,
         "three": 16,
         "ft": 17,
@@ -35171,7 +35171,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -35219,7 +35219,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 18,
         "three": 16,
         "ft": 16,
@@ -35252,7 +35252,7 @@
         "jumping": 8,
         "strength": 14,
         "stamina": 16,
-        "balance": 10
+        "balance": 7
       },
       "hidden": {
         "consistency": 10,
@@ -35300,7 +35300,7 @@
       "attrs": {
         "close": 19,
         "layup": 12,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 14,
         "three": 17,
         "ft": 18,
@@ -35333,7 +35333,7 @@
         "jumping": 12,
         "strength": 15,
         "stamina": 16,
-        "balance": 12
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -35412,7 +35412,7 @@
         "flair": 11,
         "aggression": 14,
         "speed": 12,
-        "acceleration": 19,
+        "acceleration": 11,
         "agility": 11,
         "jumping": 13,
         "strength": 11,
@@ -35468,7 +35468,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 15,
         "three": 14,
         "ft": 18,
@@ -35501,7 +35501,7 @@
         "jumping": 19,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -35552,7 +35552,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 15,
         "three": 17,
         "ft": 17,
@@ -35585,7 +35585,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -35669,7 +35669,7 @@
         "jumping": 17,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -35830,7 +35830,7 @@
         "jumping": 13,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -35878,7 +35878,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 16,
         "three": 16,
         "ft": 18,
@@ -35911,7 +35911,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -35962,7 +35962,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -35995,7 +35995,7 @@
         "jumping": 18,
         "strength": 14,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -36046,7 +36046,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -36079,7 +36079,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 18,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -36130,7 +36130,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 10,
         "three": 8,
         "ft": 9,
@@ -36163,7 +36163,7 @@
         "jumping": 18,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -36247,7 +36247,7 @@
         "jumping": 12,
         "strength": 17,
         "stamina": 17,
-        "balance": 14
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -36331,7 +36331,7 @@
         "jumping": 13,
         "strength": 17,
         "stamina": 16,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -36379,7 +36379,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 18,
         "three": 16,
         "ft": 16,
@@ -36412,7 +36412,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -36496,7 +36496,7 @@
         "jumping": 14,
         "strength": 17,
         "stamina": 19,
-        "balance": 16
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -36580,7 +36580,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 17,
-        "balance": 12
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -36628,7 +36628,7 @@
       "attrs": {
         "close": 19,
         "layup": 19,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 18,
         "ft": 17,
@@ -36661,7 +36661,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 19,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -36745,7 +36745,7 @@
         "jumping": 13,
         "strength": 17,
         "stamina": 16,
-        "balance": 14
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -36829,7 +36829,7 @@
         "jumping": 15,
         "strength": 16,
         "stamina": 16,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -36910,7 +36910,7 @@
         "jumping": 15,
         "strength": 17,
         "stamina": 18,
-        "balance": 14
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -36961,7 +36961,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 15,
         "ft": 17,
@@ -36994,7 +36994,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 16,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -37126,7 +37126,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 17,
         "three": 16,
         "ft": 15,
@@ -37159,7 +37159,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -37288,7 +37288,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 12,
         "three": 15,
         "ft": 16,
@@ -37321,7 +37321,7 @@
         "jumping": 13,
         "strength": 12,
         "stamina": 17,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -37372,7 +37372,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 13,
@@ -37405,7 +37405,7 @@
         "jumping": 13,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -37456,7 +37456,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 17,
         "three": 19,
         "ft": 15,
@@ -37489,7 +37489,7 @@
         "jumping": 14,
         "strength": 7,
         "stamina": 17,
-        "balance": 10
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -37573,7 +37573,7 @@
         "jumping": 15,
         "strength": 18,
         "stamina": 16,
-        "balance": 16
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -37621,7 +37621,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -37654,7 +37654,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -37783,7 +37783,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 13,
         "three": 15,
         "ft": 15,
@@ -37816,7 +37816,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 18,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -37867,7 +37867,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 18,
         "three": 15,
         "ft": 14,
@@ -37900,7 +37900,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 19,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -37951,7 +37951,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 18,
@@ -37984,7 +37984,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -38068,7 +38068,7 @@
         "jumping": 11,
         "strength": 16,
         "stamina": 19,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -38116,7 +38116,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 13,
         "three": 16,
         "ft": 13,
@@ -38149,7 +38149,7 @@
         "jumping": 16,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -38200,7 +38200,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -38233,7 +38233,7 @@
         "jumping": 15,
         "strength": 8,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -38284,7 +38284,7 @@
       "attrs": {
         "close": 19,
         "layup": 17,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -38317,7 +38317,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 16,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -38368,7 +38368,7 @@
       "attrs": {
         "close": 15,
         "layup": 13,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 13,
         "ft": 16,
@@ -38401,7 +38401,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 16,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -38537,7 +38537,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 12,
         "three": 16,
         "ft": 17,
@@ -38570,7 +38570,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -38621,7 +38621,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 17,
         "three": 17,
         "ft": 17,
@@ -38654,7 +38654,7 @@
         "jumping": 11,
         "strength": 12,
         "stamina": 18,
-        "balance": 12
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -38705,7 +38705,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 8,
+        "dunk": 9,
         "mid": 15,
         "three": 15,
         "ft": 17,
@@ -38738,7 +38738,7 @@
         "jumping": 15,
         "strength": 9,
         "stamina": 19,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -38789,7 +38789,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 17,
@@ -38822,7 +38822,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -38907,7 +38907,7 @@
         "jumping": 14,
         "strength": 18,
         "stamina": 18,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -38958,7 +38958,7 @@
       "attrs": {
         "close": 20,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -39042,7 +39042,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -39075,7 +39075,7 @@
         "jumping": 17,
         "strength": 10,
         "stamina": 19,
-        "balance": 14
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -39126,7 +39126,7 @@
       "attrs": {
         "close": 14,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 16,
         "three": 17,
         "ft": 14,
@@ -39159,7 +39159,7 @@
         "jumping": 16,
         "strength": 8,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -39210,7 +39210,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -39243,7 +39243,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -39294,7 +39294,7 @@
       "attrs": {
         "close": 13,
         "layup": 9,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 14,
         "three": 16,
         "ft": 18,
@@ -39327,7 +39327,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -39378,7 +39378,7 @@
       "attrs": {
         "close": 14,
         "layup": 10,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 6,
         "three": 5,
         "ft": 8,
@@ -39411,7 +39411,7 @@
         "jumping": 6,
         "strength": 13,
         "stamina": 15,
-        "balance": 9
+        "balance": 6
       },
       "hidden": {
         "consistency": 10,
@@ -39492,7 +39492,7 @@
         "jumping": 15,
         "strength": 16,
         "stamina": 16,
-        "balance": 14
+        "balance": 12
       },
       "hidden": {
         "consistency": 10,
@@ -39540,7 +39540,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 16,
+        "dunk": 19,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -39573,7 +39573,7 @@
         "jumping": 19,
         "strength": 10,
         "stamina": 19,
-        "balance": 14
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -39624,7 +39624,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 10,
         "three": 15,
         "ft": 16,
@@ -39657,7 +39657,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 18,
-        "balance": 14
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -39705,7 +39705,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 16,
         "three": 16,
         "ft": 15,
@@ -39738,7 +39738,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -39789,7 +39789,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 17,
         "three": 17,
         "ft": 16,
@@ -39822,7 +39822,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 19,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -39906,7 +39906,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 19,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -39990,7 +39990,7 @@
         "jumping": 16,
         "strength": 15,
         "stamina": 16,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -40041,7 +40041,7 @@
       "attrs": {
         "close": 19,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 18,
         "mid": 16,
         "three": 16,
         "ft": 18,
@@ -40074,7 +40074,7 @@
         "jumping": 18,
         "strength": 8,
         "stamina": 18,
-        "balance": 13
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -40125,7 +40125,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 11,
         "three": 15,
         "ft": 16,
@@ -40158,7 +40158,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -40206,7 +40206,7 @@
       "attrs": {
         "close": 18,
         "layup": 13,
-        "dunk": 17,
+        "dunk": 18,
         "mid": 14,
         "three": 5,
         "ft": 13,
@@ -40239,7 +40239,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -40287,7 +40287,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -40371,7 +40371,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -40404,7 +40404,7 @@
         "jumping": 18,
         "strength": 10,
         "stamina": 17,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -40455,7 +40455,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 16,
         "three": 16,
         "ft": 16,
@@ -40488,7 +40488,7 @@
         "jumping": 17,
         "strength": 15,
         "stamina": 18,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -40539,7 +40539,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -40572,7 +40572,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -40653,7 +40653,7 @@
         "jumping": 12,
         "strength": 9,
         "stamina": 17,
-        "balance": 11
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -40737,7 +40737,7 @@
         "jumping": 17,
         "strength": 16,
         "stamina": 16,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -40788,7 +40788,7 @@
       "attrs": {
         "close": 16,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -40821,7 +40821,7 @@
         "jumping": 13,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -40905,7 +40905,7 @@
         "jumping": 13,
         "strength": 16,
         "stamina": 16,
-        "balance": 12
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -41038,7 +41038,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 9,
         "three": 14,
         "ft": 14,
@@ -41071,7 +41071,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -41155,7 +41155,7 @@
         "jumping": 15,
         "strength": 14,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -41203,7 +41203,7 @@
       "attrs": {
         "close": 19,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 17,
         "three": 17,
         "ft": 19,
@@ -41236,7 +41236,7 @@
         "jumping": 11,
         "strength": 10,
         "stamina": 17,
-        "balance": 12
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -41287,7 +41287,7 @@
       "attrs": {
         "close": 17,
         "layup": 14,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 15,
         "three": 16,
         "ft": 15,
@@ -41320,7 +41320,7 @@
         "jumping": 17,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -41371,7 +41371,7 @@
       "attrs": {
         "close": 16,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 14,
         "three": 14,
         "ft": 15,
@@ -41404,7 +41404,7 @@
         "jumping": 14,
         "strength": 15,
         "stamina": 17,
-        "balance": 12
+        "balance": 9
       },
       "hidden": {
         "consistency": 10,
@@ -41566,7 +41566,7 @@
         "jumping": 14,
         "strength": 18,
         "stamina": 16,
-        "balance": 16
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -41650,7 +41650,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 17,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -41701,7 +41701,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 14,
         "three": 16,
         "ft": 16,
@@ -41734,7 +41734,7 @@
         "jumping": 13,
         "strength": 11,
         "stamina": 18,
-        "balance": 12
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -41785,7 +41785,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 17,
         "three": 18,
         "ft": 18,
@@ -41818,7 +41818,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 19,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -41946,7 +41946,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -41979,7 +41979,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -42030,7 +42030,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 14,
         "ft": 16,
@@ -42063,7 +42063,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -42147,7 +42147,7 @@
         "jumping": 15,
         "strength": 16,
         "stamina": 18,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -42198,7 +42198,7 @@
       "attrs": {
         "close": 18,
         "layup": 19,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 18,
         "three": 18,
         "ft": 16,
@@ -42231,7 +42231,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 19,
-        "balance": 16
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -42282,7 +42282,7 @@
       "attrs": {
         "close": 12,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 11,
@@ -42315,7 +42315,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -42366,7 +42366,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 18,
         "mid": 13,
         "three": 14,
         "ft": 14,
@@ -42399,7 +42399,7 @@
         "jumping": 18,
         "strength": 14,
         "stamina": 16,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -42450,7 +42450,7 @@
       "attrs": {
         "close": 14,
         "layup": 14,
-        "dunk": 10,
+        "dunk": 12,
         "mid": 16,
         "three": 17,
         "ft": 17,
@@ -42483,7 +42483,7 @@
         "jumping": 15,
         "strength": 6,
         "stamina": 18,
-        "balance": 11
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -42611,7 +42611,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 17,
+        "dunk": 19,
         "mid": 13,
         "three": 11,
         "ft": 16,
@@ -42644,7 +42644,7 @@
         "jumping": 20,
         "strength": 14,
         "stamina": 19,
-        "balance": 16
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -42695,7 +42695,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 17,
+        "dunk": 18,
         "mid": 11,
         "three": 14,
         "ft": 11,
@@ -42728,7 +42728,7 @@
         "jumping": 20,
         "strength": 15,
         "stamina": 19,
-        "balance": 17
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -42779,7 +42779,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 16,
         "three": 19,
         "ft": 16,
@@ -42812,7 +42812,7 @@
         "jumping": 13,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -42863,7 +42863,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -42896,7 +42896,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -42947,7 +42947,7 @@
       "attrs": {
         "close": 14,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 10,
         "three": 17,
         "ft": 17,
@@ -42980,7 +42980,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -43109,7 +43109,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 13,
         "ft": 15,
@@ -43193,7 +43193,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -43226,7 +43226,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -43354,7 +43354,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 14,
         "three": 15,
         "ft": 17,
@@ -43387,7 +43387,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -43522,7 +43522,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -43555,7 +43555,7 @@
         "jumping": 14,
         "strength": 18,
         "stamina": 20,
-        "balance": 17
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -43606,7 +43606,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 11,
         "three": 15,
         "ft": 15,
@@ -43639,7 +43639,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -43690,7 +43690,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 19,
         "three": 16,
         "ft": 15,
@@ -43723,7 +43723,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -43807,7 +43807,7 @@
         "jumping": 15,
         "strength": 15,
         "stamina": 16,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -43858,7 +43858,7 @@
       "attrs": {
         "close": 16,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 18,
         "three": 16,
         "ft": 15,
@@ -43891,7 +43891,7 @@
         "jumping": 14,
         "strength": 16,
         "stamina": 19,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -43939,7 +43939,7 @@
       "attrs": {
         "close": 18,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 13,
         "three": 17,
         "ft": 14,
@@ -43972,7 +43972,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 17,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -44023,7 +44023,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 9,
         "three": 5,
         "ft": 10,
@@ -44056,7 +44056,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 16,
-        "balance": 15
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -44214,7 +44214,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 15,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -44298,7 +44298,7 @@
         "jumping": 15,
         "strength": 10,
         "stamina": 19,
-        "balance": 13
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -44346,7 +44346,7 @@
       "attrs": {
         "close": 16,
         "layup": 16,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 18,
         "three": 17,
         "ft": 16,
@@ -44379,7 +44379,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -44463,7 +44463,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 18,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -44547,7 +44547,7 @@
         "jumping": 9,
         "strength": 17,
         "stamina": 18,
-        "balance": 13
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -44628,7 +44628,7 @@
         "jumping": 13,
         "strength": 14,
         "stamina": 18,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -44709,7 +44709,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 16,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -44760,7 +44760,7 @@
       "attrs": {
         "close": 15,
         "layup": 15,
-        "dunk": 7,
+        "dunk": 8,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -44793,7 +44793,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 17,
-        "balance": 13
+        "balance": 14
       },
       "hidden": {
         "consistency": 10,
@@ -44844,7 +44844,7 @@
       "attrs": {
         "close": 17,
         "layup": 18,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 18,
         "three": 14,
         "ft": 17,
@@ -44928,7 +44928,7 @@
       "attrs": {
         "close": 18,
         "layup": 14,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 17,
         "three": 16,
         "ft": 16,
@@ -44961,7 +44961,7 @@
         "jumping": 15,
         "strength": 16,
         "stamina": 16,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -45012,7 +45012,7 @@
       "attrs": {
         "close": 15,
         "layup": 8,
-        "dunk": 14,
+        "dunk": 15,
         "mid": 14,
         "three": 15,
         "ft": 15,
@@ -45096,7 +45096,7 @@
       "attrs": {
         "close": 15,
         "layup": 14,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 14,
         "three": 16,
         "ft": 15,
@@ -45180,7 +45180,7 @@
       "attrs": {
         "close": 15,
         "layup": 16,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 17,
         "three": 15,
         "ft": 15,
@@ -45213,7 +45213,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -45264,7 +45264,7 @@
       "attrs": {
         "close": 14,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -45297,7 +45297,7 @@
         "jumping": 14,
         "strength": 11,
         "stamina": 18,
-        "balance": 15
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -45348,7 +45348,7 @@
       "attrs": {
         "close": 15,
         "layup": 13,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 13,
         "three": 16,
         "ft": 15,
@@ -45381,7 +45381,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -45432,7 +45432,7 @@
       "attrs": {
         "close": 17,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 17,
@@ -45465,7 +45465,7 @@
         "jumping": 15,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -45600,7 +45600,7 @@
       "attrs": {
         "close": 17,
         "layup": 14,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 15,
         "three": 15,
         "ft": 15,
@@ -45633,7 +45633,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -45717,7 +45717,7 @@
         "jumping": 16,
         "strength": 16,
         "stamina": 17,
-        "balance": 14
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -45768,7 +45768,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 17,
         "mid": 16,
         "three": 14,
         "ft": 14,
@@ -45801,7 +45801,7 @@
         "jumping": 17,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -45885,7 +45885,7 @@
         "jumping": 16,
         "strength": 14,
         "stamina": 18,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -45936,7 +45936,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 14,
         "mid": 18,
         "three": 17,
         "ft": 16,
@@ -45969,7 +45969,7 @@
         "jumping": 13,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -46021,7 +46021,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 18,
+        "dunk": 17,
         "mid": 17,
         "three": 16,
         "ft": 17,
@@ -46105,7 +46105,7 @@
       "attrs": {
         "close": 18,
         "layup": 17,
-        "dunk": 11,
+        "dunk": 13,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -46138,7 +46138,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -46189,7 +46189,7 @@
       "attrs": {
         "close": 16,
         "layup": 17,
-        "dunk": 10,
+        "dunk": 11,
         "mid": 17,
         "three": 16,
         "ft": 18,
@@ -46222,7 +46222,7 @@
         "jumping": 15,
         "strength": 9,
         "stamina": 17,
-        "balance": 14
+        "balance": 19
       },
       "hidden": {
         "consistency": 10,
@@ -46273,7 +46273,7 @@
       "attrs": {
         "close": 12,
         "layup": 17,
-        "dunk": 14,
+        "dunk": 16,
         "mid": 15,
         "three": 14,
         "ft": 15,
@@ -46306,7 +46306,7 @@
         "jumping": 17,
         "strength": 14,
         "stamina": 17,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -46357,7 +46357,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 12,
+        "dunk": 14,
         "mid": 17,
         "three": 17,
         "ft": 15,
@@ -46390,7 +46390,7 @@
         "jumping": 14,
         "strength": 9,
         "stamina": 16,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -46441,7 +46441,7 @@
       "attrs": {
         "close": 18,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 17,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -46474,7 +46474,7 @@
         "jumping": 19,
         "strength": 13,
         "stamina": 17,
-        "balance": 15
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -46606,7 +46606,7 @@
       "attrs": {
         "close": 17,
         "layup": 18,
-        "dunk": 9,
+        "dunk": 10,
         "mid": 17,
         "three": 15,
         "ft": 16,
@@ -46639,7 +46639,7 @@
         "jumping": 14,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -46687,7 +46687,7 @@
       "attrs": {
         "close": 19,
         "layup": 16,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 16,
         "three": 14,
         "ft": 14,
@@ -46720,7 +46720,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 18,
-        "balance": 15
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -46855,7 +46855,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 13,
+        "dunk": 16,
         "mid": 16,
         "three": 15,
         "ft": 17,
@@ -46888,7 +46888,7 @@
         "jumping": 17,
         "strength": 15,
         "stamina": 18,
-        "balance": 17
+        "balance": 18
       },
       "hidden": {
         "consistency": 10,
@@ -46972,7 +46972,7 @@
         "jumping": 12,
         "strength": 14,
         "stamina": 16,
-        "balance": 13
+        "balance": 11
       },
       "hidden": {
         "consistency": 10,
@@ -47023,7 +47023,7 @@
       "attrs": {
         "close": 17,
         "layup": 16,
-        "dunk": 12,
+        "dunk": 13,
         "mid": 18,
         "three": 17,
         "ft": 13,
@@ -47056,7 +47056,7 @@
         "jumping": 14,
         "strength": 13,
         "stamina": 16,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -47107,7 +47107,7 @@
       "attrs": {
         "close": 19,
         "layup": 15,
-        "dunk": 16,
+        "dunk": 15,
         "mid": 12,
         "three": 7,
         "ft": 15,
@@ -47140,7 +47140,7 @@
         "jumping": 15,
         "strength": 17,
         "stamina": 15,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -47221,7 +47221,7 @@
         "jumping": 15,
         "strength": 13,
         "stamina": 18,
-        "balance": 14
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -47272,7 +47272,7 @@
       "attrs": {
         "close": 16,
         "layup": 10,
-        "dunk": 15,
+        "dunk": 16,
         "mid": 14,
         "three": 16,
         "ft": 17,
@@ -47305,7 +47305,7 @@
         "jumping": 16,
         "strength": 11,
         "stamina": 18,
-        "balance": 14
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -47389,7 +47389,7 @@
         "jumping": 15,
         "strength": 17,
         "stamina": 16,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -47440,7 +47440,7 @@
       "attrs": {
         "close": 17,
         "layup": 17,
-        "dunk": 18,
+        "dunk": 19,
         "mid": 16,
         "three": 15,
         "ft": 14,
@@ -47473,7 +47473,7 @@
         "jumping": 19,
         "strength": 18,
         "stamina": 17,
-        "balance": 17
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -47557,7 +47557,7 @@
         "jumping": 18,
         "strength": 12,
         "stamina": 18,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -47608,7 +47608,7 @@
       "attrs": {
         "close": 16,
         "layup": 15,
-        "dunk": 13,
+        "dunk": 15,
         "mid": 16,
         "three": 16,
         "ft": 15,
@@ -47641,7 +47641,7 @@
         "jumping": 15,
         "strength": 12,
         "stamina": 16,
-        "balance": 14
+        "balance": 16
       },
       "hidden": {
         "consistency": 10,
@@ -47725,7 +47725,7 @@
         "jumping": 14,
         "strength": 14,
         "stamina": 15,
-        "balance": 12
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -47806,7 +47806,7 @@
         "jumping": 11,
         "strength": 13,
         "stamina": 18,
-        "balance": 12
+        "balance": 10
       },
       "hidden": {
         "consistency": 10,
@@ -47890,7 +47890,7 @@
         "jumping": 16,
         "strength": 10,
         "stamina": 19,
-        "balance": 13
+        "balance": 17
       },
       "hidden": {
         "consistency": 10,
@@ -47938,7 +47938,7 @@
       "attrs": {
         "close": 13,
         "layup": 14,
-        "dunk": 11,
+        "dunk": 12,
         "mid": 15,
         "three": 16,
         "ft": 16,
@@ -47971,7 +47971,7 @@
         "jumping": 14,
         "strength": 10,
         "stamina": 16,
-        "balance": 13
+        "balance": 15
       },
       "hidden": {
         "consistency": 10,
@@ -48023,7 +48023,7 @@
       "attrs": {
         "close": 14,
         "layup": 11,
-        "dunk": 14,
+        "dunk": 13,
         "mid": 10,
         "three": 8,
         "ft": 12,
@@ -48056,7 +48056,7 @@
         "jumping": 11,
         "strength": 15,
         "stamina": 16,
-        "balance": 10
+        "balance": 6
       },
       "hidden": {
         "consistency": 10,
@@ -48137,7 +48137,7 @@
         "jumping": 15,
         "strength": 18,
         "stamina": 16,
-        "balance": 15
+        "balance": 13
       },
       "hidden": {
         "consistency": 10,
@@ -48171,9 +48171,9 @@
       ]
     }
   ],
-  "updatedAt": "2026-11-10T20:47:59.882Z",
-  "ratingNotes": "1-20 scale. Direct NBA 2K27 attributes are mapped from 0-100 by rounding rating/5; dunk = 75% Driving Dunk + 25% Standing Dunk; rebound = Defensive Rebound only. Non-direct mental/role attributes are documented proxies, not direct 2K ratings. Seven hidden attributes remain neutral/unscouted; potential is direct 2K27 only where the source provides it and otherwise remains a legacy estimate.",
-  "ratingsMethod": "Current NBA 2K27 source: NBA 2K API public current-roster endpoint, which republishes 2KRatings data; verified free agents are supplemented from 2kAuction player pages. Direct attributes map by Math.round(value/5) to game 1-20. Dunk uses 75% Driving Dunk + 25% Standing Dunk; rebound uses Defensive Rebound only. Acceleration uses a direct source value when present; otherwise the previous Speed with Ball proxy is retained. Balance is the mean of Agility and Strength because no separate balance attribute is published. Mental/role fields without direct 2K equivalents use documented proxies (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception, offensive/defensive consistency, Reaction Time, Draw Foul).",
+  "updatedAt": "2026-11-10T20:49:48.710Z",
+  "ratingNotes": "1-20 scale. Player ratings use NBA 2K27 source attributes mapped from 0-100 by rounding rating/5. Dunk uses the direct Driving Dunk rating only; rebound uses Defensive Rebound only. Game-only fields without a separate 2K rating use the closest named 2K source attribute; no career-stat or height-based ability estimates are used. Players absent from the 2K27 source remain explicitly unverified and are not presented as direct 2K ratings.",
+  "ratingsMethod": "NBA 2K27 source of truth: NBA 2K API current-roster endpoint (2KRatings data), with verified free agents supplemented from 2kAuction. Source ratings are mapped to the game 1-20 scale by Math.round(value/5). Dunk = direct Driving Dunk; rebound = Defensive Rebound. No career-stat, height-based, or manually invented ability calculations are used. Where the game has a field with no exact 2K category, it uses the closest available 2K attribute and remains identified as a game-field mapping. Players absent from 2K27 remain unverified rather than receiving fabricated 2K ratings.",
   "ratingsCoverage": {
     "sourceRows": 655,
     "source2K25Rows": 0,
@@ -48339,6 +48339,7 @@
     "partialNames": [],
     "manual2K27Rows": 6,
     "hiddenAttributeCoverage": "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
-    "screenAttributeCoverage": "No separate 2K27 Screen rating; scouting proxy retained"
+    "screenAttributeCoverage": "No separate 2K27 Screen rating; closest 2K source attribute mapping retained",
+    "accelerationMapping": "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value"
   }
 }
