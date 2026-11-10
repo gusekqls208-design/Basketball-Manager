@@ -116,9 +116,6 @@ function applyPlayer(p, source) {
   // Offensive Rebound is intentionally excluded rather than averaged in.
   setMapped(next, "rebound", pick(a, "defensiveRebound"));
 
-  // Career-peak exception requested for LeBron: current-roster 2K ratings
-  // understate his historical weak-side/chase-down block ability.
-  if (norm(p.name) === "lebronjames") next.block = 17;
 
   // Balance has no separate 2K attribute; use the direct 2K Agility rating.
   setMapped(next, "balance", pick(a, "agility"));
@@ -143,7 +140,8 @@ function applyPlayer(p, source) {
   p.ratingsSourcePlayer = source.name || p.name;
   p.ratingsSourceTeam = source.team || null;
   p.ratingsSourcePositions = Array.isArray(source.positions) ? source.positions : [];
-  p.ratingsScale = "2K27 0-100 mapped to game 1-20 by round(value/5); OVR retained on 0-99; LeBron block has a documented career-peak override to 17";
+  p.ratingsScale = "Direct NBA 2K27 attributes mapped from 0-100 to game 1-20 by round(value/5); OVR copied directly";
+  delete p.blockRatingNote;
   p.ratingsUpdatedAt = today;
   p.ratingsStatus = "2K-direct-27";
   p.screenSource = "No separate 2K27 Screen category; mapped to the direct 2K Strength rating";
@@ -229,8 +227,8 @@ const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p =
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 ratings synced from NBA 2K API/2KRatings; ${db.players.length} players retained with verified 2K27 ratings; ${excludedUnverified.length} players without 2K27 ratings excluded`;
-db.ratingNotes = "Only players with verified NBA 2K27 ratings are included. 2K27 source attributes map from 0-100 to game 1-20 by rounding rating/5; OVR remains direct 2K OVR. Dunk = Driving Dunk; rebound = Defensive Rebound; acceleration = Speed with Ball; balance = Agility; screen = Strength; aggression = Hustle. No career-stat, height-based, legacy, or invented ability formulas are used. Players without 2K27 ratings are excluded.";
-db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. 0-100 source attributes map to game 1-20 by Math.round(value/5), and OVR is copied directly. Game-specific fields with no exact 2K category use explicitly documented closest direct 2K attributes. Players without verified 2K27 data are excluded, never filled with legacy estimates.";
+db.ratingNotes = "Only players with verified NBA 2K27 ratings are included. All 36 visible attributes map directly from 2K27 source attributes: 0-100 values are converted to game 1-20 by rounding rating/5; OVR is copied directly. Dunk = Driving Dunk; rebound = Defensive Rebound; acceleration = Speed with Ball; balance = Agility; screen = Strength; aggression = Hustle; flair = Intangibles. No player-specific overrides, career-stat, height-based, legacy, or invented ability formulas are used. Players without 2K27 ratings are excluded.";
+db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. All 36 visible attributes use direct 2K27 attribute inputs mapped to game 1-20 by Math.round(value/5), and OVR is copied directly. Closest direct 2K attribute mappings are documented for game-only fields. No player-specific overrides or legacy formulas. Players without verified 2K27 data are excluded, never filled with estimates.";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
   sourceRows: sources.length,
