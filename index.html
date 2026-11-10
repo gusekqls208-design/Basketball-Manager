@@ -183,7 +183,7 @@ function sourceBadge(p){return p.realData?'<span class="pill good" style="font-s
 function rosterPage(m){
  let t=my();
  m.innerHTML=head("SQUAD MANAGEMENT","선수단","실제 선수와 가상 선수의 출처를 구분해 표시합니다.")+ '<div class="notice">실제 NBA 선수는 초록색, 가상 생성 선수는 갈색으로 표시됩니다.</div>'+
- '<div class="sectionbar"><h2>FIRST TEAM · '+t.players.length+' PLAYERS</h2><button class="btn primary" onclick="addPlayer()">+ 선수 생성</button></div>'+
+ '<div class="sectionbar"><h2>FIRST TEAM · '+t.players.length+' PLAYERS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bulkScoutBtn" onclick="bulkScoutAllPlayers()">전체 선수 능력치 다시 산정</button><button class="btn primary" onclick="addPlayer()">+ 선수 생성</button></div></div><div id="bulkScoutStatus" class="small muted" style="margin:0 0 12px"></div>'+
  '<div class="tablewrap"><table><thead><tr>'+sortHead("name","선수")+sortHead("pos","포지션")+sortHead("age","나이")+sortHead("height","신장")+sortHead("weight","체중")+sortHead("ovr","OVR")+sortHead("condition","컨디션")+sortHead("role","역할")+sortHead("salary","연봉")+'<th></th></tr></thead><tbody>'+
  rosterSorted(t.players).map(p=>'<tr class="click-row" onclick="editPlayer(\''+p.id+'\')"><td><span class="player-name-cell">'+(p.photoUrl?'<img src="'+p.photoUrl+'" alt="" loading="lazy">':'<span class="mini-silhouette">♟</span>')+'<span><b>'+p.name+'</b> '+sourceBadge(p)+'<div class="small muted">'+p.trait+'</div></span></span></td><td>'+positionLabel(p)+'</td><td>'+(p.ageApprox?'약 ':'')+p.age+'</td><td>'+(p.physicalEstimated?'약 ':'')+p.height+'cm</td><td>'+(p.physicalEstimated?'약 ':'')+p.weight+'kg</td><td class="rating" style="color:'+ovrColor(p.ovr)+'">'+p.ovr+'</td><td>'+p.condition+'%</td><td>'+p.role+'</td><td>'+money(p.salary)+'</td><td><span class="small muted">열기</span></td></tr>').join("")+
  '</tbody></table></div>';
@@ -209,6 +209,30 @@ function parseEspnStatCategory(data){
 }
 function clampRating(v){return Math.max(1,Math.min(20,Math.round(v)))}
 function statToRating(v,lo,hi){return clampRating(4+16*Math.max(0,Math.min(1,(v-lo)/(hi-lo))))}
+async function bulkScoutAllPlayers(){
+ const btn=document.getElementById("bulkScoutBtn"),status=document.getElementById("bulkScoutStatus");
+ if(window.bulkScoutRunning)return;window.bulkScoutRunning=true;
+ if(btn){btn.disabled=true;btn.textContent="전체 스카우팅 진행 중…"}
+ const setStatus=t=>{if(status)status.textContent=t};
+ const all=state.clubs.flatMap(t=>(t.players||[]).filter(p=>p.realData).map(p=>({p,team:t.id||p.teamAbbr||p.team})));
+ const unique=[...new Map(all.map(x=>[String(x.p.id),x])).values()],rosterMap=new Map();
+ const teamsToLoad=[...new Set(unique.map(x=>x.team).filter(x=>ESPN_TEAM_IDS[x]))];let rosterDone=0;
+ const rosterQueue=[...teamsToLoad];
+ async function rosterWorker(){while(rosterQueue.length){const abbr=rosterQueue.shift();try{const res=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/teams/"+ESPN_TEAM_IDS[abbr]+"/roster?season=2027",{cache:"no-store"});if(res.ok){const data=await res.json();(data.athletes||[]).forEach(a=>{if(a.displayName&&a.id)rosterMap.set(cleanPlayerKey(a.displayName),String(a.id));});}}catch(e){}rosterDone++;setStatus("팀별 선수 식별 정보 확인 "+rosterDone+"/"+teamsToLoad.length);}
+ }
+ await Promise.all(Array.from({length:5},rosterWorker));
+ let done=0,updated=0,failed=0;const queue=[...unique];
+ async function playerWorker(){while(queue.length){const item=queue.shift(),p=item.p;try{
+  const athleteId=p.espnId||rosterMap.get(cleanPlayerKey(p.name));if(!athleteId){failed++;done++;continue;}p.espnId=String(athleteId);
+  const got=await Promise.all([2027,2026,2025].map(async year=>{try{const url="https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year;let res;for(let attempt=0;attempt<3;attempt++){res=await fetch(url,{cache:"force-cache"});if(res.ok||res.status!==429)break;await new Promise(r=>setTimeout(r,500*(attempt+1)));}if(!res||!res.ok)return null;const data=await res.json(),st=parseEspnStatCategory(data);return Number(st.GP)>0?{year,st}:null;}catch(e){return null;}}));
+  const valid=got.filter(Boolean).sort((a,b)=>b.year-a.year);if(valid.length){const fields=["GP","PTS","REB","AST","STL","BLK","MIN","FG%","3P%","FT%","3PA","FTA","TO","TOV"],avg={};fields.forEach(k=>{const rows=valid.filter(x=>Number.isFinite(Number(x.st[k])));if(rows.length){const weights=rows.map(x=>Number(x.st.GP)||1),den=weights.reduce((a,b)=>a+b,0);avg[k]=rows.reduce((a,x,i)=>a+(Number(x.st[k])||0)*weights[i],0)/den;}});if(avg.GP>=5){applyStatsScouting(p,avg);p.recentStatsSource="ESPN weighted 3-season stats (2024-25 to 2026-27)";p.recentStatsUpdatedAt=new Date().toISOString();p.recentStatsSeasons=valid.map(x=>x.year);updated++;}else failed++;}else failed++;
+ }catch(e){failed++;}done++;if(done%10===0||done===unique.length){persist();setStatus("능력치 산정 중 "+done+"/"+unique.length+"명 · 통계 반영 "+updated+"명 · 미확인 "+failed+"명");}}
+ }
+ await Promise.all(Array.from({length:8},playerWorker));persist();window.bulkScoutRunning=false;
+ if(btn){btn.disabled=false;btn.textContent="전체 선수 능력치 다시 산정"}
+ setStatus("완료: "+unique.length+"명 중 "+updated+"명 통계 반영 · "+failed+"명 기록 미확인. 속력·가속력·점프력과 히든 능력치는 박스스코어로 검증할 수 없어 별도 근거가 필요합니다.");
+ render(document.querySelector(".nav.active")?.dataset.page||"roster");
+}
 function applyStatsScouting(p,st){
  const g=st||{},a=p.attrs||{},gp=Number(g.GP)||0;if(gp<5)return false;
  const set=(k,v)=>a[k]=clampRating(v),rate=(v,lo,hi)=>statToRating(Number(v)||0,lo,hi);
