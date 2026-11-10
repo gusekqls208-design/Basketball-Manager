@@ -228,7 +228,7 @@ async function bulkScoutAllPlayers(){
   const valid=got.filter(Boolean).sort((a,b)=>b.year-a.year);if(valid.length){const fields=["GP","PTS","REB","AST","STL","BLK","MIN","FG%","3P%","FT%","3PA","FTA","TO","TOV"],avg={};fields.forEach(k=>{const rows=valid.filter(x=>Number.isFinite(Number(x.st[k])));if(rows.length){const weights=rows.map(x=>Number(x.st.GP)||1),den=weights.reduce((a,b)=>a+b,0);avg[k]=rows.reduce((a,x,i)=>a+(Number(x.st[k])||0)*weights[i],0)/den;}});if(avg.GP>=5){applyStatsScouting(p,avg);p.recentStatsSource="ESPN weighted 3-season stats (2024-25 to 2026-27)";p.recentStatsUpdatedAt=new Date().toISOString();p.recentStatsSeasons=valid.map(x=>x.year);updated++;}else failed++;}else failed++;
  }catch(e){failed++;}done++;if(done%10===0||done===unique.length){persist();setStatus("능력치 산정 중 "+done+"/"+unique.length+"명 · 통계 반영 "+updated+"명 · 미확인 "+failed+"명");}}
  }
- await Promise.all(Array.from({length:8},playerWorker));persist();window.bulkScoutRunning=false;
+ await Promise.all(Array.from({length:8},playerWorker));state.bulkScoutingVersion=1;persist();window.bulkScoutRunning=false;
  if(btn){btn.disabled=false;btn.textContent="전체 선수 능력치 다시 산정"}
  setStatus("완료: "+unique.length+"명 중 "+updated+"명 통계 반영 · "+failed+"명 기록 미확인. 속력·가속력·점프력과 히든 능력치는 박스스코어로 검증할 수 없어 별도 근거가 필요합니다.");
  render(document.querySelector(".nav.active")?.dataset.page||"roster");
@@ -464,5 +464,5 @@ async function syncOfficialRosters(){
  }
 }
 
-if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters()}else renderSetup();
+if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters().then(()=>{if((Number(state.bulkScoutingVersion)||0)<1)setTimeout(()=>bulkScoutAllPlayers(),1800);});}else renderSetup();
 </script></body></html>
