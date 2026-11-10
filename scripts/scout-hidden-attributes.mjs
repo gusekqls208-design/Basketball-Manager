@@ -250,7 +250,7 @@ for(const p of db.players){
 }
 failed=failed.filter(x=>!db.players.find(p=>p.name===x.name)?.hiddenScoutedAt);
 for(const p of db.players){
-  p.hidden={consistency:10,importantMatches:10,professionalism:10,injuryProneness:10,potential:10,...(p.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;
+  p.hidden={consistency:10,importantMatches:10,injuryProneness:10,potential:10,...(p.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
   p.hiddenEvidence=p.hiddenEvidence||{};
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
