@@ -39,7 +39,7 @@ const teams=[
 ["DEN","Denver Nuggets","서부","Northwest"],["MIN","Minnesota Timberwolves","서부","Northwest"],["OKC","Oklahoma City Thunder","서부","Northwest"],["POR","Portland Trail Blazers","서부","Northwest"],["UTA","Utah Jazz","서부","Northwest"],
 ["GSW","Golden State Warriors","서부","Pacific"],["LAC","LA Clippers","서부","Pacific"],["LAL","Los Angeles Lakers","서부","Pacific"],["PHX","Phoenix Suns","서부","Pacific"],["SAC","Sacramento Kings","서부","Pacific"],
 ["DAL","Dallas Mavericks","서부","Southwest"],["HOU","Houston Rockets","서부","Southwest"],["MEM","Memphis Grizzlies","서부","Southwest"],["NOP","New Orleans Pelicans","서부","Southwest"],["SAS","San Antonio Spurs","서부","Southwest"]];
-const stars={BOS:"Jayson Tatum",BKN:"Michael Porter Jr.",NYK:"Karl-Anthony Towns",PHI:"Joel Embiid",TOR:"Scottie Barnes",CHI:"Josh Giddey",CLE:"Donovan Mitchell",DET:"Cade Cunningham",IND:"Pascal Siakam",MIL:"Giannis Antetokounmpo",ATL:"Dyson Daniels",CHA:"LaMelo Ball",MIA:"Giannis Antetokounmpo",ORL:"Franz Wagner",WAS:"Alex Sarr",DEN:"Nikola Jokić",MIN:"Rudy Gobert",OKC:"Shai Gilgeous-Alexander",POR:"Deni Avdija",UTA:"Lauri Markkanen",GSW:"Al Horford",LAC:"Rui Hachimura",LAL:"Luka Dončić",PHX:"Dillon Brooks",SAC:"Domantas Sabonis",DAL:"Kyrie Irving",HOU:"Alperen Sengun",MEM:"Zach Edey",NOP:"Yves Missi",SAS:"Victor Wembanyama"};
+const stars={BOS:"Jayson Tatum",BKN:"Michael Porter Jr.",NYK:"Karl-Anthony Towns",PHI:"Joel Embiid",TOR:"Scottie Barnes",CHI:"Josh Giddey",CLE:"Donovan Mitchell",DET:"Cade Cunningham",IND:"Pascal Siakam",MIL:"Thanasis Antetokounmpo",ATL:"Dyson Daniels",CHA:"LaMelo Ball",MIA:"Giannis Antetokounmpo",ORL:"Franz Wagner",WAS:"Alex Sarr",DEN:"Nikola Jokić",MIN:"Rudy Gobert",OKC:"Shai Gilgeous-Alexander",POR:"Deni Avdija",UTA:"Lauri Markkanen",GSW:"Al Horford",LAC:"Rui Hachimura",LAL:"Luka Dončić",PHX:"Dillon Brooks",SAC:"Domantas Sabonis",DAL:"Kyrie Irving",HOU:"Alperen Sengun",MEM:"Zach Edey",NOP:"Yves Missi",SAS:"Victor Wembanyama"};
 const pos=["PG","SG","SF","PF","C"],first=["Alex","Jordan","Marcus","Darius","Tyler","Cameron","Jalen","Malik","Devin","Aaron","Isaiah","Noah","Elijah","Dylan","Caleb","Brandon","Tre","Jaylen","Donovan","Riley"],last=["Carter","Brooks","Hayes","Mitchell","Reed","Foster","Bennett","Coleman","Parker","Turner","Wright","Morris","Jackson","Davis","Young","Howard","Price","Ward","Simmons","Ross"];
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pick=a=>a[rnd(0,a.length-1)], money=n=>"₩"+Math.round(n).toLocaleString("ko-KR")+"억";
 let state=load();
@@ -135,15 +135,7 @@ if(state?.clubs){
   p.ovr=Math.round(w.reduce((sum,k)=>sum+(+p.attrs[k]||0),0)/w.length*5);
   if((state.realPlayerDataVersion||0)<3)applyRealPlayerProfile(p);
  }));
- if((state.realPlayerDataVersion||0)<3){
-  let kawhi=null;
-  state.clubs.forEach(t=>{const i=t.players.findIndex(p=>p.name==="Kawhi Leonard");if(i>=0){const p=t.players.splice(i,1)[0];if(!kawhi)kawhi=p;}});
-  const tor=state.clubs.find(t=>t.id==="TOR");
-  if(tor){
-   if(!kawhi){const drop=[...tor.players].reverse().find(p=>!p.realData)||tor.players[tor.players.length-1];if(drop)tor.players=tor.players.filter(p=>p!==drop);kawhi=makePlayer("Kawhi Leonard","SF",1,18,"league");}
-   kawhi.name="Kawhi Leonard";kawhi.pos="SF";kawhi.origin="league";applyRealPlayerProfile(kawhi);tor.players.push(kawhi);
-  }
- }
+ // Version 3 previously forced Kawhi Leonard into Toronto. Removed: roster membership must come from the official team roster dataset, never a hard-coded exception.
  state.attrDistributionVersion=3;state.hiddenDistributionVersion=1;state.realPlayerDataVersion=3;persist();
 }
 function load(){try{return JSON.parse(localStorage.getItem("bm_save_v1"))}catch(e){return null}}
@@ -158,7 +150,7 @@ let ovr=Math.round(weights.reduce((s,k)=>s+a[k],0)/weights.length*5);
 let trait=pick(["캐치 앤 슛","픽앤롤 플레이메이커","림 프로텍터","트랜지션 피니셔","미드레인지 전문가","온볼 수비수","리바운드 사냥꾼","코너 3점 슈터","백도어 커터","강한 스크리너"]);
 return{id:crypto.randomUUID(),name,pos:p,origin,relationship:60,seasonStats:{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0},career:[],age:rnd(20,34),height:p==="C"?rnd(208,220):p==="PF"?rnd(200,211):p==="SF"?rnd(195,205):rnd(183,198),weight:p==="C"?rnd(108,125):rnd(82,105),ovr,attrs:a,hidden,salary:rnd(35,320),years:rnd(1,4),condition:rnd(78,100),fatigue:rnd(0,18),role:i<5?"선발":"로테이션",pts:0,reb:0,ast:0,minutes:0,trait,traits:[trait]};
 }
-function createLeague(teamId){let clubs=teams.map((t,i)=>{let list=[];let star=stars[t[0]];for(let n=0;n<12;n++){let p=pos[n%5];let nm=n===0?star:pick(first)+" "+pick(last);let base=n===0?17:rnd(8,14);{let pl=makePlayer(nm,p,n,base,"league");applyRealPlayerProfile(pl);list.push(pl)}}if(t[0]==="TOR"){const pl=makePlayer("Kawhi Leonard","SF",12,18,"league");applyRealPlayerProfile(pl);list[list.length-1]=pl;}return{id:t[0],name:t[1],conf:t[2],division:t[3],players:list,w:0,l:0,pf:0,pa:0,money:2500,coach:"수석 코치",tactics:{off:"균형",def:"맨투맨",tempo:"보통",boards:"균형"}}});let schedule=[];for(let r=0;r<50;r++){let order=[...clubs].sort(()=>Math.random()-.5);for(let i=0;i<15;i++){let home=order[i],away=order[29-i];schedule.push({id:schedule.length,round:r+1,home:home.id,away:away.id,played:false,hs:null,as:null,logs:[]})}}return{version:1,attrDistributionVersion:2,teamId,clubs,schedule,round:1,gameCount:0,season:"2026/27",cash:2500,log:[],tactics:{off:"균형",def:"맨투맨",tempo:"보통",boards:"균형",players:{}},created:new Date().toISOString()}}
+function createLeague(teamId){let clubs=teams.map((t,i)=>{let list=[];let star=stars[t[0]];for(let n=0;n<12;n++){let p=pos[n%5];let nm=n===0?star:pick(first)+" "+pick(last);let base=n===0?17:rnd(8,14);{let pl=makePlayer(nm,p,n,base,"league");applyRealPlayerProfile(pl);list.push(pl)}}return{id:t[0],name:t[1],conf:t[2],division:t[3],players:list,w:0,l:0,pf:0,pa:0,money:2500,coach:"수석 코치",tactics:{off:"균형",def:"맨투맨",tempo:"보통",boards:"균형"}}});let schedule=[];for(let r=0;r<50;r++){let order=[...clubs].sort(()=>Math.random()-.5);for(let i=0;i<15;i++){let home=order[i],away=order[29-i];schedule.push({id:schedule.length,round:r+1,home:home.id,away:away.id,played:false,hs:null,as:null,logs:[]})}}return{version:1,attrDistributionVersion:2,teamId,clubs,schedule,round:1,gameCount:0,season:"2026/27",cash:2500,log:[],tactics:{off:"균형",def:"맨투맨",tempo:"보통",boards:"균형",players:{}},created:new Date().toISOString()}}
 function my(){return state?.clubs.find(t=>t.id===state.teamId)}
 function club(id){return state.clubs.find(t=>t.id===id)}
 function teamName(id){return club(id)?.name||id}
