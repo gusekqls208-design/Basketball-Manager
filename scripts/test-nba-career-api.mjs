@@ -1,15 +1,10 @@
-const url="https://stats.nba.com/stats/playercareerstats?LeagueID=00&PerMode=PerGame&PlayerID=2544";
-const r=await fetch(url,{headers:{
- "Accept":"application/json, text/plain, */*",
- "Origin":"https://www.nba.com",
- "Referer":"https://www.nba.com/",
- "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
- "x-nba-stats-origin":"stats",
- "x-nba-stats-token":"true"
-},signal:AbortSignal.timeout(15000)});
-console.log("NBA_STATS_HTTP",r.status,r.headers.get("content-type"));
-const text=await r.text();
-console.log("NBA_STATS_BODY_HEAD",text.slice(0,1000));
-if(!r.ok)throw new Error("NBA stats API failed: "+r.status);
-const data=JSON.parse(text);
-console.log("NBA_STATS_SETS",JSON.stringify((data.resultSets||[]).map(x=>({name:x.name,headers:x.headers,rows:x.rowSet?.length,first:x.rowSet?.[0]}))));
+for(const season of [2026,2025]){
+ const url="https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/1966/gamelog?season="+season;
+ const r=await fetch(url,{headers:{"Accept":"application/json","User-Agent":"BasketballManager-HiddenScout/1.0"},signal:AbortSignal.timeout(15000)});
+ console.log("ESPN_GAMELOG_HTTP",season,r.status);
+ const body=await r.text();
+ console.log("ESPN_GAMELOG_HEAD",season,body.slice(0,300));
+ if(!r.ok)continue;
+ const d=JSON.parse(body);
+ console.log("ESPN_GAMELOG_META",season,JSON.stringify({keys:Object.keys(d),filters:d.filters,labels:d.labels,names:d.names,eventCount:d.events?.length,first:d.events?.[0]}));
+}
