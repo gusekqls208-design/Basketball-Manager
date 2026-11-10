@@ -246,6 +246,18 @@ console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,pl
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
 db.hiddenScouting={version:1,source:"ESPN NBA/NCAA + EuroLeague/EuroCup career season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from league games played/expected season games, not a verified medical injury log. ImportantMatches combines NBA 2K OVR star tier, playoff experience and playoff-vs-regular scoring as an impact proxy, not official clutch-time tracking. Potential is shown only for players aged 26 or younger; older players display a dash."};
 db.updatedAt=new Date().toISOString();
-await fs.writeFile(FILE,JSON.stringify(db,null,2)+"\n");
+const hiddenOutput={
+  snapshot:db.snapshot,
+  updatedAt:db.updatedAt,
+  hiddenScouting:db.hiddenScouting,
+  players:db.players.map(p=>({
+    name:p.name,team:p.team,teamAbbr:p.teamAbbr,espnId:p.espnId,
+    hidden:p.hidden,hiddenEvidence:p.hiddenEvidence||{},hiddenSource:p.hiddenSource||"",
+    hiddenScoutedAt:p.hiddenScoutedAt||"",hiddenReviewedAt:p.hiddenReviewedAt||"",
+    hiddenScoutingStatus:p.hiddenScoutingStatus||"unscouted",
+    career:Array.isArray(p.career)?p.career:[],careerLoaded:!!p.careerLoaded,careerSource:p.careerSource||""
+  }))
+};
+await fs.writeFile("hidden-scouting-2026-27.json",JSON.stringify(hiddenOutput,null,2)+"\n");
 console.log(JSON.stringify({players:db.players.length,scouted,failed:failed.length,failedNames:failed.map(x=>x.name)},null,2));
 if(failed.length>Math.max(40,db.players.length*.1))throw new Error("Too many players failed career scouting");
