@@ -421,7 +421,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=6)return;
+ if(!state?.clubs||state.rosterSourceVersion>=8)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
@@ -486,7 +486,7 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=7;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
+  state.rosterSourceVersion=8;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
   state.rosterSyncedAt=new Date().toISOString();persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
