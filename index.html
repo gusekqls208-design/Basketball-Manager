@@ -407,7 +407,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=13)return;
+ if(!state?.clubs||state.rosterSourceVersion>=14)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
@@ -462,7 +462,7 @@ async function syncOfficialRosters(){
     p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);p.physicalEstimated=isLive?(!a.height||!a.weight):!!a.physicalEstimated;
     p.jersey=a.jersey||"";p.secondaryPositions=stat?.secondaryPositions||a.secondaryPositions||[];
     p.photoUrl=stat?.headshot||(isLive?a.headshot?.href:"")||"";
-    if(stat){p.attrs={...stat.attrs};p.hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:10};p.hiddenSource="미스카우팅 · 중립 기준값";p.hiddenEvidence={};p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings";p.ratingsStatus=stat.ratingsStatus||"";p.ratingsSourcePlayer=stat.ratingsSourcePlayer||p.name;p.ratingsScale=stat.ratingsScale||"";p.ratingsSourceUrl=stat.ratingsSourceUrl||"";}
+    if(stat){p.attrs={...stat.attrs};p.hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:10,...(stat.hidden||{})};p.hiddenSource=stat.hiddenSource||"미스카우팅 · 중립 기준값";p.hiddenEvidence={...(stat.hiddenEvidence||{})};p.career=Array.isArray(stat.career)?stat.career:[];p.careerLoaded=!!stat.careerLoaded;p.careerSource=stat.careerSource||"";p.hiddenScoutedAt=stat.hiddenScoutedAt||"";p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings";p.ratingsStatus=stat.ratingsStatus||"";p.ratingsSourcePlayer=stat.ratingsSourcePlayer||p.name;p.ratingsScale=stat.ratingsScale||"";p.ratingsSourceUrl=stat.ratingsSourceUrl||"";}
     else p.ratingsSource="individual scouting estimate";
     if(isLive){
      p.birthDate=a.dateOfBirth||"";p.experience=Number(a.experience?.years||0);
@@ -479,7 +479,7 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=13;state.rosterRatingsSnapshot=database.snapshot;state.rosterRatingsCoverage=database.ratingsCoverage;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
+  state.rosterSourceVersion=14;state.rosterRatingsSnapshot=database.snapshot;state.rosterRatingsCoverage=database.ratingsCoverage;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
   state.rosterSyncedAt=new Date().toISOString();persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
