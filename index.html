@@ -623,12 +623,12 @@ function positionLiveFormation(m,offense,defense,phase){
  }
  const ballSide=m.possHome?1:-1;
  defense.forEach((p,i)=>{
-  const mark=offense[i%offense.length];p._matchup=mark.id;
+  const mark=offense[i%offense.length];if(!(phase>=2&&i===4))p._matchup=mark.id;
   const targetEl=document.getElementById("liveP_"+mark.id);
   const tx=targetEl?parseFloat(targetEl.style.left):50,ty=targetEl?parseFloat(targetEl.style.top):50;
   const gap=phase===3||phase===4?3.5:5;
   let dx=tx-ballSide*gap,dy=ty+(i%2?2:-2);
-  if(phase===2&&i===4){dx=m.possHome?47:53;dy=50;liveComment("수비가 스크린에 대응합니다. 매치업을 바꾸며 따라붙습니다.");}
+  if(phase===2&&i===4){dx=m.possHome?47:53;dy=50;p._matchup=handler.id;}
   moveLivePlayer(p,dx,dy,phase>=4?"block":"defend");
  });
  const h=document.getElementById("liveP_"+handler.id),ball=document.getElementById("liveBall");
@@ -652,7 +652,7 @@ function resolveLiveShot(m,offense,defense){
  const three=Math.random()<.38,attrs=shooter.attrs||{},defAttrs=defender.attrs||{};
  const rating=Number(three?(attrs.three??attrs.threePoint??10):(attrs.mid??attrs.inside??10));
  const defenseRating=Number(defAttrs.perimeter??defAttrs.defense??10);
- const hit=Math.random()<Math.max(.20,Math.min(.72,.43+(rating-10)*.012-(defenseRating-10)*.009+(m.tactic==="3점슛 중심"&&three?.07:0)));
+ const hit=Math.random()<Math.max(.20,Math.min(.72,.43+(rating-10)*.012-(defenseRating-10)*.009+(m.tactic==="3점슛 중심"&&three ? .07 : 0)));
  const stats=m.stats[shooter.id],side=m.possHome?"home":"away";
  stats.fga++;if(three)stats.threeA++;
  const blocked=Math.random()<Math.max(.03,Math.min(.28,.08+(defenseRating-rating)*.012));
