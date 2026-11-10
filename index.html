@@ -158,7 +158,7 @@ function fmt(n){return Math.round(n).toLocaleString("ko-KR")}
 function nav(page){document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===page));render(page)}
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>nav(b.dataset.page));
 function render(page="home"){if(!state){renderSetup();return}document.getElementById("teamhead").textContent=my().name;document.getElementById("moneyhead").textContent=money(state.cash);let m=document.getElementById("main");({home:homePage,roster:rosterPage,schedule:schedulePage,standings:standingsPage,tactics:tacticsPage,market:marketPage,office:officePage,save:savePage}[page]||homePage)(m)}
-function renderSetup(){document.getElementById("sidebar").classList.add("hidden");document.getElementById("teamhead").textContent="프랜차이즈 선택";document.getElementById("main").innerHTML='<div class="setup"><div class="setupintro"><div class="eyebrow">YOUR FRANCHISE. YOUR LEGACY.</div><h1>BUILD A DYNASTY.</h1><p>30개 NBA 프랜차이즈 중 한 팀을 선택해 단장 겸 감독으로 커리어를 시작하세요. 50경기 정규시즌, 플레이오프, 드래프트와 선수 시장이 기다립니다.</p><div class="notice">초기 플레이 가능한 빌드입니다. 구단 선택과 경기 엔진부터 구현했으며, 현재 선수단은 경기 시스템 검증용 샘플 데이터입니다. 실제 2026/27 개막 로스터 519명과 상세 능력치·계약 정보는 별도 검증 후 순차 반영합니다.</div></div><div class="sectionbar"><h2>SELECT YOUR FRANCHISE</h2><span class="small muted">30 TEAMS · 2 CONFERENCES</span></div><div class="teamgrid">'+teams.map(t=>'<button class="teamtile" onclick="startClub(\''+t[0]+'\')"><b>'+t[1]+'</b><small>'+t[2]+' · '+t[3]+'</small></button>').join("")+'</div></div>'}
+function renderSetup(){document.getElementById("sidebar").classList.add("hidden");document.getElementById("teamhead").textContent="프랜차이즈 선택";document.getElementById("main").innerHTML='<div class="setup"><div class="setupintro"><div class="eyebrow">YOUR FRANCHISE. YOUR LEGACY.</div><h1>BUILD A DYNASTY.</h1><p>30개 NBA 프랜차이즈 중 한 팀을 선택해 단장 겸 감독으로 커리어를 시작하세요. 50경기 정규시즌, 플레이오프, 드래프트와 선수 시장이 기다립니다.</p><div class="notice">초기 플레이 가능한 빌드입니다. 구단 선택과 경기 엔진부터 구현했으며, 2026–27 현행 NBA 30개 구단 선수단을 불러옵니다. 실제 선수 정보와 사진이 적용되며, 능력치는 경기 기록 기반 게임용 스카우팅 추정치입니다.</div></div><div class="sectionbar"><h2>SELECT YOUR FRANCHISE</h2><span class="small muted">30 TEAMS · 2 CONFERENCES</span></div><div class="teamgrid">'+teams.map(t=>'<button class="teamtile" onclick="startClub(\''+t[0]+'\')"><b>'+t[1]+'</b><small>'+t[2]+' · '+t[3]+'</small></button>').join("")+'</div></div>'}
 function startClub(id){state=createLeague(id);persist();document.getElementById("sidebar").classList.remove("hidden");nav("home");syncOfficialRosters().catch(e=>console.error("NBA roster sync",e))}
 function head(k,title,desc,action=""){return '<div class="pagehead"><div><div class="eyebrow">'+k+'</div><h1>'+title+'</h1><div class="small muted">'+desc+'</div></div>'+action+'</div>'}
 function nextGame(){return state.schedule.find(g=>!g.played&&(g.home===state.teamId||g.away===state.teamId))}
@@ -239,62 +239,62 @@ const ESPN_TEAM_IDS={ATL:1,BOS:2,BKN:17,CHA:30,CHI:4,CLE:5,DAL:6,DEN:7,DET:8,GSW
 function cleanPlayerKey(n){return String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/gi,"").toLowerCase()}
 function espnPosition(a){let v=String(a||"").toUpperCase();if(["PG","POINT GUARD"].includes(v))return"PG";if(["SG","SHOOTING GUARD"].includes(v))return"SG";if(["SF","SMALL FORWARD"].includes(v))return"SF";if(["PF","POWER FORWARD"].includes(v))return"PF";if(["C","CENTER"].includes(v))return"C";if(v==="G")return"PG";if(v==="F")return"SF";return"C"}
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=1)return;
- const status=document.getElementById("main");if(status)status.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 선수단을 불러오는 중입니다. 공식 선수 정보와 사진을 연결하고 있습니다…</div>');
- const requests=Object.entries(ESPN_TEAM_IDS).map(async([abbr,id])=>{
-  const response=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+id+"/roster?season=2027",{cache:"no-store"});
-  if(!response.ok)throw new Error(abbr+" roster "+response.status);
-  const data=await response.json();
-  const players=(data.athletes||[]).filter(x=>x&&x.id&&x.displayName);
-  if(!players.length)throw new Error(abbr+" roster empty");
-  return{abbr,players};
- });
- const results=await Promise.allSettled(requests);
- const successful=results.filter(x=>x.status==="fulfilled").map(x=>x.value);
- if(successful.length<30){
-  const notice=document.getElementById("rosterSyncNotice");
-  if(notice)notice.textContent="실제 선수단 동기화가 일부 구단에서 실패했습니다 ("+successful.length+"/30). 기존 선수단은 유지했습니다. 네트워크 연결 후 새로고침해 주세요.";
-  console.error("NBA roster sync incomplete",results.filter(x=>x.status==="rejected"));
-  return;
+ if(!state?.clubs||state.rosterSourceVersion>=2)return;
+ const main=document.getElementById("main");
+ if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 전체 NBA 선수단 30개 구단 데이터를 불러오는 중입니다…</div>');
+ try{
+  const response=await fetch("./players-2026-27.json",{cache:"no-store"});
+  if(!response.ok)throw new Error("선수 데이터 파일 로드 실패 ("+response.status+")");
+  const database=await response.json();
+  if(!Array.isArray(database.players)||database.players.length<500)throw new Error("선수 데이터 검증 실패");
+  const seen=new Set(),byTeam=new Map();
+  for(const item of database.players){
+   const key=cleanPlayerKey(item.name);
+   if(!key||seen.has(key))continue;
+   seen.add(key);
+   if(!byTeam.has(item.team))byTeam.set(item.team,[]);
+   byTeam.get(item.team).push(item);
+  }
+  if(byTeam.size!==30)throw new Error("30개 구단 데이터 누락 ("+byTeam.size+"/30)");
+  const oldByName=new Map();
+  for(const team of state.clubs)for(const p of team.players||[])if(p.realData||p.origin==="official")oldByName.set(cleanPlayerKey(p.name),p);
+  let total=0;
+  for(const team of state.clubs){
+   const records=byTeam.get(team.id);
+   if(!records?.length)throw new Error(team.id+" 선수단 누락");
+   const next=records.map((d,index)=>{
+    const old=oldByName.get(cleanPlayerKey(d.name));
+    const posKey=["PG","SG","SF","PF","C"].includes(d.pos)?d.pos:"SF";
+    const p=makePlayer(d.name,posKey,index,12,"official");
+    p.id="nba-"+d.id;p.nbaId=String(d.id);p.realData=true;p.origin="official";
+    p.age=Number(d.age)||26;p.ageApprox=!!d.ageApprox;
+    p.height=Number(d.height)||200;p.weight=Number(d.weight)||95;
+    p.jersey=d.jersey||"";p.photoUrl=d.headshot||"";
+    p.attrs={...d.attrs};p.hidden={...d.hidden};
+    p.ovr=Number(d.ovr)||Math.round(Object.values(d.attrs).reduce((a,b)=>a+b,0)/Object.keys(d.attrs).length*5);
+    p.salary=Number(d.salary)||100;p.years=Number(d.years)||1;
+    p.traits=d.traits||[];p.trait=p.traits[0]||"";
+    p.seasonStats=old?.seasonStats||p.seasonStats;p.career=old?.career||[];
+    p.relationship=old?.relationship??60;p.pts=old?.pts||0;p.reb=old?.reb||0;p.ast=old?.ast||0;p.minutes=old?.minutes||0;
+    p.condition=old?.condition??rnd(82,100);p.fatigue=old?.fatigue??rnd(0,12);
+    p.birthDate=d.birthDate||"";p.ratingsSource=d.ratingsSource||"scouting estimate";
+    return p;
+   });
+   next.sort((a,b)=>b.ovr-a.ovr);
+   next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
+   team.players=next;total+=next.length;
+  }
+  state.rosterSourceVersion=2;state.rosterSource="2026-27 current 30-team roster dataset";state.rosterSyncedAt=new Date().toISOString();
+  persist();
+  const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
+  const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
+  console.info("NBA full roster imported",{teams:byTeam.size,players:total,unique:seen.size});
+ }catch(e){
+  console.error("Full NBA roster import failed",e);
+  const n=document.getElementById("rosterSyncNotice");
+  if(n)n.textContent="전체 선수단 데이터 적용 실패. 새로고침해 다시 시도해 주세요. ("+e.message+")";
  }
- let total=0,unique=new Set();
- for(const pack of successful){
-  const team=state.clubs.find(t=>t.id===pack.abbr);if(!team)continue;
-  const oldByName=new Map(team.players.map(p=>[cleanPlayerKey(p.name),p]));
-  const next=pack.players.map((a,index)=>{
-   const name=a.displayName||a.fullName||[a.firstName,a.lastName].filter(Boolean).join(" ");
-   const old=oldByName.get(cleanPlayerKey(name));
-   const posKey=espnPosition(a.position?.abbreviation||a.position?.name);
-   const exp=Number(a.experience?.years||0),age=Number(a.age)|| (a.dateOfBirth?Math.floor((Date.now()-Date.parse(a.dateOfBirth))/(365.2425*86400000)):26);
-   const base=Math.max(8,Math.min(17,Math.round(9.5+Math.min(exp,12)*.48+(age>30?1:0))));
-   let p=makePlayer(name,posKey,index,base,"official");
-   p.id="nba-"+a.id;p.espnId=String(a.id);p.realData=true;p.origin="official";
-   p.age=age;p.height=Math.round(Number(a.height||78)*2.54);p.weight=Math.round(Number(a.weight||210)*.453592);
-   p.jersey=a.jersey||"";p.birthDate=a.dateOfBirth||"";p.photoUrl=NBA_PLAYER_IDS[cleanPlayerKey(name)]?"https://cdn.nba.com/headshots/nba/latest/1040x760/"+NBA_PLAYER_IDS[cleanPlayerKey(name)]+".png":(a.headshot?.href||"");
-   p.experience=exp;p.positionLabel=a.position?.displayName||a.position?.name||posKey;
-   p.injuryStatus=(a.injuries||[]).map(x=>x.status).filter(Boolean).join(", ");
-   p.contracts=a.contracts||[];
-   p.salary=old?.salary??(p.contracts.find(c=>c.season?.year===2027)?.salary?Math.round(p.contracts.find(c=>c.season?.year===2027).salary/1000000*14):p.salary);
-   if(old){
-    p.seasonStats=old.seasonStats||p.seasonStats;p.career=old.career||[];p.relationship=old.relationship??60;
-    p.pts=old.pts||0;p.reb=old.reb||0;p.ast=old.ast||0;p.minutes=old.minutes||0;
-    p.condition=old.condition??p.condition;p.fatigue=old.fatigue??p.fatigue;p.role=old.role||p.role;
-   }
-   applyRealPlayerProfile(p);
-   p.realData=true;p.origin="official";p.espnId=String(a.id);p.photoUrl=a.headshot?.href||"";
-   p.age=age;p.height=Math.round(Number(a.height||78)*2.54);p.weight=Math.round(Number(a.weight||210)*.453592);
-   p.jersey=a.jersey||"";p.birthDate=a.dateOfBirth||"";p.experience=exp;p.positionLabel=a.position?.displayName||a.position?.name||posKey;
-   p.injuryStatus=(a.injuries||[]).map(x=>x.status).filter(Boolean).join(", ");
-   unique.add(cleanPlayerKey(name));return p;
-  });
-  team.players=next;total+=next.length;
- }
- state.rosterSourceVersion=1;state.rosterSource="ESPN live NBA team rosters (2026-27)";
- state.rosterSyncedAt=new Date().toISOString();persist();
- const notice=document.getElementById("rosterSyncNotice");if(notice)notice.remove();
- const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
- console.info("NBA real roster sync complete", {teams:successful.length,players:total,unique:unique.size});
 }
 
-if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");render();syncOfficialRosters().catch(e=>{console.error(e);const n=document.getElementById("rosterSyncNotice");if(n)n.textContent="선수단 동기화 실패: 인터넷 연결을 확인하고 새로고침해 주세요."})}else renderSetup();
+if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");render();syncOfficialRosters()}else renderSetup();
 </script></body></html>
