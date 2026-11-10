@@ -135,9 +135,11 @@ function applyPlayer(p, source) {
   const potential = pick(a, "potential") ?? asNum(source.potential);
   if (potential !== null) p.hidden = { ...(p.hidden || {}), potential: to20(potential) };
 
-  p.ratingsSource = "NBA 2K27 current roster (NBA 2K API; sourced from 2KRatings)";
-  p.ratingsSourceUrl = "https://nba2kapi.com";
+  p.ratingsSource = source.manualSource || "NBA 2K27 current roster (NBA 2K API; sourced from 2KRatings)";
+  p.ratingsSourceUrl = source.manualUrl || (source.slug ? "https://nba2kapi.com/players/" + source.slug : "https://nba2kapi.com");
   p.ratingsSourcePlayer = source.name || p.name;
+  p.ratingsSourceTeam = source.team || null;
+  p.ratingsSourcePositions = Array.isArray(source.positions) ? source.positions : [];
   p.ratingsScale = "2K27 0-100 mapped to game 1-20 by round(value/5); OVR retained on 0-99";
   p.ratingsUpdatedAt = today;
   p.ratingsStatus = "2K-direct-27";
@@ -149,38 +151,84 @@ function applyPlayer(p, source) {
 const db = JSON.parse(await fs.readFile(FILE, "utf8"));
 const sources = await fetchAll();
 const byName = new Map(sources.map(s => [norm(s.name), s]));
+const aliases = {
+  "mo bamba": "Mohamed Bamba",
+  "jimmy butler iii": "Jimmy Butler",
+  "nic claxton": "Nicolas Claxton",
+  "ronald holland ii": "Ron Holland",
+  "bronny james": "Bronny James Jr.",
+  "svi mykhailiuk": "Sviatoslav Mykhailiuk",
+  "labaron philon": "Labaron Philon Jr.",
+  "alex sarr": "Alexandre Sarr",
+  "bub carrington": "Carlton Carrington",
+  "rob dillingham": "Robert Dillingham",
+};
 let matched = 0;
+const matchedSourceNames = new Set();
 const unmatchedSource = [];
 for (const p of db.players) {
-  const source = byName.get(norm(p.name));
+  const source = byName.get(norm(p.name)) || byName.get(norm(aliases[norm(p.name)]));
   if (!source) continue;
   applyPlayer(p, source);
+  matchedSourceNames.add(norm(source.name));
   matched++;
 }
-for (const s of sources) if (!db.players.some(p => norm(p.name) === norm(s.name))) unmatchedSource.push(s.name);
 
-if (matched < 450) throw new Error(`Safety stop: matched only ${matched} of ${sources.length} 2K27 players to game roster`);
+// Enrique Freeman is a verified 2K27 free agent, so he is absent from the current-team API slice.
+const enrique = db.players.find(p => norm(p.name) === norm("Enrique Freeman"));
+if (enrique && !matchedSourceNames.has(norm("Enrique Freeman"))) {
+  const source = {
+    name: "Enrique Freeman", slug: "enrique-freeman", team: "Free Agent",
+    positions: ["PF", "C"], overall: 69, height: "6'9\"", weight: "220 lbs",
+    manualSource: "NBA 2K27 detailed attributes (2kAuction)",
+    manualUrl: "https://2kauction.com/mynba/players/enrique-freeman",
+    attributes: {
+      drivingLayup:74, drivingDunk:80, standingDunk:60, postControl:62, drawFoul:40,
+      closeShot:74, midRangeShot:66, threePointShot:66, freeThrow:67, shotIQ:35, offensiveConsistency:30,
+      passAccuracy:59, passVision:32, passIQ:60, ballHandle:62, speedWithBall:59,
+      interiorDefense:66, perimeterDefense:66, steal:35, block:56, helpDefenseIQ:68,
+      passPerception:63, defensiveConsistency:50, offensiveRebound:40, defensiveRebound:57,
+      speed:74, agility:74, strength:60, vertical:81, stamina:88, hustle:95,
+      intangibles:70, potential:77, reactionTime:62
+    }
+  };
+  applyPlayer(enrique, source);
+  enrique.ratingsSource = source.manualSource;
+  enrique.ratingsSourceUrl = source.manualUrl;
+  enrique.ratingsScale = "2K27 0-100 mapped to game 1-20; overall retained on 0-99";
+  enrique.ratingsStatus = "2K-direct-27";
+}
+
+for (const s of sources) if (!matchedSourceNames.has(norm(s.name))) unmatchedSource.push(s.name);
+if (matched < 450) throw new Error("Safety stop: matched only " + matched + " of " + sources.length + " 2K27 players to game roster");
 
 const counts = {};
 for (const p of db.players) counts[p.ratingsStatus || "unverified"] = (counts[p.ratingsStatus || "unverified"] || 0) + 1;
-const unverified = db.players.filter(p => p.ratingsStatus !== "2K-direct-27" && !String(p.ratingsStatus || "").startsWith("2K-direct")).map(p => p.name);
+const unverified = db.players.filter(p => !p.ratingsStatus || p.ratingsStatus === "unverified").map(p => p.name);
+const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p => p.name);
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 current roster ratings synced from NBA 2K API public endpoint; ${matched} of ${db.players.length} game-roster players matched; unmatched players retain prior verified source or remain unverified`;
 db.ratingNotes = "1-20 scale. Direct NBA 2K27 attributes are mapped from 0-100 by rounding rating/5; dunk = 75% Driving Dunk + 25% Standing Dunk; rebound = mean of Offensive and Defensive Rebound. Non-direct mental/role attributes are documented proxies, not direct 2K ratings. Six hidden attributes remain neutral/unscouted unless separately verified; potential is mapped from 2K27 when available.";
-db.ratingsMethod = "Current NBA 2K27 source: NBA 2K API public current-roster endpoint, which republishes 2KRatings data. Direct attributes map by Math.round(value/5) to game 1-20. Dunk uses 75% Driving Dunk + 25% Standing Dunk; rebound uses mean of Offensive Rebound and Defensive Rebound. Acceleration uses the direct 2K27 Acceleration attribute. Balance is the mean of Agility and Strength because no separate balance attribute is published. Mental/role fields without direct 2K equivalents use documented proxies (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception, offensive/defensive consistency, Reaction Time, Draw Foul).";
+db.ratingsMethod = "Current NBA 2K27 source: NBA 2K API public current-roster endpoint, which republishes 2KRatings data; verified free agents are supplemented from 2kAuction player pages. Direct attributes map by Math.round(value/5) to game 1-20. Dunk uses 75% Driving Dunk + 25% Standing Dunk; rebound uses mean of Offensive Rebound and Defensive Rebound. Acceleration uses a direct source value when present; otherwise the previous Speed with Ball proxy is retained. Balance is the mean of Agility and Strength because no separate balance attribute is published. Mental/role fields without direct 2K equivalents use documented proxies (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception, offensive/defensive consistency, Reaction Time, Draw Foul).";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
   sourceRows: sources.length,
+  source2K25Rows: counts["2K-direct-25"] || 0,
+  source2K26Rows: counts["2K-direct"] || 0,
   ratingsCounts: counts,
   playersTotal: db.players.length,
   playersWith2KRatings: db.players.filter(p => String(p.ratingsStatus || "").startsWith("2K-direct")).length,
   unverifiedPlayers: unverified.length,
   unverifiedNames: unverified,
+  partialPlayers: partial.length,
+  partialNames: partial,
   direct2K27Matched: matched,
+  manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
+  accelerationProxy: "2K27 direct acceleration where available; otherwise Speed with Ball proxy",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
 await fs.writeFile(FILE, JSON.stringify(db, null, 2) + "\n");
-console.log(JSON.stringify({sourceRows:sources.length,matched,unverified:unverified.length,unmatchedSource:unmatchedSource.length,counts},null,2));
+console.log(JSON.stringify({sourceRows:sources.length,matched,unverified:unverified.length,partial:partial.length,unmatchedSource:unmatchedSource.length,counts},null,2));
