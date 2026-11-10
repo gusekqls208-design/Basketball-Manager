@@ -200,6 +200,16 @@ if (enrique && !matchedSourceNames.has(norm("Enrique Freeman"))) {
 }
 
 for (const s of sources) if (!matchedSourceNames.has(norm(s.name))) unmatchedSource.push(s.name);
+for (const p of db.players) {
+  if (!p.ratingsStatus) {
+    p.ratingsStatus = "unverified";
+    p.ratingsSource = "No verified NBA 2K27 rating found; provisional age/position-based estimate";
+    p.ratingsScale = "unverified provisional estimate; not a direct 2K rating";
+    p.ratingsConfidence = "low";
+    p.ratingsUpdatedAt = today;
+    p.hiddenSource = "Unscouted; hidden attributes remain neutral baseline";
+  }
+}
 if (matched < 450) throw new Error("Safety stop: matched only " + matched + " of " + sources.length + " 2K27 players to game roster");
 
 const counts = {};
