@@ -148,6 +148,7 @@ for(const p of db.players){
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
 }
 const scouted=db.players.filter(p=>p.hiddenScoutedAt).length;
+console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,players:db.players.length,targets:targets.length,scouted,failed:failed.length,sampleFailures:failed.slice(0,12)}));
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
 db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,scoutedPlayers:scouted,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
 db.updatedAt=new Date().toISOString();
