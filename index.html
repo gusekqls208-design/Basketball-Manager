@@ -540,6 +540,7 @@ function hasAnyTrait(p,names){return names.some(n=>hasTrait(p,n))}
 function weightedPick(list,score){let weights=list.map(p=>Math.max(1,score(p))),total=weights.reduce((a,b)=>a+b,0),roll=Math.random()*total;for(let i=0;i<list.length;i++){roll-=weights[i];if(roll<=0)return list[i]}return list[list.length-1]}
 function power(t){let p=t.players.slice(0,8);let base=p.reduce((s,x)=>s+x.ovr*.13+x.condition*.04-x.fatigue*.08,0)/p.length;let fit=0;if(t.tactics){fit+=t.tactics.off==="3점슛 중심"?p.reduce((s,x)=>s+x.attrs.three*.018,0)/p.length:t.tactics.off==="픽앤롤 중심"?p.reduce((s,x)=>s+(x.attrs.handle+x.attrs.pass+x.attrs.screen)/60*.018,0)/p.length:0;fit+=t.tactics.def==="맨투맨"?p.reduce((s,x)=>s+x.attrs.perimeter*.012,0)/p.length:t.tactics.def.includes("지역")?p.reduce((s,x)=>s+(x.attrs.interior+x.attrs.rebound)/40*.012,0)/p.length:0;if(t.tactics.tempo==="빠르게")fit+=p.reduce((s,x)=>s+(x.attrs.speed+x.attrs.stamina)/40*.04,0)/p.length;if(t.tactics.tempo==="느리게")fit+=p.reduce((s,x)=>s+x.attrs.decisions*.035,0)/p.length;}return base+fit}
 function playNext(){
+ if(window.liveMatch&&!window.liveMatch.ended){window.liveMatch.paused=false;showGame(window.liveMatch.g.id);return;}
  const g=nextGame();if(!g)return;
  const home=club(g.home),away=club(g.away);
  window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,paused:false,ended:false,homeLine:home.players.slice(0,5),awayLine:away.players.slice(0,5),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,tactic:state.tactics?.off||"균형",timeoutOverlay:false};
@@ -561,7 +562,7 @@ function showGame(id){
  '<div class="nba-bottom"><span id="liveStatus">TIP-OFF 준비</span><button class="btn ghost" onclick="finishBroadcast()">경기 종료 처리</button></div></div>';
  renderLivePlayers();refreshLiveLineup();updateLiveScoreboard();startBroadcast(m);
 }
-function exitBroadcast(){if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;document.body.classList.remove("broadcast-mode");nav("schedule")}
+function exitBroadcast(){if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;if(window.liveMatch&&!window.liveMatch.ended)window.liveMatch.paused=true;document.body.classList.remove("broadcast-mode");nav("schedule")}
 function toggleBroadcast(){const m=window.liveMatch;if(!m)return;m.paused=!m.paused;const b=document.getElementById("broadcastPause");if(b)b.textContent=m.paused?"▶ 재개":"Ⅱ 일시정지"}
 function setBroadcastSpeed(v){const m=window.liveMatch;if(!m)return;m.speed=Math.max(.5,Number(v)||1)}
 function callTimeout(){const m=window.liveMatch;if(!m||m.ended||m.paused)return;const side=m.g.home===state.teamId?"home":"away";const key=side+"Timeouts";if(m[key]<=0){liveComment("더 이상 사용할 수 있는 타임아웃이 없습니다.");return}m[key]--;m.paused=true;m.timeoutOverlay=true;document.getElementById("broadcastPause").textContent="▶ 재개";document.getElementById("liveStatus").textContent="TIMEOUT · 작전 타임";document.getElementById("broadcastDialogue").textContent="벤치에서 선수들을 불러 모읍니다. 수비 매치업과 다음 공격 패턴을 다시 정비합니다.";updateLiveScoreboard()}
