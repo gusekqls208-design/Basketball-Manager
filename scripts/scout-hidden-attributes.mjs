@@ -66,7 +66,7 @@ function seasonGames(year){
 function scoreHidden(p,rows){
   const done=rows.filter(r=>r.gp>0);
   if(!done.length)return false;
-  p.hidden={...(p.hidden||{})};
+  p.hidden={...(p.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;
   p.hiddenEvidence={...(p.hiddenEvidence||{})};
   const completed=done.filter(r=>r.year<2027);
   const nbaRows=completed.filter(r=>r.league==="NBA");
@@ -99,10 +99,12 @@ function scoreHidden(p,rows){
     const regPts=regularRows.reduce((n,r)=>n+r.pts*r.gp,0)/Math.max(1,regularRows.reduce((n,r)=>n+r.gp,0));
     const poPts=playoffRows.reduce((n,r)=>n+r.playoffs.pts*r.playoffs.gp,0)/poGp;
     const uplift=regPts>0?(poPts-regPts)/regPts:0;
-    p.hidden.importantMatches=clamp(10+Math.max(-.35,Math.min(.5,uplift))*18+Math.min(4,poGp/35));
-    p.hidden.pressure=clamp(10+Math.max(-.3,Math.min(.4,uplift))*15+Math.min(3,poGp/45));
-    p.hiddenEvidence.importantMatches=(playoffRows[0]?.league||"NBA")+" postseason performance vs regular season (not official clutch tracking)";
-    p.hiddenEvidence.pressure=(playoffRows[0]?.league||"NBA")+" postseason scoring change and sample size (proxy, not official clutch tracking)";
+    const ovr=Number(p.ovr)||70;
+    const starBase=ovr>=95?17:ovr>=90?16:ovr>=85?14:ovr>=80?12:10;
+    const playoffExperience=poGp>=150?2:poGp>=75?1:0;
+    const playoffPerformance=Math.max(-2,Math.min(2,uplift*8));
+    p.hidden.importantMatches=clamp(starBase+playoffExperience+playoffPerformance,1,20);
+    p.hiddenEvidence.importantMatches="NBA 2K OVR star tier + ESPN playoff experience + postseason scoring change (not official clutch tracking)";
   }
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
   p.career=done.map(r=>({season:(r.year-1)+"-"+String(r.year).slice(-2),league:r.league||"NBA",team:r.team||"NBA",gp:r.gp,pts:r.pts,reb:r.reb,ast:r.ast,stl:r.stl,blk:r.blk,playoffs:r.playoffs||null}));
@@ -229,7 +231,7 @@ for(const p of db.players){
 }
 failed=failed.filter(x=>!db.players.find(p=>p.name===x.name)?.hiddenScoutedAt);
 for(const p of db.players){
-  p.hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:10,...(p.hidden||{})};
+  p.hidden={consistency:10,importantMatches:10,professionalism:10,injuryProneness:10,potential:10,...(p.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
   p.hiddenEvidence=p.hiddenEvidence||{};
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
@@ -241,7 +243,7 @@ for(const p of db.players){
 const scouted=db.players.filter(p=>p.hiddenScoutedAt).length;
 console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,players:db.players.length,targets:targets.length,scouted,failed:failed.length,sampleFailures:failed.slice(0,30),unscouted:db.players.filter(p=>!p.hiddenScoutedAt).map(p=>({name:p.name,team:p.teamAbbr,age:p.age,experience:p.experience,espnId:p.espnId,status:p.hiddenScoutingStatus}))}));
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
-db.hiddenScouting={version:1,source:"ESPN NBA/NCAA + EuroLeague/EuroCup career season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from league games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
+db.hiddenScouting={version:1,source:"ESPN NBA/NCAA + EuroLeague/EuroCup career season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from league games played/expected season games, not a verified medical injury log. ImportantMatches combines NBA 2K OVR star tier, playoff experience and playoff-vs-regular scoring as an impact proxy, not official clutch-time tracking. Potential is shown only for players aged 26 or younger; older players display a dash."};
 db.updatedAt=new Date().toISOString();
 await fs.writeFile(FILE,JSON.stringify(db,null,2)+"\n");
 console.log(JSON.stringify({players:db.players.length,scouted,failed:failed.length,failedNames:failed.map(x=>x.name)},null,2));
