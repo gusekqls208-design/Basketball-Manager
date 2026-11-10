@@ -14,10 +14,6 @@ const today = new Date().toISOString().slice(0, 10);
 const norm = (s) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 const asNum = (v) => typeof v === "number" && Number.isFinite(v) ? v : null;
 const to20 = (v) => v == null ? null : Math.max(1, Math.min(20, Math.round(v / 5)));
-const mean = (...xs) => {
-  const vals = xs.map(asNum).filter(v => v !== null);
-  return vals.length ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
-};
 function flatten(obj, out = {}) {
   if (!obj || typeof obj !== "object") return out;
   for (const [k,v] of Object.entries(obj)) {
@@ -101,7 +97,7 @@ function applyPlayer(p, source) {
     determination: ["hustle"],
     flair: ["drawFoul"],
     speed: ["speed"],
-    acceleration: ["acceleration"],
+    acceleration: ["acceleration", "speedWithBall"],
     agility: ["agility"],
     jumping: ["vertical"],
     strength: ["strength"],
@@ -109,10 +105,8 @@ function applyPlayer(p, source) {
   };
   for (const [target, keys] of Object.entries(direct)) setMapped(next, target, pick(a, ...keys));
 
-  const driving = pick(a, "drivingDunk");
-  const standing = pick(a, "standingDunk");
-  const dunk = driving !== null && standing !== null ? driving * 0.75 + standing * 0.25 : (driving ?? standing);
-  setMapped(next, "dunk", dunk);
+  // Use the direct 2K Driving Dunk rating; do not blend in Standing Dunk.
+  setMapped(next, "dunk", pick(a, "drivingDunk"));
 
   // The game's single Rebound attribute represents defensive rebounding only.
   // Offensive Rebound is intentionally excluded rather than averaged in.
@@ -122,8 +116,8 @@ function applyPlayer(p, source) {
   // understate his historical weak-side/chase-down block ability.
   if (norm(p.name) === "lebronjames") next.block = 17;
 
-  const balance = mean(pick(a, "agility"), pick(a, "strength"));
-  setMapped(next, "balance", balance);
+  // Balance has no separate 2K attribute; use the direct 2K Agility rating.
+  setMapped(next, "balance", pick(a, "agility"));
 
   p.attrs = next;
   if (typeof source.overall === "number") p.ovr = source.overall;
@@ -226,8 +220,8 @@ const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p =
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 current roster ratings synced from NBA 2K API public endpoint; ${matched} of ${db.players.length} game-roster players matched; unmatched players retain prior verified source or remain unverified`;
-db.ratingNotes = "1-20 scale. Direct NBA 2K27 attributes are mapped from 0-100 by rounding rating/5; dunk = 75% Driving Dunk + 25% Standing Dunk; rebound = Defensive Rebound only. Non-direct mental/role attributes are documented proxies, not direct 2K ratings. Seven hidden attributes remain neutral/unscouted; potential is direct 2K27 only where the source provides it and otherwise remains a legacy estimate.";
-db.ratingsMethod = "Current NBA 2K27 source: NBA 2K API public current-roster endpoint, which republishes 2KRatings data; verified free agents are supplemented from 2kAuction player pages. Direct attributes map by Math.round(value/5) to game 1-20. Dunk uses 75% Driving Dunk + 25% Standing Dunk; rebound uses Defensive Rebound only. Acceleration uses a direct source value when present; otherwise the previous Speed with Ball proxy is retained. Balance is the mean of Agility and Strength because no separate balance attribute is published. Mental/role fields without direct 2K equivalents use documented proxies (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception, offensive/defensive consistency, Reaction Time, Draw Foul).";
+db.ratingNotes = "1-20 scale. Player ratings use NBA 2K27 source attributes mapped from 0-100 by rounding rating/5. Dunk uses the direct Driving Dunk rating only; rebound uses Defensive Rebound only. Game-only fields without a separate 2K rating use the closest named 2K source attribute; no career-stat or height-based ability estimates are used. Players absent from the 2K27 source remain explicitly unverified and are not presented as direct 2K ratings.";
+db.ratingsMethod = "NBA 2K27 source of truth: NBA 2K API current-roster endpoint (2KRatings data), with verified free agents supplemented from 2kAuction. Source ratings are mapped to the game 1-20 scale by Math.round(value/5). Dunk = direct Driving Dunk; rebound = Defensive Rebound. No career-stat, height-based, or manually invented ability calculations are used. Where the game has a field with no exact 2K category, it uses the closest available 2K attribute and remains identified as a game-field mapping. Players absent from 2K27 remain unverified rather than receiving fabricated 2K ratings.";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
   sourceRows: sources.length,
@@ -243,9 +237,9 @@ db.ratingsCoverage = {
   direct2K27Matched: matched,
   manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
-  accelerationProxy: "2K27 direct acceleration where available; otherwise Speed with Ball proxy",
+  accelerationMapping: "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value",
   hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
-  screenAttributeCoverage: "No separate 2K27 Screen rating; scouting proxy retained",
+  screenAttributeCoverage: "No separate 2K27 Screen rating; closest 2K source attribute mapping retained",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
