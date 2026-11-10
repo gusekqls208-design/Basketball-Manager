@@ -135,7 +135,12 @@ await mapLimit(unmatched,2,async p=>{
     }catch{}
   }
 });
-for(const p of db.players)p.hiddenScoutedAt="";
+for(const p of db.players){
+  p.hiddenScoutedAt="";
+  p.hidden={...(p.hidden||{}),consistency:10,importantMatches:10,pressure:10,injuryProneness:10};
+  p.hiddenEvidence={...(p.hiddenEvidence||{})};
+  for(const k of ["consistency","importantMatches","pressure","injuryProneness"])delete p.hiddenEvidence[k];
+}
 const internationalNames=new Set(["Tarik Biberovic","Khalifa Diop"]);
 const targets=db.players.filter(p=>p.espnId&&!internationalNames.has(p.name));
 if(targets.length<500)throw new Error("ESPN ID coverage too low: "+targets.length+"/"+db.players.length);
