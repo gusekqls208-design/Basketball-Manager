@@ -80,13 +80,14 @@ function applyPlayer(p, source) {
     handle: ["ballHandle"],
     pass: ["passAccuracy"],
     passTech: ["passIQ"],
+    screen: ["strength"],
     perimeter: ["perimeterDefense"],
     interior: ["interiorDefense"],
     steal: ["steal"],
     block: ["block"],
     anticipation: ["helpDefenseIQ"],
     decisions: ["shotIQ"],
-    vision: ["passVision"],
+    vision: ["vision", "passVision"],
     offBall: ["offensiveConsistency"],
     positioning: ["defensiveConsistency"],
     composure: ["intangibles", "intangible"],
@@ -96,6 +97,7 @@ function applyPlayer(p, source) {
     leadership: ["intangibles", "intangible"],
     determination: ["hustle"],
     flair: ["drawFoul"],
+    aggression: ["hustle"],
     speed: ["speed"],
     acceleration: ["acceleration", "speedWithBall"],
     agility: ["agility"],
@@ -142,7 +144,7 @@ function applyPlayer(p, source) {
   p.ratingsScale = "2K27 0-100 mapped to game 1-20 by round(value/5); OVR retained on 0-99; LeBron block has a documented career-peak override to 17";
   p.ratingsUpdatedAt = today;
   p.ratingsStatus = "2K-direct-27";
-  p.screenSource = "2K27 has no separate Screen rating; this field remains a scouting proxy";
+  p.screenSource = "No separate 2K27 Screen category; mapped to the direct 2K Strength rating";
   p.hiddenSource = potential !== null
     ? "2K27 potential mapped; other hidden attributes remain unscouted neutral baseline"
     : "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
@@ -203,11 +205,11 @@ for (const s of sources) if (!matchedSourceNames.has(norm(s.name))) unmatchedSou
 for (const p of db.players) {
   if (!p.ratingsStatus || p.ratingsStatus === "unverified") {
     p.ratingsStatus = "unverified";
-    p.ratingsSource = "No verified NBA 2K27 rating found; provisional age/position-based estimate";
-    p.ratingsScale = "unverified provisional estimate; not a direct 2K rating";
+    p.ratingsSource = "No NBA 2K27 player rating found; no 2K rating assigned";
+    p.ratingsScale = "unverified; no NBA 2K27 rating available";
     p.ratingsConfidence = "low";
     p.ratingsUpdatedAt = today;
-    p.screenSource = "No verified 2K27 source; Screen remains a provisional scouting estimate";
+    p.screenSource = "No verified NBA 2K27 source; player remains unverified";
     p.hiddenSource = "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
   }
 }
@@ -239,7 +241,7 @@ db.ratingsCoverage = {
   source2K27Rows: sources.length,
   accelerationMapping: "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value",
   hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
-  screenAttributeCoverage: "No separate 2K27 Screen rating; closest 2K source attribute mapping retained",
+  screenAttributeCoverage: "Screen maps to direct 2K Strength; aggression maps to direct 2K Hustle",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
