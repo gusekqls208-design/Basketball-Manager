@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "scripts/test-nba-career-api.mjs"
+      - ".github/workflows/test-nba-career-api.yml"
 permissions:
   contents: read
 jobs:
