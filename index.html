@@ -107,7 +107,7 @@ if(state?.clubs){
  state.clubs.forEach(t=>t.players.forEach(p=>{
   p.attrs={...defaults,...p.attrs};
   p.hidden={...hidden,...(p.hidden||{})};
-  if((state.hiddenDistributionVersion||0)<1){
+  if((state.hiddenDistributionVersion||0)<2){
    const current=Math.max(5,Math.min(20,Math.round((+p.ovr||55)/5)));
    // Unknown mental/medical attributes must not be randomized and presented as scouting facts.
    // Neutral values mean "unscouted"; potential defaults to current ability until evidence exists.
