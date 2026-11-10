@@ -131,7 +131,7 @@ await mapLimit(targets,5,async p=>{
       const s=parseStats(regular),gp=s.GP||0;
       if(gp>0){
         const ps=parseStats(post),pgp=ps.GP||0;
-        rows.push({year,gp,pts:s.PTS||0,reb:s.REB||0,ast:s.AST||0,stl:s.STL||0,blk:s.BLK||0,team:(regular?.teams||[]).map(t=>t.abbreviation).filter(Boolean).join("/"),playoffs:pgp>0?{gp:pgp,pts:ps.PTS||0,reb:ps.REB||0,ast:ps.AST||0}:null});
+        rows.push({year,gp,pts:s.PTS||0,reb:s.REB||0,ast:s.AST||0,stl:s.STL||0,blk:s.BLK||0,team:(Array.isArray(regular?.teams)?regular.teams:Object.values(regular?.teams||{})).map(t=>t?.abbreviation||t?.displayName).filter(Boolean).join("/"),playoffs:pgp>0?{gp:pgp,pts:ps.PTS||0,reb:ps.REB||0,ast:ps.AST||0}:null});
       }
       await sleep(90);
     }
