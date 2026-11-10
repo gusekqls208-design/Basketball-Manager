@@ -108,6 +108,7 @@ if(state?.clubs){
  const defaults=Object.fromEntries(attrKeys.map(k=>[k,10]));
  const hidden={consistency:10,importantMatches:10,pressure:10,professionalism:10,injuryProneness:10,naturalFitness:10,adaptability:10,potential:14};
  state.clubs.forEach(t=>t.players.forEach(p=>{
+  if((state.careerTotalsVersion||0)<2){p.careerLoaded=false;p.career=[];}
   p.attrs={...defaults,...p.attrs};
   p.hidden={...hidden,...(p.hidden||{})};
   if((state.hiddenDistributionVersion||0)<2){
@@ -132,7 +133,7 @@ if(state?.clubs){
   if((state.realPlayerDataVersion||0)<5)applyRealPlayerProfile(p);
  }));
  // Version 3 previously forced Kawhi Leonard into Toronto. Removed: roster membership must come from the official team roster dataset, never a hard-coded exception.
- state.attrDistributionVersion=3;state.hiddenDistributionVersion=2;state.realPlayerDataVersion=7;persist();
+ state.attrDistributionVersion=3;state.hiddenDistributionVersion=2;state.realPlayerDataVersion=7;state.careerTotalsVersion=2;persist();
 }
 function load(){try{return JSON.parse(localStorage.getItem("bm_save_v1"))}catch(e){return null}}
 function persist(){localStorage.setItem("bm_save_v1",JSON.stringify(state))}
