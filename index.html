@@ -203,12 +203,12 @@ function courtSVG(p){
  return '<svg viewBox="0 0 220 190" style="width:100%;max-width:270px;background:#b77a43;border-radius:8px;border:1px solid #d7a36b"><rect x="8" y="8" width="204" height="174" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M30 182V130A80 80 0 0 1 190 130V182 M75 182V102H145V182 M75 102A35 35 0 0 0 145 102 M8 8H212" fill="none" stroke="#f7e5ca" stroke-width="2"/><circle cx="110" cy="165" r="7" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M92 153H128" stroke="#f7e5ca" stroke-width="3"/><path d="M96 165A14 14 0 0 0 124 165" fill="none" stroke="#f7e5ca" stroke-width="1.5"/>'+pos.map(k=>{let [x,y]=spots[k],v=scores[k],c=v>=12?"#78c69a":v>=9?"#f28a2e":"#55514c";return '<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+c+'" stroke="#fff" stroke-width="1.8"/><text x="'+x+'" y="'+(y+3)+'" fill="#17120d" font-size="8" font-weight="900" text-anchor="middle">'+k+'</text>'}).join("")+'</svg>'
 }
 async function loadPlayerCareer(p,box){
- if(p.careerLoaded||!p.id||!String(p.id).startsWith("nba-"))return;
- const athleteId=String(p.id).slice(4),list=box.querySelector("#careerHistoryList");
+ if(p.careerLoaded||!p.espnId)return;
+ const athleteId=String(p.espnId),list=box.querySelector("#careerHistoryList");
  if(!list)return;
  list.innerHTML='<span class="muted small">ESPN 시즌별 기록을 불러오는 중…</span>';
  try{
-  const years=[2027,2026,2025,2024,2023,2022,2021,2020];
+  const years=Array.from({length:Math.min(24,Math.max(1,Number(p.experience)||8))},(_,i)=>2027-i);
   const rows=await Promise.all(years.map(async year=>{
    try{
     const res=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year+"&seasontype=2",{cache:"force-cache"});
@@ -273,7 +273,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=3)return;
+ if(!state?.clubs||state.rosterSourceVersion>=4)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
@@ -312,7 +312,7 @@ async function syncOfficialRosters(){
     const old=oldByName.get(key);
     const posKey=useLive?espnPosition(a,stat?.pos||"SF"):(a.pos||"SF");
     const p=makePlayer(name,posKey,index,12,"official");
-    p.id="nba-"+(useLive?a.id:a.id);p.nbaId=String(stat?.id||a.id);p.realData=true;p.origin="official";
+    p.id="nba-"+(useLive?a.id:a.id);p.espnId=useLive?String(a.id):"";p.nbaId=String(stat?.id||a.id);p.realData=true;p.origin="official";
     p.age=useLive?(Number(a.age)||26):(Number(a.age)||26);
     p.ageApprox=useLive?false:!!a.ageApprox;
     p.height=useLive?Math.round(Number(a.height||78)*2.54):(Number(a.height)||200);
@@ -336,7 +336,7 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=3;state.rosterSource=useLive?"ESPN live 2026-27 NBA team rosters + NBA CDN photos":"2026-27 roster snapshot + NBA CDN photos";
+  state.rosterSourceVersion=4;state.rosterSource=useLive?"ESPN live 2026-27 NBA team rosters + NBA CDN photos":"2026-27 roster snapshot + NBA CDN photos";
   state.rosterSyncedAt=new Date().toISOString();persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
@@ -348,5 +348,5 @@ async function syncOfficialRosters(){
  }
 }
 
-if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=3)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters()}else renderSetup();
+if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=4)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters()}else renderSetup();
 </script></body></html>
