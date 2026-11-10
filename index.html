@@ -273,6 +273,32 @@ function updateHiddenEvidence(p,rows){
  p.hiddenEvidence={...(p.hiddenEvidence||{}),potential:"age and current overall estimate"};
  p.hiddenSource="partly evidence-derived; pressure, professionalism and clutch ratings unscouted";
 }
+function parseEspnGameLogTotals(data,gp){
+ try{
+  const types=Array.isArray(data?.seasonTypes)?data.seasonTypes:[];
+  const regular=types.find(x=>/regular/i.test(String(x.displayName||x.name||""))||String(x.id||x.type?.id||"")==="2")||types[0];
+  const categories=regular?.categories||data?.categories||[];
+  let chosen=null;
+  for(const cat of categories){
+   const ev=cat?.events;
+   const arr=Array.isArray(ev)?ev:(ev&&typeof ev==="object"?Object.values(ev):[]);
+   if(arr.length){chosen={cat,arr};break;}
+  }
+  if(!chosen)return null;
+  const labels=chosen.cat.labels||data.labels||data.displayNames||[];
+  const idx={};labels.forEach((x,i)=>{const k=String(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");idx[k]=i;});
+  const keys={min:["MIN","MINUTES"],pts:["PTS","POINTS"],reb:["REB","REBOUNDS"],ast:["AST","ASSISTS"],stl:["STL","STEALS"],blk:["BLK","BLOCKS"],to:["TO","TOV","TURNOVERS"]};
+  const sums={min:0,pts:0,reb:0,ast:0,stl:0,blk:0,to:0};let counted=0;
+  for(const ev of chosen.arr){
+   const vals=ev?.stats||ev?.values||[];if(!Array.isArray(vals)||!vals.length)continue;
+   const read=k=>{const i=keys[k].map(x=>idx[x]).find(x=>x!==undefined);if(i===undefined)return null;const raw=String(vals[i]??"").trim();if(!raw||raw==="--"||raw==="DNP")return null;if(k==="min"&&raw.includes(":")){const z=raw.split(":").map(Number);return z[0]+(z[1]||0)/60;}const n=Number(raw.replace(/,/g,""));return Number.isFinite(n)?n:null;};
+   const row={};for(const k of Object.keys(keys))row[k]=read(k);
+   if(Object.keys(row).some(k=>k!=="min"&&row[k]!==null)){counted++;for(const k of Object.keys(keys))if(row[k]!==null)sums[k]+=row[k];}
+  }
+  if(counted<Math.max(1,Math.floor(Number(gp||0)*.9)))return null;
+  return{...sums,gameLogGames:counted};
+ }catch(e){return null}
+}
 async function loadPlayerCareer(p,box){
  if(p.careerLoaded)return;
  const list=box.querySelector("#careerHistoryList");if(!list)return;
@@ -309,10 +335,11 @@ async function loadPlayerCareer(p,box){
      if(!res.ok)return null;
      const data=await res.json(),stats=parseEspnStatCategory(data),gp=stats.GP||0;
      if(!gp)return null;
+     let exactTotals=null;try{const gr=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/gamelog?season="+year,{cache:"force-cache"});if(gr.ok)exactTotals=parseEspnGameLogTotals(await gr.json(),gp);}catch(e){}
      const team=(data.teams||[]).map(t=>t.abbreviation||t.displayName).filter(Boolean).join("/");
      let playoffs=null;
      try{const pr=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year+"&seasontype=3",{cache:"force-cache"});if(pr.ok){const pd=await pr.json(),ps=parseEspnStatCategory(pd);if(Number(ps.GP)>0)playoffs={gp:ps.GP,pts:ps.PTS||0,reb:ps.REB||0,ast:ps.AST||0,stl:ps.STL||0,blk:ps.BLK||0};}}catch(e){}
-     return{season:(year-1)+"-"+String(year).slice(-2),team:team||"NBA",gp,pts:stats.PTS||0,reb:stats.REB||0,ast:stats.AST||0,stl:stats.STL||0,blk:stats.BLK||0,to:stats.TO||stats.TOV||0,min:stats.MIN||0,fg:stats["FG%"]||stats.FG_PCT||0,three:stats["3P%"]||stats["3PT%"]||0,ft:stats["FT%"]||0,stats,playoffs};
+     return{season:(year-1)+"-"+String(year).slice(-2),team:team||"NBA",gp,pts:stats.PTS||0,reb:stats.REB||0,ast:stats.AST||0,stl:stats.STL||0,blk:stats.BLK||0,to:stats.TO||stats.TOV||0,min:stats.MIN||0,ptsTotal:exactTotals?.pts??Math.round((stats.PTS||0)*gp),rebTotal:exactTotals?.reb??Math.round((stats.REB||0)*gp),astTotal:exactTotals?.ast??Math.round((stats.AST||0)*gp),stlTotal:exactTotals?.stl??Math.round((stats.STL||0)*gp),blkTotal:exactTotals?.blk??Math.round((stats.BLK||0)*gp),toTotal:exactTotals?.to??Math.round((stats.TO||stats.TOV||0)*gp),minTotal:exactTotals?.min??Math.round((stats.MIN||0)*gp),totalsSource:exactTotals?"ESPN game log sum":"per-game average × games",fg:stats["FG%"]||stats.FG_PCT||0,three:stats["3P%"]||stats["3PT%"]||0,ft:stats["FT%"]||0,stats,playoffs};
     }catch(e){return null}
    }));
    rows.push(...got.filter(Boolean));
@@ -334,7 +361,7 @@ async function loadPlayerCareer(p,box){
   persist();
   if(list.isConnected){
    const bioBits=[p.college?"출신 대학 "+p.college:"",p.draft?"드래프트 "+p.draft.year+"년 "+p.draft.round+"라운드 "+p.draft.selection순위:""].filter(Boolean).join(" · ");
-   list.innerHTML=(bioBits?'<div class="career-meta">'+bioBits+'</div>':"")+(p.career.length?'<div class="career-table-wrap"><table class="career-table"><thead><tr><th>시즌</th><th>팀</th><th>G</th><th>MIN(합계)</th><th>PTS(합계)</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th><th>3P%</th><th>FT%</th></tr></thead><tbody>'+p.career.map(c=>'<tr><td>'+c.season+'</td><td>'+c.team+'</td><td>'+c.gp+'</td><td>'+Math.round(Number(c.min||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.pts||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.reb||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.ast||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.stl||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.blk||0)*Number(c.gp||0))+'</td><td>'+Math.round(Number(c.to||0)*Number(c.gp||0))+'</td><td>'+Number(c.pts||0).toFixed(1)+'</td><td>'+Number(c.reb||0).toFixed(1)+'</td><td>'+Number(c.ast||0).toFixed(1)+'</td><td>'+(Number(c.fg||0)*100).toFixed(1)+'</td><td>'+(Number(c.three||0)*100).toFixed(1)+'</td><td>'+(Number(c.ft||0)*100).toFixed(1)+'</td></tr>').join("")+'</tbody></table></div><div class="muted small career-note">MIN/PTS/REB/AST/STL/BLK/TO=시즌 합계(경기당 평균×출전 경기로 환산) · PPG/RPG/APG=경기당 평균 · 슈팅 성공률(%)</div>':'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 ESPN 기록 제공 범위 밖의 선수일 수 있습니다.</span>');
+   list.innerHTML=(bioBits?'<div class="career-meta">'+bioBits+'</div>':"")+(p.career.length?'<div class="career-table-wrap"><table class="career-table"><thead><tr><th>시즌</th><th>팀</th><th>G</th><th>MIN(합계)</th><th>PTS(합계)</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th><th>3P%</th><th>FT%</th></tr></thead><tbody>'+p.career.map(c=>'<tr><td>'+c.season+'</td><td>'+c.team+'</td><td>'+c.gp+'</td><td>'+Number(c.minTotal??Math.round(Number(c.min||0)*Number(c.gp||0)))+'</td><td>'+Number(c.ptsTotal??Math.round(Number(c.pts||0)*Number(c.gp||0)))+'</td><td>'+Number(c.rebTotal??Math.round(Number(c.reb||0)*Number(c.gp||0)))+'</td><td>'+Number(c.astTotal??Math.round(Number(c.ast||0)*Number(c.gp||0)))+'</td><td>'+Number(c.stlTotal??Math.round(Number(c.stl||0)*Number(c.gp||0)))+'</td><td>'+Number(c.blkTotal??Math.round(Number(c.blk||0)*Number(c.gp||0)))+'</td><td>'+Number(c.toTotal??Math.round(Number(c.to||0)*Number(c.gp||0)))+'</td><td>'+Number(c.pts||0).toFixed(1)+'</td><td>'+Number(c.reb||0).toFixed(1)+'</td><td>'+Number(c.ast||0).toFixed(1)+'</td><td>'+(Number(c.fg||0)*100).toFixed(1)+'</td><td>'+(Number(c.three||0)*100).toFixed(1)+'</td><td>'+(Number(c.ft||0)*100).toFixed(1)+'</td></tr>').join("")+'</tbody></table></div><div class="muted small career-note">MIN/PTS/REB/AST/STL/BLK/TO=시즌 합계(경기 로그 합산, 로그 누락 시 경기당 평균×출전 경기로 환산) · PPG/RPG/APG=경기당 평균 · 슈팅 성공률(%)</div>':'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 ESPN 기록 제공 범위 밖의 선수일 수 있습니다.</span>');
    const facts=box.querySelector(".profile-facts");
    if(facts){const cells=facts.querySelectorAll("div");if(cells[1])cells[1].innerHTML='<span>나이</span><b>'+p.age+'세</b>';if(cells[2])cells[2].innerHTML='<span>신체</span><b>'+p.height+'cm / '+p.weight+'kg</b>';}
    const head=box.querySelector(".profile-top .small.muted");if(head)head.textContent=p.pos+' · '+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role;
