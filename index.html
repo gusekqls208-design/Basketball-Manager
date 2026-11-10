@@ -195,7 +195,7 @@ function sortHead(key,label){
 }
 function sourceBadge(p){return p.realData?'<span class="pill good" style="font-size:9px">실제 NBA 선수</span>':'<span class="pill" style="font-size:9px;border-color:#8b6745;color:#d8b18a">가상 선수</span>'}
 function rosterPage(m){
- let t=my(),all=state.clubs.flatMap(c=>c.players.map(p=>({...p,teamName:c.name,teamId:c.id}))),real=all.filter(p=>p.realData),fake=all.filter(p=>!p.realData),hundreds=all.filter(p=>Number(p.ovr)>=100).sort((a,b)=>a.name.localeCompare(b.name));
+ let t=my(),all=state.clubs.flatMap(c=>c.players.map(p=>({...p,teamName:c.name,teamId:c.id}))),real=all.filter(p=>p.realData),fake=all.filter(p=>!p.realData),hundreds=all.filter(p=>Number(p.ovr)===100).sort((a,b)=>a.name.localeCompare(b.name));
  m.innerHTML=head("SQUAD MANAGEMENT","선수단","선수 출처와 OVR 100 선수까지 구분해서 확인할 수 있습니다.")+
  '<div class="notice">초록 표시는 실제 선수 프로필 데이터가 연결된 선수, 갈색 표시는 아직 가상 데이터인 선수입니다. OVR 100은 현재 저장 데이터 기준으로 아래에서 이름과 소속팀을 확인할 수 있습니다.</div>'+
  '<div class="grid" style="margin-bottom:14px;grid-template-columns:repeat(3,minmax(0,1fr))"><div class="card"><h3>실제 선수 데이터 연결</h3><div class="metric">'+real.length+'</div><div class="metric-sub">전체 리그 '+all.length+'명 중</div></div><div class="card"><h3>가상 데이터</h3><div class="metric">'+fake.length+'</div><div class="metric-sub">실제 선수 프로필 미연결</div></div><div class="card"><h3>OVR 100 선수</h3><div class="metric">'+hundreds.length+'</div><div class="metric-sub">현재 저장 데이터 기준</div></div></div>'+
