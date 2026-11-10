@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: nba-2k27-ratings-sync
+  cancel-in-progress: false
+
 jobs:
   sync-ratings:
     runs-on: ubuntu-latest
