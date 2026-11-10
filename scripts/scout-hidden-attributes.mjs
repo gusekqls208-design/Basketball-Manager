@@ -215,7 +215,7 @@ for(const p of db.players){
   p.hiddenEvidence=p.hiddenEvidence||{};
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
   p.hiddenReviewedAt=new Date().toISOString();
-  if(p.hiddenScoutedAt)p.hiddenScoutingStatus=p.career?.some(r=>r.league==="NCAA")?"college-career-records":"career-records";
+  if(p.hiddenScoutedAt)p.hiddenScoutingStatus=p.career?.some(r=>String(r.league||"").startsWith("Euro"))?"international-career-records":p.career?.some(r=>r.league==="NCAA")?"college-career-records":"career-records";
   else if(p.espnId)p.hiddenScoutingStatus="no-NBA-or-NCAA-career-records";
   else p.hiddenScoutingStatus="ESPN-id-unresolved";
 }
