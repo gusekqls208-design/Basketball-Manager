@@ -98,7 +98,7 @@ const realPlayerProfiles={
 };
 function applyRealPlayerProfile(p){
  // Preserve directly imported NBA 2K attribute ratings permanently; legacy profile seeds must not overwrite them.
- if(String(p?.ratingsStatus||"").startsWith("2K-direct"))return false;
+ if(String(p?.ratingsStatus||"").startsWith("2K-"))return false;
  const d=realPlayerProfiles[p.name];if(!d)return false;
  p.pos=d[0];p.attrs={...variedAttributes(d[0],d[1]/5,(p.name||"").split("").reduce((a,c)=>a+c.charCodeAt(0),0)),...d[2]};
  const h=d[3];p.hidden={consistency:h[0],importantMatches:h[1],pressure:h[2],professionalism:h[3],injuryProneness:h[4],naturalFitness:h[5],adaptability:h[6],potential:h[7]};
@@ -132,7 +132,7 @@ if(state?.clubs){
   if((state.realPlayerDataVersion||0)<5)applyRealPlayerProfile(p);
  }));
  // Version 3 previously forced Kawhi Leonard into Toronto. Removed: roster membership must come from the official team roster dataset, never a hard-coded exception.
- state.attrDistributionVersion=3;state.hiddenDistributionVersion=2;state.realPlayerDataVersion=6;persist();
+ state.attrDistributionVersion=3;state.hiddenDistributionVersion=2;state.realPlayerDataVersion=7;persist();
 }
 function load(){try{return JSON.parse(localStorage.getItem("bm_save_v1"))}catch(e){return null}}
 function persist(){localStorage.setItem("bm_save_v1",JSON.stringify(state))}
