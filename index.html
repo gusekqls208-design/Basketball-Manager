@@ -470,5 +470,5 @@ async function syncOfficialRosters(){
  }
 }
 
-if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters();}else renderSetup();
+if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters().then(()=>{if(state?.rosterSourceVersion>=7&&(state.bulkScoutingVersion||0)<3)setTimeout(()=>bulkScoutAllPlayers(),1800);});}else renderSetup();
 </script></body></html>
