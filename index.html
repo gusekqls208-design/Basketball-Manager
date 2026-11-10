@@ -413,12 +413,12 @@ function searchMarket(){
   if(f.team&&p.from!==f.team)return false;
   if(f.pos&&p.pos!==f.pos)return false;
   const age=num(p.age),h=num(p.height),w=num(p.weight);
-  if(f.ageMin!==""&&(age===null||age<num(f.ageMin)))return false;
-  if(f.ageMax!==""&&(age===null||age>num(f.ageMax)))return false;
-  if(f.heightMin!==""&&(h===null||h<num(f.heightMin)))return false;
-  if(f.heightMax!==""&&(h===null||h>num(f.heightMax)))return false;
-  if(f.weightMin!==""&&(w===null||w<num(f.weightMin)))return false;
-  if(f.weightMax!==""&&(w===null||w>num(f.weightMax)))return false;
+  if(f.ageMin!=null&&f.ageMin!==""&&(age===null||age<num(f.ageMin)))return false;
+  if(f.ageMax!=null&&f.ageMax!==""&&(age===null||age>num(f.ageMax)))return false;
+  if(f.heightMin!=null&&f.heightMin!==""&&(h===null||h<num(f.heightMin)))return false;
+  if(f.heightMax!=null&&f.heightMax!==""&&(h===null||h>num(f.heightMax)))return false;
+  if(f.weightMin!=null&&f.weightMin!==""&&(w===null||w<num(f.weightMin)))return false;
+  if(f.weightMax!=null&&f.weightMax!==""&&(w===null||w>num(f.weightMax)))return false;
   if(f.nation){const nation=String(p.nationality||p.country||p.citizenship||p.birthCountry||"").toLocaleLowerCase();if(!nation.includes(f.nation))return false;}
   if(f.attr&&f.attrMin!==""&&Number(p.attrs?.[f.attr]||0)<Number(f.attrMin))return false;
   return true;
