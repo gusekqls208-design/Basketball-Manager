@@ -417,11 +417,13 @@ async function syncOfficialRosters(){
   if(!dbResponse.ok)throw new Error("선수 데이터 파일 로드 실패 ("+dbResponse.status+")");
   const database=await dbResponse.json();
   if(!Array.isArray(database.players)||database.players.length<500)throw new Error("선수 데이터 검증 실패");
-  const hiddenResponse=await fetch("./hidden-scouting-2026-27.json",{cache:"no-store"});
-  if(!hiddenResponse.ok)throw new Error("히든 스카우팅 데이터 로드 실패 ("+hiddenResponse.status+")");
-  const hiddenDatabase=await hiddenResponse.json();
-  if(!Array.isArray(hiddenDatabase.players)||hiddenDatabase.players.length<500)throw new Error("히든 스카우팅 데이터 검증 실패");
-  const hiddenByName=new Map(hiddenDatabase.players.map(p=>[cleanPlayerKey(p.name),p]));
+  let hiddenDatabase={players:[],updatedAt:""};
+  try{
+   const hiddenResponse=await fetch("./hidden-scouting-2026-27.json",{cache:"no-store"});
+   if(hiddenResponse.ok){hiddenDatabase=await hiddenResponse.json();if(!Array.isArray(hiddenDatabase.players)||hiddenDatabase.players.length<500)throw new Error("히든 스카우팅 데이터 검증 실패");}
+   else console.warn("Hidden scouting file not deployed yet; using roster snapshot values.");
+  }catch(hiddenError){console.warn("Hidden scouting data unavailable; using roster snapshot values.",hiddenError);}
+  const hiddenByName=new Map((hiddenDatabase.players||[]).map(p=>[cleanPlayerKey(p.name),p]));
   const staticByName=new Map(database.players.map(p=>[cleanPlayerKey(p.name),p]));
   const oldByName=new Map();
   for(const team of state.clubs)for(const p of team.players||[])if(p.realData||p.origin==="official")oldByName.set(cleanPlayerKey(p.name),p);
