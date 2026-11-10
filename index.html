@@ -409,7 +409,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=19)return;
+ if(!state?.clubs||state.rosterSourceVersion>=20)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
@@ -417,6 +417,11 @@ async function syncOfficialRosters(){
   if(!dbResponse.ok)throw new Error("선수 데이터 파일 로드 실패 ("+dbResponse.status+")");
   const database=await dbResponse.json();
   if(!Array.isArray(database.players)||database.players.length<500)throw new Error("선수 데이터 검증 실패");
+  const hiddenResponse=await fetch("./hidden-scouting-2026-27.json",{cache:"no-store"});
+  if(!hiddenResponse.ok)throw new Error("히든 스카우팅 데이터 로드 실패 ("+hiddenResponse.status+")");
+  const hiddenDatabase=await hiddenResponse.json();
+  if(!Array.isArray(hiddenDatabase.players)||hiddenDatabase.players.length<500)throw new Error("히든 스카우팅 데이터 검증 실패");
+  const hiddenByName=new Map(hiddenDatabase.players.map(p=>[cleanPlayerKey(p.name),p]));
   const staticByName=new Map(database.players.map(p=>[cleanPlayerKey(p.name),p]));
   const oldByName=new Map();
   for(const team of state.clubs)for(const p of team.players||[])if(p.realData||p.origin==="official")oldByName.set(cleanPlayerKey(p.name),p);
@@ -445,6 +450,7 @@ async function syncOfficialRosters(){
     if(!key||allNames.has(key))continue;
     allNames.add(key);
     const stat=staticByName.get(key);
+    const hiddenStat=hiddenByName.get(key);
     const old=oldByName.get(key);
     const posKey=isLive?espnPosition(a,stat?.pos||"SF"):(a.pos||"SF");
     const p=makePlayer(name,posKey,index,12,"official");
@@ -464,7 +470,7 @@ async function syncOfficialRosters(){
     p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);p.physicalEstimated=isLive?(!a.height||!a.weight):!!a.physicalEstimated;
     p.jersey=a.jersey||"";p.secondaryPositions=stat?.secondaryPositions||a.secondaryPositions||[];
     p.photoUrl=stat?.headshot||(isLive?a.headshot?.href:"")||"";
-    if(stat){p.attrs={...stat.attrs};p.hidden={consistency:10,importantMatches:10,professionalism:10,injuryProneness:10,potential:10,...(stat.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;p.hiddenSource=stat.hiddenSource||"미스카우팅 · 중립 기준값";p.hiddenEvidence={...(stat.hiddenEvidence||{})};p.career=Array.isArray(stat.career)?stat.career:[];p.careerLoaded=!!stat.careerLoaded;p.careerSource=stat.careerSource||"";p.hiddenScoutedAt=stat.hiddenScoutedAt||"";p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;const playoffGames=(p.career||[]).reduce((n,r)=>n+Number(r.playoffs?.gp||0),0);const starBase=p.ovr>=95?19:p.ovr>=90?18:p.ovr>=85?17:p.ovr>=80?15:p.ovr>=75?13:p.ovr>=70?11:10;p.hidden.importantMatches=Math.min(20,starBase+(playoffGames>=150?2:playoffGames>=75?1:0));p.hiddenEvidence.importantMatches="NBA 2K OVR star tier + verified playoff experience; elite players start high";p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings";p.ratingsStatus=stat.ratingsStatus||"";p.ratingsSourcePlayer=stat.ratingsSourcePlayer||p.name;p.ratingsScale=stat.ratingsScale||"";p.ratingsSourceUrl=stat.ratingsSourceUrl||"";}
+    if(stat){p.attrs={...stat.attrs};const scout=hiddenStat||stat;p.hidden={consistency:10,importantMatches:10,professionalism:10,injuryProneness:10,potential:10,...(scout.hidden||stat.hidden||{})};delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;p.hiddenSource=scout.hiddenSource||stat.hiddenSource||"미스카우팅 · 중립 기준값";p.hiddenEvidence={...(scout.hiddenEvidence||stat.hiddenEvidence||{})};p.career=Array.isArray(scout.career)?scout.career:(Array.isArray(stat.career)?stat.career:[]);p.careerLoaded=!!(scout.careerLoaded||stat.careerLoaded);p.careerSource=scout.careerSource||stat.careerSource||"";p.hiddenScoutedAt=scout.hiddenScoutedAt||stat.hiddenScoutedAt||"";p.hiddenScoutingStatus=scout.hiddenScoutingStatus||stat.hiddenScoutingStatus||"";p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;const playoffGames=(p.career||[]).reduce((n,r)=>n+Number(r.playoffs?.gp||0),0);const starBase=p.ovr>=95?19:p.ovr>=90?18:p.ovr>=85?17:p.ovr>=80?15:p.ovr>=75?13:p.ovr>=70?11:10;if(!scout.hiddenEvidence?.importantMatches)p.hidden.importantMatches=Math.min(20,starBase+(playoffGames>=150?2:playoffGames>=75?1:0));p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings";p.ratingsStatus=stat.ratingsStatus||"";p.ratingsSourcePlayer=stat.ratingsSourcePlayer||p.name;p.ratingsScale=stat.ratingsScale||"";p.ratingsSourceUrl=stat.ratingsSourceUrl||"";}
     else p.ratingsSource="individual scouting estimate";
     if(isLive){
      p.birthDate=a.dateOfBirth||"";p.experience=Number(a.experience?.years||0);
@@ -472,7 +478,7 @@ async function syncOfficialRosters(){
      if(contract?.salary)p.salary=Math.round(contract.salary/1000000*14);
      p.injuryStatus=(a.injuries||[]).map(x=>x.status).filter(Boolean).join(", ");
     }
-    p.seasonStats=old?.seasonStats||p.seasonStats;p.career=old?.career?.length?old.career:(p.career||[]);p.careerLoaded=!!(old?.careerLoaded||p.careerLoaded);
+    p.seasonStats=old?.seasonStats||p.seasonStats;if(!hiddenStat?.career?.length)p.career=old?.career?.length?old.career:(p.career||[]);p.careerLoaded=!!(hiddenStat?.careerLoaded||old?.careerLoaded||p.careerLoaded);
     p.relationship=old?.relationship??60;p.pts=old?.pts||0;p.reb=old?.reb||0;p.ast=old?.ast||0;p.minutes=old?.minutes||0;
     p.condition=old?.condition??rnd(82,100);p.fatigue=old?.fatigue??rnd(0,12);
     next.push(p);
@@ -481,8 +487,8 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=19;state.rosterRatingsSnapshot=database.snapshot;state.rosterRatingsCoverage=database.ratingsCoverage;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
-  state.rosterSyncedAt=new Date().toISOString();persist();
+  state.rosterSourceVersion=20;state.rosterRatingsSnapshot=database.snapshot;state.rosterRatingsCoverage=database.ratingsCoverage;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
+  state.rosterSyncedAt=new Date().toISOString();state.rosterHiddenScoutingSnapshot=hiddenDatabase.updatedAt;persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
   console.info("NBA roster import complete",{source:state.rosterSource,liveTeams:liveByTeam.size,snapshotTeams:30-liveByTeam.size,players:total,unique:allNames.size});
