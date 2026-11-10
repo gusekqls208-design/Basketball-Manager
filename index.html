@@ -115,6 +115,12 @@ body.broadcast-mode main{padding:10px 18px 24px!important;background:#090d13}
 .nba-bottom{display:flex;justify-content:space-between;align-items:center;padding:8px 2px;font-size:10px;color:#9eacba}
 @keyframes liveRun{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}@keyframes liveDribble{from{transform:translateY(0)}to{transform:translateY(3px)}}
 @media(max-width:760px){body.broadcast-mode main{padding:7px!important}.nba-scoreboard{grid-template-columns:1fr 110px 1fr}.nba-team-box{padding:7px}.nba-team-box strong{font-size:10px}.nba-game-clock{font-size:23px}.nba-court{aspect-ratio:4/3}.nba-player{transform:translate(-50%,-50%) scale(.78)}.nba-lower{grid-template-columns:1fr}.nba-playlog{max-height:80px}.nba-top{flex-wrap:wrap}.nba-speed{margin-left:auto}}
+
+.nba-player.is-passing .nba-player-torso{transform:rotate(18deg)}
+.nba-player.is-rebounding .nba-player-torso{animation:liveBoard .42s ease-in-out infinite alternate}
+.nba-player.is-rebounding .nba-player-torso:before{transform:rotate(-75deg) translateY(-5px)}
+.nba-player.is-rebounding .nba-player-torso:after{transform:rotate(75deg) translateY(-5px)}
+@keyframes liveBoard{from{translate:0 1px}to{translate:0 -9px}}
 </style></head><body><div id="app"><header><div><div class="brand">BASKETBALL <span>MANAGER</span></div><div class="season-tag">FRONT OFFICE SIMULATION · 2026/27</div></div><div class="headright"><span id="teamhead">팀 미선택</span><span>예산 <b id="moneyhead">₩0</b></span></div></header><div class="layout"><aside class="side" id="sidebar"><div class="navlabel">FRONT OFFICE</div><button class="nav active" data-page="home"><span class="ico">▦</span>대시보드</button><button class="nav" data-page="roster"><span class="ico">♟</span>선수단</button><button class="nav" data-page="schedule"><span class="ico">▤</span>일정 / 결과</button><button class="nav" data-page="standings"><span class="ico">▥</span>리그 순위</button><div class="navlabel">STRATEGY</div><button class="nav" data-page="tactics"><span class="ico">⌘</span>전술 센터</button><button class="nav" data-page="market"><span class="ico">⇄</span>선수 시장</button><button class="nav" data-page="office"><span class="ico">⚙</span>구단 운영</button><div class="navlabel">CAREER</div><button class="nav" data-page="save"><span class="ico">▣</span>저장 / 백업</button></aside><main id="main"></main></div></div>
 <script>
 const teams=[
@@ -598,7 +604,7 @@ function liveMatchTick(){
  }
  if(secondAdvanced&&elapsed>=20){m.possessionElapsed=0;m.phase=-1;m.ballHandlerId=null;}
 }
-function moveLivePlayer(p,x,y,action){const el=document.getElementById("liveP_"+p.id);if(!el)return;el.style.left=Math.max(7,Math.min(93,x))+"%";el.style.top=Math.max(10,Math.min(90,y))+"%";el.dataset.action=action;el.classList.toggle("is-dribbling",action==="dribble");el.classList.toggle("is-shooting",action==="shoot");el.classList.toggle("is-blocking",action==="block")}
+function moveLivePlayer(p,x,y,action){const el=document.getElementById("liveP_"+p.id);if(!el)return;el.style.left=Math.max(7,Math.min(93,x))+"%";el.style.top=Math.max(10,Math.min(90,y))+"%";el.dataset.action=action;el.classList.toggle("is-dribbling",action==="dribble");el.classList.toggle("is-shooting",action==="shoot");el.classList.toggle("is-blocking",action==="block");el.classList.toggle("is-passing",action==="pass");el.classList.toggle("is-rebounding",action==="rebound")}
 function animateBallPass(from,to){const ball=document.getElementById("liveBall"),a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!ball||!a||!b)return;ball.style.left=a.style.left;ball.style.top=a.style.top;requestAnimationFrame(()=>{ball.style.left=b.style.left;ball.style.top=b.style.top})}
 function resolveLiveShot(m,offense,defense,atkClub){
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense[0],three=Math.random()<.42,attrs=shooter.attrs||{},defAttrs=defender.attrs||{};
@@ -606,7 +612,7 @@ function resolveLiveShot(m,offense,defense,atkClub){
  const side=m.possHome?"home":"away",other=m.possHome?"away":"home",stats=m.stats[shooter.id];stats.fga++;if(three)stats.threeA++;
  if(Math.random()<.08){m.fouls[other]++;liveComment(defender.name+"의 파울입니다. 공격 동작에서 접촉이 있었습니다.");}
  if(hit){const pts=three?3:2;stats.pts+=pts;stats.fgm++;if(three)stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;const assister=offense.find(p=>p.id!==shooter.id);if(assister&&Math.random()<.62)m.stats[assister.id].ast++;liveComment(shooter.name+" 성공! "+(three?"3점슛":"골밑 마무리")+"로 "+pts+"점을 보탭니다.","score");m.possHome=!m.possHome;m.shotClock=24;}
- else{if(Math.random()<.17){m.stats[defender.id].blk++;liveComment(defender.name+"이(가) 타이밍을 맞춰 슛을 블록합니다!","highlight");}else liveComment(shooter.name+"의 슛이 림을 외면합니다. 리바운드 싸움입니다.");const rebounder=Math.random()<.55?defense[0]:offense[2];m.stats[rebounder.id].reb++;if(rebounder===offense[2]){liveComment(rebounder.name+" 공격 리바운드! 공격 기회를 한 번 더 이어갑니다.");m.shotClock=14;}else{liveComment(rebounder.name+"이(가) 수비 리바운드를 잡아냅니다. 공격권이 바뀝니다.");m.possHome=!m.possHome;m.shotClock=24;}}
+ else{if(Math.random()<.17){m.stats[defender.id].blk++;liveComment(defender.name+"이(가) 타이밍을 맞춰 슛을 블록합니다!","highlight");}else liveComment(shooter.name+"의 슛이 림을 외면합니다. 리바운드 싸움입니다.");const rebounder=Math.random()<.55?defense[0]:offense[2];m.stats[rebounder.id].reb++;moveLivePlayer(rebounder,m.possHome?52:48,47,"rebound");if(rebounder===offense[2]){liveComment(rebounder.name+" 공격 리바운드! 공격 기회를 한 번 더 이어갑니다.");m.shotClock=14;}else{liveComment(rebounder.name+"이(가) 수비 리바운드를 잡아냅니다. 공격권이 바뀝니다.");m.possHome=!m.possHome;m.shotClock=24;}}
  updateLiveScoreboard();m.possessionElapsed=0;m.phase=-1;m.phaseTick=0;m.ballHandlerId=null;
 }
 function finishLiveMatch(){const m=window.liveMatch;if(!m||m.ended)return;m.ended=true;if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;const g=m.g;g.played=true;g.hs=m.homeScore;g.as=m.awayScore;g.logs=m.logs;if(g.hs===g.as){g.hs+=2;m.homeScore=g.hs}m.home.pf+=g.hs;m.home.pa+=g.as;m.away.pf+=g.as;m.away.pa+=g.hs;if(g.hs>g.as){m.home.w++;m.away.l++}else{m.away.w++;m.home.l++}
