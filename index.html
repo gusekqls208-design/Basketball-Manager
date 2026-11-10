@@ -66,6 +66,22 @@ if(state?.clubs){
  state.clubs.forEach(t=>t.players.forEach(p=>{
   p.attrs={...defaults,...p.attrs};
   p.hidden={...hidden,...(p.hidden||{})};
+  if((state.hiddenDistributionVersion||0)<1){
+   const key=(p.name||"Player")+"|"+(t.id||"");
+   let seed=key.split("").reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+   const roll=(n,min,max)=>{seed=(seed*1664525+1013904223)>>>0;return min+(seed%(max-min+1))};
+   const current=Math.max(5,Math.min(20,Math.round((+p.ovr||55)/5)));
+   p.hidden={
+    consistency:roll(1,6,18),
+    importantMatches:roll(2,5,19),
+    pressure:roll(3,5,19),
+    professionalism:roll(4,5,20),
+    injuryProneness:roll(5,2,18),
+    naturalFitness:roll(6,5,19),
+    adaptability:roll(7,5,19),
+    potential:Math.max(current,roll(8,Math.max(9,current),20))
+   };
+  }
   p.traits=p.traits||[p.trait||"균형형"];p.trait=p.trait||p.traits[0];
   p.origin=p.origin||"league";p.relationship=p.relationship??50;
   p.seasonStats=p.seasonStats||{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0};p.career=p.career||[];
@@ -77,7 +93,7 @@ if(state?.clubs){
   const w=p.pos==="PG"?["handle","pass","passTech","vision","decisions","speed","acceleration","three"]:p.pos==="SG"?["three","handle","mid","perimeter","agility","offBall"]:p.pos==="SF"?["mid","perimeter","rebound","three","layup","agility"]:p.pos==="PF"?["rebound","strength","interior","post","dunk","screen"]:["interior","rebound","block","strength","close","screen"];
   p.ovr=Math.round(w.reduce((sum,k)=>sum+(+p.attrs[k]||0),0)/w.length*5);
  }));
- state.attrDistributionVersion=2;persist();
+ state.attrDistributionVersion=2;state.hiddenDistributionVersion=1;persist();
 }
 function load(){try{return JSON.parse(localStorage.getItem("bm_save_v1"))}catch(e){return null}}
 function persist(){localStorage.setItem("bm_save_v1",JSON.stringify(state))}
