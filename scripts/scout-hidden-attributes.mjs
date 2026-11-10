@@ -111,14 +111,18 @@ function collectSearchCandidates(value,out=[]){
   return out;
 }
 await mapLimit(unmatched,2,async p=>{
-  try{
-    const q=await getJson("https://site.web.api.espn.com/apis/search/v2?query="+encodeURIComponent(p.name)+"&limit=10&sport=basketball");
-    const arr=collectSearchCandidates(q);
-    const hit=arr.find(a=>norm(a.displayName||a.fullName||a.name||a.shortName)===norm(p.name));
-    const uid=String(hit?.uid||"");
-    const id=uid.match(/a:(\d+)/)?.[1]||(/^\d+$/.test(String(hit?.id||""))?String(hit.id):null);
-    if(id)p.espnId=String(id);
-  }catch{}
+  const cleanName=p.name.replace(/,?\\s+(?:jr\\.?|sr\\.?|iii|ii)$/i,"").trim();
+  const variants=[p.name,cleanName].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  for(const name of variants){
+    try{
+      const q=await getJson("https://site.web.api.espn.com/apis/search/v2?query="+encodeURIComponent(name)+"&limit=10&sport=basketball");
+      const arr=collectSearchCandidates(q);
+      const hit=arr.find(a=>[a.displayName,a.fullName,a.name,a.shortName].some(v=>norm(v)===norm(name)||norm(v)===norm(p.name)));
+      const uid=String(hit?.uid||"");
+      const id=uid.match(/a:(\\d+)/)?.[1]||(/^\\d+$/.test(String(hit?.id||""))?String(hit.id):null);
+      if(id){p.espnId=String(id);break;}
+    }catch{}
+  }
 });
 const knownNoCareer=new Set(db.hiddenScouting?.failedNames||[]);
 const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt&&!knownNoCareer.has(p.name));
