@@ -97,12 +97,8 @@ const realPlayerProfiles={
  "Michael Porter Jr.":["SF",86,{close:16,layup:14,dunk:15,mid:18,three:19,ft:17,post:13,handle:12,pass:10,passTech:10,perimeter:12,interior:10,steal:8,block:8,rebound:14,screen:10,anticipation:14,decisions:14,vision:12,offBall:19,positioning:15,composure:17,concentration:18,teamwork:15,workRate:14,leadership:13,determination:15,flair:16,aggression:10,speed:14,acceleration:13,agility:14,jumping:17,strength:13,stamina:15,balance:15},[16,14,15,17,16,13,16,17],["엘리트 캐치 앤 슛","오프볼 스페이서","코너 3점 슈터"]]
 };
 function applyRealPlayerProfile(p){
- // Preserve directly imported NBA 2K attribute ratings permanently; legacy profile seeds must not overwrite them.
- if(String(p?.ratingsStatus||"").startsWith("2K-"))return false;
- const d=realPlayerProfiles[p.name];if(!d)return false;
- p.pos=d[0];p.attrs={...variedAttributes(d[0],d[1]/5,(p.name||"").split("").reduce((a,c)=>a+c.charCodeAt(0),0)),...d[2]};
- const h=d[3];p.hidden={consistency:h[0],importantMatches:h[1],pressure:h[2],professionalism:h[3],injuryProneness:h[4],naturalFitness:h[5],adaptability:h[6],potential:h[7]};
- p.ovr=d[1];p.traits=[...d[4]];p.trait=p.traits[0];p.realData=true;return true;
+ // All real-player ratings are imported from NBA 2K. Legacy profile-based ratings are disabled.
+ return false;
 }
 if(state?.clubs){
  const defaults=Object.fromEntries(attrKeys.map(k=>[k,10]));
@@ -212,48 +208,15 @@ function parseEspnStatCategory(data){
 }
 function clampRating(v){return Math.max(1,Math.min(20,Math.round(v)))}
 function statToRating(v,lo,hi){return clampRating(4+16*Math.max(0,Math.min(1,(v-lo)/(hi-lo))))}
-async function bulkScoutAllPlayers(){
- const btn=document.getElementById("bulkScoutBtn"),status=document.getElementById("bulkScoutStatus");
- if(window.bulkScoutRunning)return;window.bulkScoutRunning=true;
- if(btn){btn.disabled=true;btn.textContent="전체 스카우팅 진행 중…"}
- let toast=document.getElementById("bulkScoutToast");if(!toast){toast=document.createElement("div");toast.id="bulkScoutToast";toast.style.cssText="position:fixed;z-index:120;left:50%;bottom:18px;transform:translateX(-50%);width:min(680px,calc(100vw - 28px));padding:12px 15px;background:#30271f;border:1px solid #8a5b32;border-radius:9px;color:#f5f1e9;font-size:12px;box-shadow:0 8px 30px #0009";document.body.appendChild(toast)}
- const setStatus=t=>{if(status)status.textContent=t;if(toast)toast.textContent=t};
- const all=state.clubs.flatMap(t=>(t.players||[]).filter(p=>p.realData).map(p=>({p,team:t.id||p.teamAbbr||p.team})));
- const unique=[...new Map(all.map(x=>[String(x.p.id),x])).values()],rosterMap=new Map();
- const teamsToLoad=[...new Set(unique.map(x=>x.team).filter(x=>ESPN_TEAM_IDS[x]))];let rosterDone=0;
- const rosterQueue=[...teamsToLoad];
- async function rosterWorker(){while(rosterQueue.length){const abbr=rosterQueue.shift();try{const res=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/teams/"+ESPN_TEAM_IDS[abbr]+"/roster?season=2027",{cache:"no-store"});if(res.ok){const data=await res.json();(data.athletes||[]).forEach(a=>{if(a.displayName&&a.id)rosterMap.set(cleanPlayerKey(a.displayName),String(a.id));});}}catch(e){}rosterDone++;setStatus("팀별 선수 식별 정보 확인 "+rosterDone+"/"+teamsToLoad.length);}
- }
- await Promise.all(Array.from({length:5},rosterWorker));
- let done=0,updated=0,failed=0;const queue=[...unique];
- async function playerWorker(){while(queue.length){const item=queue.shift(),p=item.p;try{
-  const athleteId=p.espnId||rosterMap.get(cleanPlayerKey(p.name));if(!athleteId){failed++;done++;continue;}p.espnId=String(athleteId);
-  const got=await Promise.all([2027,2026,2025].map(async year=>{try{const url="https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year;let res;for(let attempt=0;attempt<3;attempt++){res=await fetch(url,{cache:"force-cache"});if(res.ok||res.status!==429)break;await new Promise(r=>setTimeout(r,500*(attempt+1)));}if(!res||!res.ok)return null;const data=await res.json(),st=parseEspnStatCategory(data);return Number(st.GP)>0?{year,st}:null;}catch(e){return null;}}));
-  const valid=got.filter(Boolean).sort((a,b)=>b.year-a.year);if(valid.length){const fields=["GP","PTS","REB","AST","STL","BLK","MIN","FG%","3P%","FT%","3PA","FTA","TO","TOV"],avg={};fields.forEach(k=>{const rows=valid.filter(x=>Number.isFinite(Number(x.st[k])));if(rows.length){const weights=rows.map(x=>Number(x.st.GP)||1),den=weights.reduce((a,b)=>a+b,0);avg[k]=rows.reduce((a,x,i)=>a+(Number(x.st[k])||0)*weights[i],0)/den;}});if(avg.GP>=5){applyStatsScouting(p,avg);p.recentStatsSource="ESPN weighted 3-season stats (2024-25 to 2026-27)";p.recentStatsUpdatedAt=new Date().toISOString();p.recentStatsSeasons=valid.map(x=>x.year);updated++;}else failed++;}else failed++;
- }catch(e){failed++;}done++;if(done%10===0||done===unique.length){persist();setStatus("능력치 산정 중 "+done+"/"+unique.length+"명 · 통계 반영 "+updated+"명 · 미확인 "+failed+"명");}}
- }
- await Promise.all(Array.from({length:8},playerWorker));state.bulkScoutingVersion=3;persist();window.bulkScoutRunning=false;
- if(btn){btn.disabled=false;btn.textContent="전체 선수 능력치 다시 산정"}
- setStatus("전체 선수 스카우팅 완료: "+unique.length+"명 중 "+updated+"명 통계 반영 · "+failed+"명 기록 미확인. 속력·가속력·점프력·히든은 별도 측정/스카우팅 근거가 필요합니다.");
- render(document.querySelector(".nav.active")?.dataset.page||"roster");
- setTimeout(()=>{const n=document.getElementById("bulkScoutToast");if(n)n.remove()},15000);
+async async function bulkScoutAllPlayers(){
+ const status=document.getElementById("bulkScoutStatus");
+ if(status)status.textContent="NBA 2K27 능력치만 사용합니다. 기존 통계 기반 재산정은 비활성화되었습니다.";
+ const btn=document.getElementById("bulkScoutBtn");
+ if(btn){btn.disabled=true;btn.textContent="2K 능력치 사용 중";}
 }
 function applyStatsScouting(p,st){
- // NBA 2K direct ratings are the locked source of truth; career stats must never overwrite them.
- if(String(p?.ratingsStatus||"").startsWith("2K"))return false;
- const g=st||{},a=p.attrs||{},gp=Number(g.GP)||0;if(gp<5)return false;
- const set=(k,v)=>a[k]=clampRating(v),rate=(v,lo,hi)=>statToRating(Number(v)||0,lo,hi);
- if(g["3P%"]!=null){const pct=Number(g["3P%"])||0,att=Number(g["3PA"])||0;const accuracy=4+Math.max(0,Math.min(1,(pct-.25)/(.43-.25)))*14;const volume=att>=7?2:att>=5?1:att>=3?0:-1;set("three",accuracy+volume);}
- if(g["FT%"]!=null)set("ft",rate(g["FT%"],.55,.92));
- if(g.BLK!=null)set("block",rate(g.BLK,.02,1.65));
- if(g.REB!=null)set("rebound",rate(g.REB,.5,13));
- if(g.STL!=null)set("steal",rate(g.STL,.1,2));
- if(g.AST!=null)set("pass",rate(g.AST,.2,9));
- if(g.AST!=null&&g.TO!=null)set("passTech",rate((Number(g.AST)||0)/(Number(g.TO)||.5),.3,4.5));
- if(g.AST!=null)set("vision",rate(g.AST,.2,9));
- if(g.BLK!=null&&g.REB!=null)set("interior",rate((Number(g.BLK)||0)+(Number(g.REB)||0)*.12,.1,3));
- p.attrs=a;p.ratingsSource="BBGM scouting baseline + ESPN statistical evidence updates";
- p.ratingsUpdatedAt=new Date().toISOString();p.ratingsEstimated=true;return true;
+ // Career statistics must not overwrite NBA 2K ratings.
+ return false;
 }
 function updateHiddenEvidence(p,rows){
  const played=(rows||[]).filter(x=>Number(x.gp)>0);if(!played.length)return;
