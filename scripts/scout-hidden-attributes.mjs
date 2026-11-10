@@ -51,7 +51,11 @@ function scoreHidden(p,rows){
   p.hidden={...(p.hidden||{})};
   p.hiddenEvidence={...(p.hiddenEvidence||{})};
   const completed=done.filter(r=>r.year<2027);
-  const recent=completed.slice(0,10);
+  const nbaRows=completed.filter(r=>r.league==="NBA");
+  const ncaaRows=completed.filter(r=>r.league==="NCAA");
+  const availabilityRows=nbaRows.length?nbaRows:completed;
+  const consistencyRows=nbaRows.length>=3?nbaRows:(ncaaRows.length>=3?ncaaRows:(nbaRows.length?nbaRows:completed));
+  const recent=availabilityRows.slice(0,10);
   const expectedFor=r=>Number(r.expectedGames)||seasonGames(r.year);
   const gp=recent.reduce((n,r)=>n+Math.min(r.gp,expectedFor(r)),0);
   const expected=recent.reduce((n,r)=>n+expectedFor(r),0);
@@ -59,33 +63,35 @@ function scoreHidden(p,rows){
   const injuryRaw=availability>=.97?2:availability>=.93?3:availability>=.88?4:availability>=.83?5:availability>=.78?6:availability>=.73?7:availability>=.68?8:availability>=.63?9:availability>=.58?10:availability>=.53?11:availability>=.48?12:availability>=.40?13:availability>=.30?14:15;
   const sample=Math.min(1,recent.length/5);
   p.hidden.injuryProneness=clamp(10+(injuryRaw-10)*sample,1,15);
-  p.hiddenEvidence.injuryProneness="ESPN 정규시즌 출전 경기/시즌별 예정 경기 비율(최근 최대 10시즌), 표본 보정 · 1~15";
-  if(done.length>=3){
-    const pp=done.map(r=>r.pts||0),mean=pp.reduce((a,b)=>a+b,0)/pp.length;
+  p.hiddenEvidence.injuryProneness=(availabilityRows[0]?.league||"NBA")+" completed-season games played ÷ expected games, last 10 seasons; estimate, not medical injury log · 1-15";
+  if(consistencyRows.length>=3){
+    const pp=consistencyRows.map(r=>r.pts||0),mean=pp.reduce((a,b)=>a+b,0)/pp.length;
     const cv=mean>0?Math.sqrt(pp.reduce((a,b)=>a+(b-mean)**2,0)/pp.length)/mean:0;
-    const stable=completed.length>=3?completed:done.filter(r=>r.year<2027);
-    const rates=stable.map(r=>r.gp/expectedFor(r)),avg=rates.reduce((a,b)=>a+b,0)/Math.max(1,rates.length);
+    const rates=consistencyRows.map(r=>r.gp/expectedFor(r)),avg=rates.reduce((a,b)=>a+b,0)/Math.max(1,rates.length);
     const sd=Math.sqrt(rates.reduce((a,b)=>a+(b-avg)**2,0)/Math.max(1,rates.length));
     p.hidden.consistency=clamp(17-Math.min(8,cv*9)-Math.min(5,sd*12)+Math.max(0,avg-.85)*8);
-    p.hiddenEvidence.consistency="ESPN 다년간 평균 득점 변동계수 + 시즌별 출전율";
+    p.hiddenEvidence.consistency=(consistencyRows[0]?.league||"NBA")+" multi-season PPG variation + season availability";
   }
-  const po=completed.filter(r=>r.playoffs?.gp>0);
-  const poGp=po.reduce((n,r)=>n+r.playoffs.gp,0);
+  const nbaPo=nbaRows.filter(r=>r.playoffs?.gp>0);
+  const nbaPoGp=nbaPo.reduce((n,r)=>n+r.playoffs.gp,0);
+  const playoffRows=nbaPoGp>=8?nbaPo:(nbaRows.length?[]:completed.filter(r=>r.playoffs?.gp>0));
+  const poGp=playoffRows.reduce((n,r)=>n+r.playoffs.gp,0);
   if(poGp>=8){
-    const regPts=done.reduce((n,r)=>n+r.pts*r.gp,0)/Math.max(1,done.reduce((n,r)=>n+r.gp,0));
-    const poPts=po.reduce((n,r)=>n+r.playoffs.pts*r.playoffs.gp,0)/poGp;
+    const regularRows=playoffRows.map(po=>completed.find(r=>r.year===po.year&&r.league===po.league)).filter(Boolean);
+    const regPts=regularRows.reduce((n,r)=>n+r.pts*r.gp,0)/Math.max(1,regularRows.reduce((n,r)=>n+r.gp,0));
+    const poPts=playoffRows.reduce((n,r)=>n+r.playoffs.pts*r.playoffs.gp,0)/poGp;
     const uplift=regPts>0?(poPts-regPts)/regPts:0;
     p.hidden.importantMatches=clamp(10+Math.max(-.35,Math.min(.5,uplift))*18+Math.min(4,poGp/35));
     p.hidden.pressure=clamp(10+Math.max(-.3,Math.min(.4,uplift))*15+Math.min(3,poGp/45));
-    p.hiddenEvidence.importantMatches="ESPN 플레이오프 누적 출전 및 정규시즌 대비 플레이오프 평균 득점 변화(클러치 공식 지표 아님)";
-    p.hiddenEvidence.pressure="ESPN 플레이오프 득점 변화와 출전 표본 기반 대리 지표(공식 클러치 지표 아님)";
+    p.hiddenEvidence.importantMatches=(playoffRows[0]?.league||"NBA")+" postseason performance vs regular season (not official clutch tracking)";
+    p.hiddenEvidence.pressure=(playoffRows[0]?.league||"NBA")+" postseason scoring change and sample size (proxy, not official clutch tracking)";
   }
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
   p.career=done.map(r=>({season:(r.year-1)+"-"+String(r.year).slice(-2),league:r.league||"NBA",team:r.team||"NBA",gp:r.gp,pts:r.pts,reb:r.reb,ast:r.ast,stl:r.stl,blk:r.blk,playoffs:r.playoffs||null}));
   p.careerLoaded=true;
-  p.careerSource=done.some(r=>r.league==="NCAA")?"ESPN NBA + NCAA 시즌별 기록 일괄 수집":"ESPN NBA 시즌별 정규시즌·플레이오프 기록 일괄 수집";
+  p.careerSource=done.some(r=>r.league==="NCAA")?"ESPN NBA + NCAA season-by-season game logs":done.some(r=>String(r.league||"").startsWith("Euro"))?"EuroLeague/EuroCup season-by-season records":"ESPN NBA season-by-season game logs";
   p.hiddenScoutedAt=new Date().toISOString();
-  p.hiddenSource="ESPN 전 커리어 기록 기반 일괄 스카우팅 · 데이터로 판정 불가한 항목은 중립 10 유지";
+  p.hiddenSource="시즌별 경기 로그 기반 일괄 스카우팅 · 데이터로 판정할 수 없는 항목은 중립값";
   return true;
 }
 
@@ -129,8 +135,10 @@ await mapLimit(unmatched,2,async p=>{
     }catch{}
   }
 });
-const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt);
-if(!targets.length)throw new Error("No remaining ESPN career records to scout");
+for(const p of db.players)p.hiddenScoutedAt="";
+const internationalNames=new Set(["Tarik Biberovic","Khalifa Diop"]);
+const targets=db.players.filter(p=>p.espnId&&!internationalNames.has(p.name));
+if(targets.length<500)throw new Error("ESPN ID coverage too low: "+targets.length+"/"+db.players.length);
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
   try{
@@ -143,34 +151,22 @@ await mapLimit(targets,5,async p=>{
     const years=Array.from({length:count+1},(_,i)=>2027-i);
     const rows=[];
     for(const year of years){
-      const [regular,post]=await Promise.all([
-        getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+p.espnId+"/stats?season="+year),
-        getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+p.espnId+"/stats?season="+year+"&seasontype=3")
-      ]);
-      const s=parseStats(regular),gp=s.GP||0;
-      if(gp>0){
-        const ps=parseStats(post),pgp=ps.GP||0;
-        rows.push({year,gp,pts:s.PTS||0,reb:s.REB||0,ast:s.AST||0,stl:s.STL||0,blk:s.BLK||0,team:(Array.isArray(regular?.teams)?regular.teams:Object.values(regular?.teams||{})).map(t=>t?.abbreviation||t?.displayName).filter(Boolean).join("/"),playoffs:pgp>0?{gp:pgp,pts:ps.PTS||0,reb:ps.REB||0,ast:ps.AST||0}:null});
-      }
-      await sleep(90);
+      const data=await getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+p.espnId+"/gamelog?season="+year);
+      const row=parseGameLogSeason(data,year,"NBA",seasonGames(year));
+      if(row.gp>0)rows.push(row);
+      await sleep(110);
     }
     if(!rows.length||(rows.length<3&&(Number(p.age)||22)<=25)){
       const age=Number(p.age)||22;
       const firstYear=Math.max(2018,2026-Math.max(1,age-18));
       for(let year=2026;year>=firstYear;year--){
-        const [regular,post]=await Promise.all([
-          getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/stats?season="+year),
-          getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/stats?season="+year+"&seasontype=3")
-        ]);
-        const cs=parseStats(regular),cgp=cs.GP||0;
-        if(cgp>0){
-          const cps=parseStats(post),cpgp=cps.GP||0;
-          rows.push({year,gp:cgp,expectedGames:32,league:"NCAA",pts:cs.PTS||0,reb:cs.REB||0,ast:cs.AST||0,stl:cs.STL||0,blk:cs.BLK||0,team:(Array.isArray(regular?.teams)?regular.teams:Object.values(regular?.teams||{})).map(t=>t?.abbreviation||t?.displayName).filter(Boolean).join("/"),playoffs:cpgp>0?{gp:cpgp,pts:cps.PTS||0,reb:cps.REB||0,ast:cps.AST||0}:null});
-        }
-        await sleep(180);
+        const data=await getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/gamelog?season="+year);
+        const row=parseGameLogSeason(data,year,"NCAA",32);
+        if(row.gp>0)rows.push(row);
+        await sleep(150);
       }
     }
-    if(!rows.length)throw new Error("No NBA or NCAA career season rows");
+    if(!rows.length)throw new Error("No NBA or NCAA season game logs");
     p.career=rows.sort((a,b)=>b.year-a.year);
     scoreHidden(p,rows);
     completed++;
