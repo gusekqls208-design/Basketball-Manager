@@ -145,7 +145,7 @@ function applyPlayer(p, source) {
   p.ratingsStatus = "2K-direct-27";
   p.hiddenSource = potential !== null
     ? "2K27 potential mapped; other hidden attributes remain unscouted neutral baseline"
-    : "unscouted neutral baseline for hidden attributes";
+    : "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
 }
 
 const db = JSON.parse(await fs.readFile(FILE, "utf8"));
@@ -207,7 +207,7 @@ for (const p of db.players) {
     p.ratingsScale = "unverified provisional estimate; not a direct 2K rating";
     p.ratingsConfidence = "low";
     p.ratingsUpdatedAt = today;
-    p.hiddenSource = "Unscouted; hidden attributes remain neutral baseline";
+    p.hiddenSource = "Potential remains a legacy estimate; other hidden attributes remain unscouted neutral baseline";
   }
 }
 if (matched < 450) throw new Error("Safety stop: matched only " + matched + " of " + sources.length + " 2K27 players to game roster");
@@ -219,7 +219,7 @@ const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p =
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 current roster ratings synced from NBA 2K API public endpoint; ${matched} of ${db.players.length} game-roster players matched; unmatched players retain prior verified source or remain unverified`;
-db.ratingNotes = "1-20 scale. Direct NBA 2K27 attributes are mapped from 0-100 by rounding rating/5; dunk = 75% Driving Dunk + 25% Standing Dunk; rebound = mean of Offensive and Defensive Rebound. Non-direct mental/role attributes are documented proxies, not direct 2K ratings. Six hidden attributes remain neutral/unscouted unless separately verified; potential is mapped from 2K27 when available.";
+db.ratingNotes = "1-20 scale. Direct NBA 2K27 attributes are mapped from 0-100 by rounding rating/5; dunk = 75% Driving Dunk + 25% Standing Dunk; rebound = mean of Offensive and Defensive Rebound. Non-direct mental/role attributes are documented proxies, not direct 2K ratings. Six hidden attributes remain neutral/unscouted; potential is direct 2K27 only where the source provides it and otherwise remains a legacy estimate.";
 db.ratingsMethod = "Current NBA 2K27 source: NBA 2K API public current-roster endpoint, which republishes 2KRatings data; verified free agents are supplemented from 2kAuction player pages. Direct attributes map by Math.round(value/5) to game 1-20. Dunk uses 75% Driving Dunk + 25% Standing Dunk; rebound uses mean of Offensive Rebound and Defensive Rebound. Acceleration uses a direct source value when present; otherwise the previous Speed with Ball proxy is retained. Balance is the mean of Agility and Strength because no separate balance attribute is published. Mental/role fields without direct 2K equivalents use documented proxies (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception, offensive/defensive consistency, Reaction Time, Draw Foul).";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
@@ -237,6 +237,7 @@ db.ratingsCoverage = {
   manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
   accelerationProxy: "2K27 direct acceleration where available; otherwise Speed with Ball proxy",
+  hiddenAttributeCoverage: "Six hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
