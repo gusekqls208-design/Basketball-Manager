@@ -1,0 +1,38 @@
+name: Sync NBA 2K27 ratings
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/sync-2k27-ratings.mjs"
+      - ".github/workflows/sync-2k27-ratings.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync-ratings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Fetch and map current NBA 2K27 ratings
+        run: node scripts/sync-2k27-ratings.mjs
+      - name: Commit updated ratings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add players-2026-27.json
+          if git diff --cached --quiet; then
+            echo "No rating changes."
+          else
+            git commit -m "Sync current NBA 2K27 player ratings"
+            git push
+          fi
