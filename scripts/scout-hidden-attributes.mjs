@@ -119,7 +119,7 @@ await mapLimit(unmatched,2,async p=>{
     if(id)p.espnId=String(id);
   }catch{}
 });
-const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt);
+const knownNoCareer=new Set(db.hiddenScouting?.failedNames||[]);\nconst targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt&&!knownNoCareer.has(p.name));
 if(!targets.length)throw new Error("No remaining ESPN career records to scout");
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
