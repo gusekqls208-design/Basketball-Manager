@@ -9480,7 +9480,7 @@
         "flair": 15,
         "aggression": 10,
         "speed": 15,
-        "acceleration": 1,
+        "acceleration": 15,
         "agility": 16,
         "jumping": 15,
         "strength": 15,
@@ -43394,7 +43394,7 @@
   ],
   "updatedAt": "2026-11-10T19:18:18.838Z",
   "ratingNotes": "1-20 scale. Defensive rim-protection corrections applied to elite bigs. Mental/medical hidden attributes are not presented as verified scouting facts; game migration resets unverified values to neutral.",
-  "ratingsMethod": "For 2K-matched players, each game attribute is mapped from NBA 2K's 0-100 attribute ratings to 1-20; dunk uses 75% Driving Dunk + 25% Standing Dunk; overall uses 2K overall. Non-direct mental/role attributes use closest 2K attributes (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception). NBA 2K25 data fills additional players not present in the 2K26 dataset. Only directly sourced 2K attributes are transferred; unavailable attributes are left unchanged. Exact and alias-matched partial 2K26 records are now used for every available attribute; fields absent from a partial 2K record are explicitly retained as unverified rather than invented. Acceleration is mapped from NBA 2K Speed with Ball (closest published acceleration-related movement attribute), while Agility remains mapped to 2K Agility; these are kept separate.",
+  "ratingsMethod": "For 2K-matched players, each game attribute is mapped from NBA 2K's 0-100 attribute ratings to 1-20; dunk uses 75% Driving Dunk + 25% Standing Dunk; overall uses 2K overall. Non-direct mental/role attributes use closest 2K attributes (Intangibles, Hustle, Shot IQ, Help Defense IQ, Pass IQ, Pass Perception). NBA 2K25 data fills additional players not present in the 2K26 dataset. Only directly sourced 2K attributes are transferred; unavailable attributes are left unchanged. Exact and alias-matched partial 2K26 records are now used for every available attribute; fields absent from a partial 2K record are explicitly retained as unverified rather than invented. Acceleration is mapped from NBA 2K Speed with Ball (closest published acceleration-related movement attribute), while Agility remains mapped to 2K Agility; these are kept separate. Acceleration is mapped from NBA 2K Speed with Ball (closest published acceleration-related movement attribute); Agility remains separately mapped from 2K Agility. This is a proxy, not a directly measured acceleration value.",
   "ratingsCoverage": {
     "sourceRows": 524,
     "source2K25Rows": 0,
