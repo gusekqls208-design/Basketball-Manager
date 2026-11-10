@@ -536,7 +536,7 @@ function power(t){let p=t.players.slice(0,8);let base=p.reduce((s,x)=>s+x.ovr*.1
 function playNext(){
  const g=nextGame();if(!g)return;
  const home=club(g.home),away=club(g.away);
- window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:0,phaseTick:0,paused:false,ended:false,homeLine:home.players.slice(0,5),awayLine:away.players.slice(0,5),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,timeoutOverlay:false};
+ window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,paused:false,ended:false,homeLine:home.players.slice(0,5),awayLine:away.players.slice(0,5),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,timeoutOverlay:false};
  const m=window.liveMatch;
  for(const p of [...home.players,...away.players])m.stats[p.id]={pts:0,reb:0,ast:0,stl:0,blk:0,tov:0,fga:0,fgm:0,threeA:0,threeM:0,min:0};
  showGame(g.id);
@@ -572,26 +572,31 @@ function updateLiveScoreboard(){const m=window.liveMatch;if(!m)return;const el=i
 function startBroadcast(m){if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=setInterval(()=>liveMatchTick(),100);liveComment("점프볼! 심판의 신호와 함께 경기가 시작됩니다.");}
 function liveMatchTick(){
  const m=window.liveMatch;if(!m||m.paused||m.ended)return;
- const rate=m.speed; m.phaseTick+=rate;
- if(m.phaseTick>=1){m.phaseTick=0;m.clock--;m.shotClock--;for(const p of [...m.homeLine,...m.awayLine])m.stats[p.id].min+=1/60; if(m.clock<=0){if(m.q<4){m.q++;m.clock=720;m.shotClock=24;liveComment(m.q+"쿼터 시작. 양 팀 모두 다시 코트로 나옵니다.");}else if(m.homeScore===m.awayScore){m.q++;m.clock=300;m.shotClock=24;liveComment("4쿼터 종료, 승부를 가리지 못했습니다. 연장전에 들어갑니다.");}else{finishLiveMatch();return}}if(m.shotClock<=0){liveComment("24초 바이얼레이션! 공격권이 넘어갑니다.");m.possHome=!m.possHome;m.shotClock=24;m.phase=0;m.phaseTick=0;}updateLiveScoreboard()}
- const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine,atkClub=m.possHome?m.home:m.away;
- const offenseDirection=m.possHome?1:-1;
- const ballHandler=offense.find(p=>p.id===m.ballHandlerId)||offense[0];m.ballHandlerId=ballHandler.id;
- const phase=m.phase;
- const baseX=m.possHome?18:82;
- const attackX=phase===0?baseX:phase===1?(m.possHome?35:65):phase===2?(m.possHome?51:49):phase===3?(m.possHome?70:30):(m.possHome?82:18);
- const y=50+Math.sin((m.phaseTick+phase)*1.7)*4;
- offense.forEach((p,i)=>{let x,ypos;if(p.id===ballHandler.id){x=attackX;ypos=y+(i-2)*2}else{x=attackX+(i-2)*7*offenseDirection;ypos=24+i*13}moveLivePlayer(p,x,ypos,phase===0?"run":phase===1?"dribble":phase===2?"pass":phase===3?"run":"shoot")});
- defense.forEach((p,i)=>{const targetX=attackX-(m.possHome?1:-1)*(7+(i%2)*3);moveLivePlayer(p,targetX,25+i*13,phase>=3?"block":"defend")});
- const ball=document.getElementById("liveBall");if(ball){const handler=document.getElementById("liveP_"+ballHandler.id);if(handler){ball.style.left=(parseFloat(handler.style.left)||attackX)+"%";ball.style.top=(parseFloat(handler.style.top)||50)+"%"}}
- if(m.phaseTick===0||m.phaseTick<rate){
-  if(phase===0){if(m.clock%24===0)liveComment(ballHandler.name+"이(가) 프런트코트를 넘어옵니다. 수비가 자리를 잡습니다.");}
-  else if(phase===1&&m.clock%24===0){liveComment(ballHandler.name+"이(가) 드리블로 수비를 흔듭니다. 동료들이 스크린을 준비합니다.");}
-  else if(phase===2&&m.clock%24===0){const receiver=offense[(offense.indexOf(ballHandler)+2)%5];m.ballHandlerId=receiver.id;animateBallPass(ballHandler,receiver);liveComment(ballHandler.name+"의 패스! "+receiver.name+"에게 연결됩니다.");}
-  else if(phase===3&&m.clock%24===0){const shooter=offense[(offense.indexOf(ballHandler)+1)%5];m.ballHandlerId=shooter.id;liveComment(shooter.name+"이(가) 수비를 끌고 페인트존으로 파고듭니다.");}
-  else if(phase===4&&m.clock%24===0){resolveLiveShot(m,offense,defense,atkClub);}
+ m.phaseTick+=m.speed;let secondAdvanced=false;
+ if(m.phaseTick>=1){m.phaseTick-=1;secondAdvanced=true;m.clock--;m.shotClock--;m.possessionElapsed=(m.possessionElapsed||0)+1;for(const p of [...m.homeLine,...m.awayLine])m.stats[p.id].min+=1/60;
+  if(m.clock<=0){if(m.q<4){m.q++;m.clock=720;m.shotClock=24;m.possessionElapsed=0;m.phase=-1;liveComment(m.q+"쿼터 시작. 양 팀이 코트로 돌아옵니다.");}else if(m.homeScore===m.awayScore){m.q++;m.clock=300;m.shotClock=24;m.possessionElapsed=0;m.phase=-1;liveComment("4쿼터 종료, 승부를 가리지 못했습니다. 연장전에 들어갑니다.");}else{finishLiveMatch();return}}
+  if(m.shotClock<=0){liveComment("24초 바이얼레이션! 공격권이 넘어갑니다.");m.possHome=!m.possHome;m.shotClock=24;m.possessionElapsed=0;m.phase=-1;m.ballHandlerId=null;}
+  updateLiveScoreboard();
  }
- if(m.clock%24===0){m.phase=(m.phase+1)%5;if(m.phase===0){m.possHome=!m.possHome;m.shotClock=24;m.ballHandlerId=null;}}
+ const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine;
+ const ballHandler=offense.find(p=>p.id===m.ballHandlerId)||offense[0];m.ballHandlerId=ballHandler.id;
+ const elapsed=m.possessionElapsed||0,phase=Math.min(4,Math.floor(Math.max(0,elapsed-1)/4));
+ const changed=secondAdvanced&&phase!==m.phase;
+ if(changed)m.phase=phase;
+ const attackX=m.possHome?(phase===0?22:phase===1?38:phase===2?53:phase===3?68:79):(phase===0?78:phase===1?62:phase===2?47:phase===3?32:21);
+ const y=49+Math.sin((elapsed+phase)*.7)*5;
+ offense.forEach((p,i)=>{let x,ypos;if(p.id===ballHandler.id){x=attackX;ypos=y+(i-2)*2}else{x=attackX+(i-2)*(phase<3?6:4)*(m.possHome?1:-1);ypos=23+i*13}const action=phase===0?"run":phase===1?"dribble":phase===2?"pass":phase===3?"run":"shoot";moveLivePlayer(p,x,ypos,action)});
+ defense.forEach((p,i)=>{const targetX=attackX-(m.possHome?1:-1)*(phase>=3?5:8+(i%2)*2);moveLivePlayer(p,targetX,25+i*13,phase===4?"block":"defend")});
+ const ball=document.getElementById("liveBall"),handlerEl=document.getElementById("liveP_"+ballHandler.id);
+ if(ball&&handlerEl){ball.style.left=handlerEl.style.left;ball.style.top=handlerEl.style.top}
+ if(changed){
+  if(phase===0){liveComment(ballHandler.name+"이(가) 프런트코트를 넘어옵니다. 공격을 정돈합니다.");}
+  else if(phase===1){liveComment(ballHandler.name+"이(가) 드리블로 수비를 흔듭니다. 동료가 스크린을 걸어줍니다.");}
+  else if(phase===2){const receiver=offense[(offense.indexOf(ballHandler)+2)%5];animateBallPass(ballHandler,receiver);m.ballHandlerId=receiver.id;liveComment(ballHandler.name+"이(가) 반대편으로 패스를 보냅니다. "+receiver.name+"이(가) 받습니다.");}
+  else if(phase===3){const driver=offense[(offense.indexOf(ballHandler)+1)%5];m.ballHandlerId=driver.id;liveComment(driver.name+"이(가) 페인트존으로 파고듭니다. 수비가 안쪽으로 좁혀집니다.");}
+  else if(phase===4){resolveLiveShot(m,offense,defense);}
+ }
+ if(secondAdvanced&&elapsed>=20){m.possessionElapsed=0;m.phase=-1;m.ballHandlerId=null;}
 }
 function moveLivePlayer(p,x,y,action){const el=document.getElementById("liveP_"+p.id);if(!el)return;el.style.left=Math.max(7,Math.min(93,x))+"%";el.style.top=Math.max(10,Math.min(90,y))+"%";el.dataset.action=action;el.classList.toggle("is-dribbling",action==="dribble");el.classList.toggle("is-shooting",action==="shoot");el.classList.toggle("is-blocking",action==="block")}
 function animateBallPass(from,to){const ball=document.getElementById("liveBall"),a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!ball||!a||!b)return;ball.style.left=a.style.left;ball.style.top=a.style.top;requestAnimationFrame(()=>{ball.style.left=b.style.left;ball.style.top=b.style.top})}
