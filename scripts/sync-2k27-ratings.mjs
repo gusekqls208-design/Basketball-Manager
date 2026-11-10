@@ -228,7 +228,7 @@ const unverified = db.players.filter(p => !p.ratingsStatus || p.ratingsStatus ==
 const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p => p.name);
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
-db.source = `${today}: NBA 2K27 current roster ratings synced from NBA 2K API public endpoint; ${matched} of ${db.players.length} game-roster players matched; unmatched players retain prior verified source or remain unverified`;
+db.source = `${today}: NBA 2K27 ratings synced from NBA 2K API/2KRatings; ${db.players.length} players retained with verified 2K27 ratings; ${excludedUnverified.length} players without 2K27 ratings excluded`;
 db.ratingNotes = "Only players with verified NBA 2K27 ratings are included. 2K27 source attributes map from 0-100 to game 1-20 by rounding rating/5; OVR remains direct 2K OVR. Dunk = Driving Dunk; rebound = Defensive Rebound; acceleration = Speed with Ball; balance = Agility; screen = Strength; aggression = Hustle. No career-stat, height-based, legacy, or invented ability formulas are used. Players without 2K27 ratings are excluded.";
 db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. 0-100 source attributes map to game 1-20 by Math.round(value/5), and OVR is copied directly. Game-specific fields with no exact 2K category use explicitly documented closest direct 2K attributes. Players without verified 2K27 data are excluded, never filled with legacy estimates.";
 db.ratingsCoverage = {
@@ -245,6 +245,7 @@ db.ratingsCoverage = {
   partialPlayers: partial.length,
   partialNames: partial,
   direct2K27Matched: matched,
+  totalVerified2K27Players: db.players.length,
   manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
   dunkMapping: "Direct Driving Dunk only; no blended rating",
