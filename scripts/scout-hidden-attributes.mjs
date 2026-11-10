@@ -154,7 +154,7 @@ await mapLimit(targets,5,async p=>{
       }
       await sleep(90);
     }
-    if(!rows.length){
+    if(!rows.length||(rows.length<3&&(Number(p.age)||22)<=25)){
       const age=Number(p.age)||22;
       const firstYear=Math.max(2018,2026-Math.max(1,age-18));
       for(let year=2026;year>=firstYear;year--){
