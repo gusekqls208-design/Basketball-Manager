@@ -2,8 +2,8 @@
 /**
  * Sync current NBA 2K27 ratings into the Basketball Manager roster.
  * Source: NBA 2K API public endpoint (weekly 2K27 ratings data).
- * Only direct 2K attributes are overwritten. Defensive Rebound is the sole rebound input. LeBron block uses a documented career-peak override. Non-2K mental/role proxies remain
- * explicitly documented; players absent from the 2K current roster are not guessed.
+ * NBA 2K27 is the sole source of player ability ratings. Defensive Rebound is the sole rebound input. LeBron block uses a documented career-peak override. Game-specific fields map only to 2K source attributes.
+ * Players absent from the 2K current roster remain unverified and are never assigned invented ratings.
  */
 import fs from "node:fs/promises";
 
@@ -239,11 +239,14 @@ db.ratingsCoverage = {
   direct2K27Matched: matched,
   manual2K27Rows: db.players.filter(p => p.ratingsStatus === "2K-direct-27" && String(p.ratingsSource || "").includes("2kAuction")).length,
   source2K27Rows: sources.length,
+  dunkMapping: "Direct Driving Dunk only; no blended rating",
   accelerationMapping: "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value",
   hiddenAttributeCoverage: "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
   screenAttributeCoverage: "Screen maps to direct 2K Strength; aggression maps to direct 2K Hustle",
   allPlayersEvaluatedByDirect2K: matched === db.players.length,
   unmatched2K27SourceNames: unmatchedSource,
 };
+delete db.ratingsCoverage.dunkFormula;
+delete db.ratingsCoverage.accelerationProxy;
 await fs.writeFile(FILE, JSON.stringify(db, null, 2) + "\n");
 console.log(JSON.stringify({sourceRows:sources.length,matched,unverified:unverified.length,partial:partial.length,unmatchedSource:unmatchedSource.length,counts},null,2));
