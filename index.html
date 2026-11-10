@@ -202,41 +202,134 @@ function courtSVG(p){
  let spots={PG:[75,43],SG:[145,43],SF:[110,91],PF:[75,143],C:[145,143]},scores=positionScores(p);
  return '<svg viewBox="0 0 220 190" style="width:100%;max-width:270px;background:#b77a43;border-radius:8px;border:1px solid #d7a36b"><rect x="8" y="8" width="204" height="174" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M30 182V130A80 80 0 0 1 190 130V182 M75 182V102H145V182 M75 102A35 35 0 0 0 145 102 M8 8H212" fill="none" stroke="#f7e5ca" stroke-width="2"/><circle cx="110" cy="165" r="7" fill="none" stroke="#f7e5ca" stroke-width="2"/><path d="M92 153H128" stroke="#f7e5ca" stroke-width="3"/><path d="M96 165A14 14 0 0 0 124 165" fill="none" stroke="#f7e5ca" stroke-width="1.5"/>'+pos.map(k=>{let [x,y]=spots[k],v=scores[k],c=v>=12?"#78c69a":v>=9?"#f28a2e":"#55514c";return '<circle cx="'+x+'" cy="'+y+'" r="10" fill="'+c+'" stroke="#fff" stroke-width="1.8"/><text x="'+x+'" y="'+(y+3)+'" fill="#17120d" font-size="8" font-weight="900" text-anchor="middle">'+k+'</text>'}).join("")+'</svg>'
 }
+function parseEspnStatCategory(data){
+ const cats=data?.categories||data?.statCategories||[];
+ const out={};
+ for(const c of cats){
+  const labels=c.labels||c.names||[];
+  const vals=c.totals||c.values||[];
+  labels.forEach((label,i)=>{const key=String(label||"").toUpperCase().replace(/[^A-Z0-9%]/g,"");const value=Number(String(vals[i]??"").replace(/,/g,""));if(key&&Number.isFinite(value))out[key]=value;});
+ }
+ return out;
+}
+function clampRating(v){return Math.max(1,Math.min(20,Math.round(v)))}
+function statToRating(v,lo,hi){return clampRating(4+16*Math.max(0,Math.min(1,(v-lo)/(hi-lo))))}
+function applyStatsScouting(p,st){
+ const g=st||{},a=p.attrs||{},pos=p.pos||"SF";
+ const pts=g.PTS||0,reb=g.REB||0,ast=g.AST||0,stl=g.STL||0,blk=g.BLK||0,min=g.MIN||0;
+ const fg=g["FG%"]||0,three=g["3P%"]||0,ft=g["FT%"]||0,threeAtt=g["3PA"]||0,fta=g.FTA||0,to=g.TO||0;
+ const hasStats=(g.GP||0)>=5;
+ if(!hasStats)return false;
+ const set=(k,v)=>a[k]=clampRating(v);
+ set("close",statToRating(fg,.38,.68));
+ set("layup",statToRating(fg,.40,.68)+(pos==="PG"||pos==="SG"?1:0));
+ set("dunk",statToRating((blk+reb*.18+pts*.06),.2,4.2)+(pos==="C"||pos==="PF"?1:0));
+ set("mid",statToRating(fg,.38,.56));
+ set("three",statToRating(three,.25,.43)+statToRating(threeAtt,.2,7)*.15);
+ set("ft",statToRating(ft,.55,.92));
+ set("post",statToRating(reb+pts*.12,1,9)+(pos==="PF"||pos==="C"?1:0));
+ set("handle",statToRating(ast+pts*.06-to*.25,0,8)+(pos==="PG"?2:0));
+ set("pass",statToRating(ast,0,9));
+ set("passTech",statToRating(ast/(to||1),.3,4.5));
+ set("perimeter",statToRating(stl+min*.012,.1,2.3)+(pos==="PG"||pos==="SG"?1:0));
+ set("interior",statToRating(blk+reb*.12,.1,3.5)+(pos==="C"||pos==="PF"?1:0));
+ set("steal",statToRating(stl,.1,2));
+ set("block",statToRating(blk,.05,2.5));
+ set("rebound",statToRating(reb,.5,13));
+ set("screen",statToRating(reb+min*.04,1,14)+(pos==="C"||pos==="PF"?1:0));
+ set("anticipation",statToRating(stl+blk,.1,3));
+ set("decisions",statToRating(ast/(to||1),.3,4.5));
+ set("vision",statToRating(ast,0,9));
+ set("offBall",statToRating(threeAtt+pts*.08,.2,10));
+ set("positioning",statToRating(reb+blk,.5,14));
+ set("composure",statToRating(ft,.55,.92));
+ set("concentration",statToRating(min,8,36));
+ set("teamwork",statToRating(ast+reb*.25,0,12));
+ set("workRate",statToRating(min+reb*.3,8,42));
+ set("leadership",statToRating(min+ast*.5,8,40));
+ set("determination",statToRating(min+pts*.2,8,42));
+ set("flair",statToRating(ast+threeAtt*.3,0,12));
+ set("aggression",statToRating(fta+stl,0,12));
+ const h=Number(p.height)||200,w=Number(p.weight)||95;
+ const speedBase=pos==="PG"?14:pos==="SG"?13:pos==="SF"?12:pos==="PF"?10:9;
+ set("speed",speedBase-(h-190)*.09);
+ set("acceleration",speedBase-(h-190)*.10);
+ set("agility",speedBase-(h-190)*.08);
+ set("jumping",statToRating(blk+reb*.12,.1,3.5)+(pos==="C"||pos==="PF"?1:0));
+ set("strength",statToRating(w,70,125));
+ set("stamina",statToRating(min,8,38));
+ set("balance",statToRating(w/h,.35,.62));
+ p.attrs=a;
+ const weightMap=pos==="PG"?["handle","pass","passTech","vision","decisions","speed","three","perimeter"]:pos==="SG"?["three","handle","mid","perimeter","agility","offBall","speed","decisions"]:pos==="SF"?["mid","perimeter","rebound","three","layup","agility","strength","decisions"]:pos==="PF"?["rebound","strength","interior","post","dunk","screen","block","positioning"]:["interior","rebound","block","strength","close","screen","jumping","positioning"];
+ p.ovr=clampRating(weightMap.reduce((sum,k)=>sum+(a[k]||0),0)/weightMap.length)*5;
+ p.ratingsSource="ESPN season statistics based scouting estimate";
+ p.ratingsUpdatedAt=new Date().toISOString();
+ return true;
+}
 async function loadPlayerCareer(p,box){
  if(p.careerLoaded)return;
  const list=box.querySelector("#careerHistoryList");if(!list)return;
  let athleteId=p.espnId?String(p.espnId):"";
  if(!athleteId&&p.teamAbbr&&ESPN_TEAM_IDS[p.teamAbbr]){
-  try{const rr=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+ESPN_TEAM_IDS[p.teamAbbr]+"/roster?season=2027",{cache:"no-store"});if(rr.ok){const rp=await rr.json();const hit=(rp.athletes||[]).find(x=>cleanPlayerKey(x.displayName)===cleanPlayerKey(p.name));if(hit){athleteId=String(hit.id);p.espnId=athleteId;p.experience=Number(hit.experience?.years||0);p.age=Number(hit.age)||p.age;p.ageApprox=false;p.birthDate=hit.dateOfBirth||p.birthDate;p.height=Math.round(Number(hit.height||78)*2.54);p.weight=Math.round(Number(hit.weight||210)*.453592);p.jersey=hit.jersey||p.jersey;p.pos=espnPosition(hit,p.pos);persist()}}}catch(e){}
+  try{const rr=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+ESPN_TEAM_IDS[p.teamAbbr]+"/roster?season=2027",{cache:"no-store"});if(rr.ok){const rp=await rr.json();const hit=(rp.athletes||[]).find(x=>cleanPlayerKey(x.displayName)===cleanPlayerKey(p.name));if(hit){athleteId=String(hit.id);p.espnId=athleteId;persist()}}}catch(e){}
  }
  if(!athleteId){list.innerHTML='<span class="muted small">ESPN 선수 식별 정보를 확인할 수 없어 커리어 통계를 불러오지 못했습니다.</span>';return;}
- list.innerHTML='<span class="muted small">ESPN 시즌별 기록을 불러오는 중…</span>';
+ list.innerHTML='<span class="muted small">시즌별 커리어 및 선수 프로필을 불러오는 중…</span>';
  try{
-  const seasonsCount=Math.min(24,Math.max(1,(Number.isFinite(+p.experience)?Number(p.experience):7)+1));
-  const years=Array.from({length:seasonsCount},(_,i)=>2027-i);
-  const rows=[];
-  for(let start=0;start<years.length;start+=3){
-   const batch=await Promise.all(years.slice(start,start+3).map(async year=>{
-   try{
-    const res=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year+"&seasontype=2",{cache:"force-cache"});
-    if(!res.ok)return null;
-    const data=await res.json();
-    const cats=data.categories||[];
-    const general=cats.find(c=>/general|offensive/i.test(c.name||""))||cats[0];
-    if(!general)return null;
-    const labels=general.labels||[],vals=general.totals||[];
-    const get=k=>{const i=labels.findIndex(x=>String(x).toUpperCase()===k);return i>=0?Number(String(vals[i]??"0").replace(/,/g,""))||0:0};
-    const gp=get("GP");if(!gp)return null;
-    const team=(data.teams||[]).map(t=>t.abbreviation||t.displayName).filter(Boolean).join("/");
-    return{season:(year-1)+"-"+String(year).slice(-2),team:team||"NBA",gp,pts:get("PTS"),reb:get("REB"),ast:get("AST"),stl:get("STL"),blk:get("BLK"),min:get("MIN")};
-   }catch(e){return null}
-   }));
-   rows.push(...batch);
+  const bioUrl="https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/athletes/"+athleteId;
+  const bioRes=await fetch(bioUrl,{cache:"force-cache"});
+  if(bioRes.ok){
+   const bio=await bioRes.json();
+   if(bio.position?.abbreviation)p.pos=espnPosition({position:bio.position},p.pos);
+   if(Number(bio.height)>0)p.height=Math.round(Number(bio.height)*2.54);
+   if(Number(bio.weight)>0)p.weight=Math.round(Number(bio.weight)*.453592);
+   if(Number(bio.age)>0){p.age=Number(bio.age);p.ageApprox=false}
+   if(bio.dateOfBirth)p.birthDate=bio.dateOfBirth;
+   if(bio.experience?.years!=null)p.experience=Number(bio.experience.years);
+   if(bio.college?.name)p.college=bio.college.name;
+   if(bio.draft?.year)p.draft={year:bio.draft.year,round:bio.draft.round,selection:bio.draft.selection};
+   if(bio.headshot?.href)p.photoUrl=bio.headshot.href;
   }
-  p.career=rows.filter(Boolean).sort((a,b)=>b.season.localeCompare(a.season));
-  p.careerLoaded=true;p.careerSource="ESPN season statistics";persist();
-  if(list.isConnected)list.innerHTML=p.career.length?p.career.map(c=>'<div><b>'+c.season+'</b><span>'+c.team+' · '+c.gp+'경기 · '+c.pts+'득점 · '+c.reb+'리바운드 · '+c.ast+'어시스트</span></div>').join(""):'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 기록 제공 범위 밖의 선수일 수 있습니다.</span>';
- }catch(e){list.innerHTML='<span class="muted small">시즌별 기록을 불러오지 못했습니다. 인터넷 연결 후 다시 열어 주세요.</span>'}
+  const exp=Math.max(1,Math.min(25,Number(p.experience)||8));
+  const years=Array.from({length:exp},(_,i)=>2027-i);
+  const rows=[];
+  for(let i=0;i<years.length;i+=4){
+   const chunk=years.slice(i,i+4);
+   const got=await Promise.all(chunk.map(async year=>{
+    try{
+     const res=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year,{cache:"force-cache"});
+     if(!res.ok)return null;
+     const data=await res.json(),stats=parseEspnStatCategory(data),gp=stats.GP||0;
+     if(!gp)return null;
+     const team=(data.teams||[]).map(t=>t.abbreviation||t.displayName).filter(Boolean).join("/");
+     return{season:(year-1)+"-"+String(year).slice(-2),team:team||"NBA",gp,pts:stats.PTS||0,reb:stats.REB||0,ast:stats.AST||0,stl:stats.STL||0,blk:stats.BLK||0,min:stats.MIN||0,fg:stats["FG%"]||0,three:stats["3P%"]||0,ft:stats["FT%"]||0,stats};
+    }catch(e){return null}
+   }));
+   rows.push(...got.filter(Boolean));
+  }
+  p.career=rows.sort((a,b)=>b.season.localeCompare(a.season));
+  p.careerLoaded=true;p.careerSource="ESPN season statistics";
+  const latest=p.career.find(c=>c.season==="2026-27")||p.career.find(c=>c.season==="2025-26");
+  if(latest){
+   p.seasonStats={...(p.seasonStats||{}),gp:latest.gp,stl:latest.stl,blk:latest.blk,pts:latest.pts,reb:latest.reb,ast:latest.ast};
+   p.pts=latest.pts;p.reb=latest.reb;p.ast=latest.ast;p.minutes=latest.min;
+   if(String(p.ratingsSource||"").includes("position and age")||String(p.ratingsSource||"").includes("derived profile"))applyStatsScouting(p,latest.stats);
+  }
+  persist();
+  if(list.isConnected){
+   const bioBits=[p.college?"출신 대학 "+p.college:"",p.draft?"드래프트 "+p.draft.year+"년 "+p.draft.round+"라운드 "+p.draft.selection순위:""].filter(Boolean).join(" · ");
+   list.innerHTML=(bioBits?'<div class="career-meta">'+bioBits+'</div>':"")+(p.career.length?p.career.map(c=>'<div><b>'+c.season+'</b><span>'+c.team+' · '+c.gp+'경기 · '+c.pts+'득점 · '+c.reb+'리바운드 · '+c.ast+'어시스트</span></div>').join(""):'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 ESPN 기록 제공 범위 밖의 선수일 수 있습니다.</span>');
+   const facts=box.querySelector(".profile-facts");
+   if(facts){const cells=facts.querySelectorAll("div");if(cells[1])cells[1].innerHTML='<span>나이</span><b>'+p.age+'세</b>';if(cells[2])cells[2].innerHTML='<span>신체</span><b>'+p.height+'cm / '+p.weight+'kg</b>';}
+   const head=box.querySelector(".profile-top .small.muted");if(head)head.textContent=p.pos+' · '+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role;
+   const portrait=box.querySelector(".player-portrait span");if(portrait)portrait.textContent=p.pos+' · #'+(p.jersey||"--");
+   const ovr=box.querySelector(".player-portrait strong");if(ovr)ovr.innerHTML=p.ovr+' <small>OVR</small>';
+   const attrs=box.querySelectorAll(".fm-attr b");let vals=Object.values(p.attrs||{});attrs.forEach((el,i)=>{if(vals[i]!=null)el.textContent=vals[i]});
+  }
+ }catch(e){
+  console.error("Career stats fetch failed",p.name,e);
+  list.innerHTML='<span class="muted small">시즌별 기록을 불러오지 못했습니다. 인터넷 연결 후 다시 열어 주세요.</span>';
+ }
 }
 function editPlayer(id){let owner=state.clubs.find(t=>t.players.some(x=>x.id===id));let p=owner?.players.find(x=>x.id===id);if(!p)return;let editable=true;let groups=[["TECHNICAL","기술 능력치",[["close","골밑슛"],["layup","레이업"],["dunk","덩크"],["mid","미들슛"],["three","3점슛"],["ft","자유투"],["post","포스트 플레이"],["handle","볼 핸들링"],["pass","패스"],["passTech","패스 기술"],["perimeter","외곽 수비"],["interior","골밑 수비"],["steal","스틸"],["block","블록"],["rebound","리바운드"],["screen","스크린"]]],["MENTAL","정신 능력치",[["anticipation","예측력"],["decisions","판단력"],["vision","코트 시야"],["offBall","오프볼 움직임"],["positioning","위치 선정"],["composure","침착성"],["concentration","집중력"],["teamwork","팀워크"],["workRate","활동량"],["leadership","리더십"],["determination","승부욕"],["flair","천재성"],["aggression","적극성"]]],["PHYSICAL","신체 능력치",[["speed","속력"],["acceleration","가속력"],["agility","민첩성"],["jumping","점프력"],["strength","근력"],["stamina","체력"],["balance","균형감각"]]]];let hiddenNames={consistency:"일관성",importantMatches:"중요 경기 활약",pressure:"압박 대처",professionalism:"프로 의식",injuryProneness:"부상 빈도",naturalFitness:"자연 회복력",adaptability:"적응력",potential:"잠재력"};let box=document.createElement("div");box.className="profile-overlay";box.innerHTML='<div class="profile-shell"><div class="profile-top"><div><div class="eyebrow">PLAYER PROFILE / '+(p.realData?"REAL NBA PLAYER":p.origin==="custom"?"CUSTOM PLAYER":p.origin==="prospect"?"GENERATED PROSPECT":"GENERATED PLAYER")+'</div><div class="profile-name">'+p.name+'</div><div class="small muted">'+p.pos+' · '+(p.ageApprox?'약 ':'')+p.age+'세 · '+p.height+'cm / '+p.weight+'kg · '+p.role+'</div></div><div class="profile-actions"><button class="btn ghost" id="editToggle" aria-label="편집 모드">✎ 편집</button><button class="btn ghost" id="closeProfile">✕</button></div></div><div class="profile-hero"><div class="player-portrait">'+(p.photoUrl?'<img src="'+p.photoUrl+'" alt="'+p.name+'" referrerpolicy="no-referrer">':'<div class="portrait-silhouette">♟</div>')+'<b>'+p.name+'</b><span>'+p.pos+' · #'+(p.jersey||"--")+'</span><strong style="color:'+ovrColor(p.ovr)+'">'+p.ovr+' <small>OVR</small></strong></div><div class="profile-info"><div class="profile-facts"><div><span>소속 구단</span><b>'+owner.name+'</b></div><div><span>나이</span><b>'+(p.ageApprox?'약 ':'')+(p.ageApprox?'약 ':'')+p.age+'세</b></div><div><span>신체</span><b>'+p.height+'cm / '+p.weight+'kg</b></div><div><span>연봉</span><b>'+money(p.salary)+'</b></div><div><span>계약</span><b>'+p.years+'년</b></div><div><span>선수 유형</span><b>'+(p.realData?"실제 NBA 선수":p.origin==="prospect"?"가상 유망주":p.origin==="custom"?"직접 생성":"가상 생성 선수")+'</b></div></div><div class="hidden-strip"><div class="sectionbar"><b>HIDDEN ATTRIBUTES</b><span class="small muted">스카우팅 정보</span></div><div class="hidden-values">'+Object.entries(hiddenNames).map(([k,n])=>'<div><span>'+n+(k==="potential"?' <small style="display:block;color:#f28a2e;font-size:8px;margin-top:2px">예상 최종 OVR '+Math.round(p.hidden.potential*5)+'</small>':'')+'</span><b style="color:'+ratingColor(p.hidden[k])+'">'+p.hidden[k]+'</b></div>').join("")+'</div></div></div></div><div class="profile-grid"><section class="profile-main"><div class="profile-section"><div class="sectionbar"><h3>PLAYER ATTRIBUTES</h3><span class="small muted">0–20 · 높을수록 우수</span></div>'+groups.map(g=>'<div class="attr-group"><h4>'+g[0]+' <span>'+g[1]+'</span></h4><div class="fm-attrs">'+g[2].map(([k,n])=>'<div class="fm-attr"><span>'+n+'</span><b style="color:'+ratingColor(p.attrs[k])+'">'+p.attrs[k]+'</b></div>').join("")+'</div></div>').join("")+'</div><div class="profile-section"><h3>LEAGUE PERFORMANCE</h3><div class="stat-cards">'+[["경기",p.seasonStats.gp||0],["득점",p.pts||0],["리바운드",p.reb||0],["어시스트",p.ast||0],["스틸",p.seasonStats.stl||0],["블록",p.seasonStats.blk||0]].map(x=>'<div><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join("")+'</div></div><div class="profile-section"><h3>CAREER HISTORY <span class="small muted">'+(p.experience!=null?'NBA '+p.experience+'시즌':'')+'</span></h3><div class="career-list" id="careerHistoryList">'+((p.career||[]).length?p.career.map(c=>'<div><b>'+c.season+'</b><span>'+c.team+' · '+c.gp+'경기 · '+c.pts+' PPG</span></div>').join(""):'<span class="muted small">'+(p.experience!=null?'NBA 경력 '+p.experience+'시즌 · 시즌별 기록을 불러오는 중입니다.':'선수 경력 데이터가 아직 연결되지 않았습니다.')+'</span>')+'</div></div><div class="profile-section"><h3>MANAGER RELATIONSHIP</h3><div class="relationship-row"><b>감독과의 관계</b><strong>'+ (p.relationship??50) +'/100</strong></div><div class="progress"><i style="width:'+(p.relationship??50)+'%"></i></div><p class="small muted">출전 시간, 역할 만족도, 팀 성적과 면담 결과에 따라 관계가 변화합니다.</p></div></section><aside class="profile-side"><div class="profile-section position-map-section"><h3>POSITION MAP</h3>'+courtSVG(p)+'<div class="small muted" style="line-height:1.7;margin-top:8px"><span style="color:#78c69a">●</span> 숙련 포지션　<span style="color:#f28a2e">●</span> 가능하나 숙련도 부족　<span style="color:#55514c">●</span> 플레이 불가</div></div><div class="profile-section"><h3>PLAYER STATUS</h3><div class="status-line"><span>컨디션</span><b>'+p.condition+'%</b></div><div class="progress"><i style="width:'+p.condition+'%"></i></div><div class="status-line"><span>피로도</span><b>'+p.fatigue+'%</b></div><div class="progress"><i style="width:'+p.fatigue+'%"></i></div><div class="status-line"><span>출전 역할</span><b>'+p.role+'</b></div></div><div class="profile-section"><h3>PLAYER TRAITS</h3><div class="trait-list">'+(p.traits||[p.trait]).map(x=>'<span class="pill">'+x+'</span>').join(" ")+'</div></div></aside></div><div class="profile-edit hidden" id="profileEdit"><div class="sectionbar"><h3>EDIT PLAYER</h3><span class="small muted">'+"편집 모드에서 기본정보·능력치·히든 능력치를 모두 수정할 수 있습니다."+'</span></div><div class="formrow"><label>이름 <input id="pn" value="'+p.name+'"></label><label>포지션 <select id="pp">'+pos.map(x=>'<option '+(x===p.pos?'selected':'')+'>'+x+'</option>').join("")+'</select></label><label>나이 <input id="pa" type="number" value="'+p.age+'" style="width:70px"></label><label>역할 <select id="pr">'+["프랜차이즈 스타","핵심 선수","선발","로테이션","벤치","유망주","전력 외"].map(x=>'<option '+(p.role===x?'selected':'')+'>'+x+'</option>').join("")+'</select></label></div><div class="formrow"><label>키(cm) <input id="ph" type="number" value="'+p.height+'" style="width:80px"></label><label>몸무게(kg) <input id="pw" type="number" value="'+p.weight+'" style="width:80px"></label><label>연봉(억 원) <input id="ps" type="number" value="'+p.salary+'" style="width:100px"></label><label>계약(년) <input id="py" type="number" value="'+p.years+'" style="width:65px"></label></div>'+(editable?'<div class="section"><h4>능력치 편집</h4><div class="fm-attrs edit-attrs">'+groups.flatMap(g=>g[2]).map(([k,n])=>'<label class="fm-attr"><span>'+n+'</span><input data-attr="'+k+'" type="number" min="0" max="20" value="'+p.attrs[k]+'"></label>').join("")+'</div></div><div class="section"><h4>히든 능력치 편집</h4><div class="fm-attrs edit-attrs">'+Object.entries(hiddenNames).map(([k,n])=>'<label class="fm-attr"><span>'+n+'</span><input data-hidden="'+k+'" type="number" min="0" max="20" value="'+p.hidden[k]+'"></label>').join("")+'</div></div>':'<div class="notice">편집 모드에서는 기본 리그 선수도 능력치와 히든 능력치를 포함한 모든 선수 정보를 수정할 수 있습니다.</div>')+'<div class="profile-edit-actions"><button class="btn danger" id="releasePlayer">방출</button><button class="btn primary" id="savePlayer">변경 저장</button></div></div></div>';document.body.append(box);loadPlayerCareer(p,box);box.querySelector("#closeProfile").onclick=()=>box.remove();box.querySelector("#editToggle").onclick=()=>{let panel=box.querySelector("#profileEdit"),btn=box.querySelector("#editToggle"),opening=panel.classList.contains("hidden");panel.classList.toggle("hidden",!opening);panel.style.display=opening?"block":"none";btn.classList.toggle("active",opening);if(opening)setTimeout(()=>panel.scrollIntoView({behavior:"smooth",block:"start"}),50)};box.querySelector("#releasePlayer").onclick=()=>{if(confirm(p.name+" 선수를 방출할까요?")){removePlayer(p.id);box.remove()}};box.querySelector("#savePlayer").onclick=()=>{p.name=box.querySelector("#pn").value;p.pos=box.querySelector("#pp").value;p.age=+box.querySelector("#pa").value;p.role=box.querySelector("#pr").value;p.height=+box.querySelector("#ph").value;p.weight=+box.querySelector("#pw").value;p.salary=+box.querySelector("#ps").value;p.years=+box.querySelector("#py").value;if(editable){box.querySelectorAll("[data-attr]").forEach(x=>p.attrs[x.dataset.attr]=Math.max(0,Math.min(20,+x.value)));box.querySelectorAll("[data-hidden]").forEach(x=>p.hidden[x.dataset.hidden]=Math.max(0,Math.min(20,+x.value)))}let keys=p.pos==="PG"?["handle","pass","passTech","vision","decisions","speed","acceleration","three"]:p.pos==="SG"?["three","handle","mid","perimeter","agility","offBall"]:p.pos==="SF"?["mid","perimeter","rebound","three","layup","agility"]:p.pos==="PF"?["rebound","strength","interior","post","dunk","screen"]:["interior","rebound","block","strength","close","screen"];p.ovr=Math.round(keys.reduce((s,k)=>s+p.attrs[k],0)/keys.length*5);persist();box.remove();nav(owner.id===state.teamId?"roster":"market")}}
 function removePlayer(id){let owner=state.clubs.find(t=>t.players.some(p=>p.id===id));if(!owner)return;owner.players=owner.players.filter(p=>p.id!==id);persist();nav(owner.id===state.teamId?"roster":"market")}
@@ -282,7 +375,7 @@ function espnPosition(a,fallback="SF"){
  if(h>=82)return"C";if(h>=80)return"PF";if(h>=78)return"SF";if(h>=76)return"SG";return"PG";
 }
 async function syncOfficialRosters(){
- if(!state?.clubs||state.rosterSourceVersion>=4)return;
+ if(!state?.clubs||state.rosterSourceVersion>=5)return;
  const main=document.getElementById("main");
  if(main)main.insertAdjacentHTML("afterbegin",'<div id="rosterSyncNotice" class="notice">2026–27 NBA 30개 구단 현행 선수단을 확인하고 전체 선수 데이터를 적용하는 중입니다…</div>');
  try{
@@ -345,7 +438,7 @@ async function syncOfficialRosters(){
    next.forEach((p,i)=>p.role=i<5?"선발":i<10?"로테이션":"벤치");
    team.players=next;total+=next.length;
   }
-  state.rosterSourceVersion=4;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
+  state.rosterSourceVersion=5;state.rosterSource="ESPN live team rosters where available + 2026-27 roster snapshot fallback + NBA CDN photos";
   state.rosterSyncedAt=new Date().toISOString();persist();
   const n=document.getElementById("rosterSyncNotice");if(n)n.remove();
   const page=document.querySelector(".nav.active")?.dataset.page||"home";render(page);
