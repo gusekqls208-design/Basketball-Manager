@@ -111,7 +111,7 @@ function applyPlayer(p, source) {
 
   const driving = pick(a, "drivingDunk");
   const standing = pick(a, "standingDunk");
-  const dunk = mean(driving == null ? null : driving * 0.75, standing == null ? null : standing * 0.25);
+  const dunk = driving !== null && standing !== null ? driving * 0.75 + standing * 0.25 : (driving ?? standing);
   setMapped(next, "dunk", dunk);
 
   const rebound = mean(pick(a, "offensiveRebound"), pick(a, "defensiveRebound"));
