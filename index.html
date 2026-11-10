@@ -422,7 +422,7 @@ async function syncOfficialRosters(){
     p.physicalEstimated=isLive?false:!!stat?.physicalEstimated;
     p.positionEstimated=!isLive;
     p.height=isLive?Math.round(Number(a.height||78)*2.54):(Number(a.height)||200);
-    p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);
+    p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);p.physicalEstimated=isLive?(!a.height||!a.weight):!!a.physicalEstimated;
     p.jersey=a.jersey||"";p.secondaryPositions=stat?.secondaryPositions||a.secondaryPositions||[];
     p.photoUrl=stat?.headshot||(isLive?a.headshot?.href:"")||"";
     if(stat){p.attrs={...stat.attrs};p.hidden={...stat.hidden};p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings"}
