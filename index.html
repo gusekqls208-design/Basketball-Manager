@@ -183,7 +183,7 @@ function sourceBadge(p){return p.realData?'<span class="pill good" style="font-s
 function rosterPage(m){
  let t=my();
  m.innerHTML=head("SQUAD MANAGEMENT","선수단","실제 선수와 가상 선수의 출처를 구분해 표시합니다.")+ '<div class="notice">실제 NBA 선수는 초록색, 가상 생성 선수는 갈색으로 표시됩니다.</div>'+
- '<div class="sectionbar"><h2>FIRST TEAM · '+t.players.length+' PLAYERS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bulkScoutBtn" onclick="bulkScoutAllPlayers()">전체 선수 능력치 다시 산정</button><button class="btn primary" onclick="addPlayer()">+ 선수 생성</button></div></div><div id="bulkScoutStatus" class="small muted" style="margin:0 0 12px"></div>'+
+ '<div class="sectionbar"><h2>FIRST TEAM · '+t.players.length+' PLAYERS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="addPlayer()">+ 선수 생성</button></div></div>'+
  '<div class="tablewrap"><table><thead><tr>'+sortHead("name","선수")+sortHead("pos","포지션")+sortHead("age","나이")+sortHead("height","신장")+sortHead("weight","체중")+sortHead("ovr","OVR")+sortHead("condition","컨디션")+sortHead("role","역할")+sortHead("salary","연봉")+'<th></th></tr></thead><tbody>'+
  rosterSorted(t.players).map(p=>'<tr class="click-row" onclick="editPlayer(\''+p.id+'\')"><td><span class="player-name-cell">'+(p.photoUrl?'<img src="'+p.photoUrl+'" alt="" loading="lazy">':'<span class="mini-silhouette">♟</span>')+'<span><b>'+p.name+'</b> '+sourceBadge(p)+'<div class="small muted">'+p.trait+'</div></span></span></td><td>'+positionLabel(p)+'</td><td>'+(p.ageApprox?'약 ':'')+p.age+'</td><td>'+(p.physicalEstimated?'약 ':'')+p.height+'cm</td><td>'+(p.physicalEstimated?'약 ':'')+p.weight+'kg</td><td class="rating" style="color:'+ovrColor(p.ovr)+'">'+p.ovr+'</td><td>'+p.condition+'%</td><td>'+p.role+'</td><td>'+money(p.salary)+'</td><td><span class="small muted">열기</span></td></tr>').join("")+
  '</tbody></table></div>';
@@ -466,5 +466,5 @@ async function syncOfficialRosters(){
  }
 }
 
-if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters().then(()=>{if((Number(state.bulkScoutingVersion)||0)<2)setTimeout(()=>bulkScoutAllPlayers(),1800);});}else renderSetup();
+if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters();}else renderSetup();
 </script></body></html>
