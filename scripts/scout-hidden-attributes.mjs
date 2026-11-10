@@ -50,9 +50,11 @@ function scoreHidden(p,rows){
   if(!done.length)return false;
   p.hidden={...(p.hidden||{})};
   p.hiddenEvidence={...(p.hiddenEvidence||{})};
-  const recent=done.slice(0,10);
-  const gp=recent.reduce((n,r)=>n+Math.min(r.gp,seasonGames(r.year)),0);
-  const expected=recent.reduce((n,r)=>n+seasonGames(r.year),0);
+  const completed=done.filter(r=>r.year<2027);
+  const recent=completed.slice(0,10);
+  const expectedFor=r=>Number(r.expectedGames)||seasonGames(r.year);
+  const gp=recent.reduce((n,r)=>n+Math.min(r.gp,expectedFor(r)),0);
+  const expected=recent.reduce((n,r)=>n+expectedFor(r),0);
   const availability=expected?gp/expected:0;
   const injuryRaw=availability>=.97?2:availability>=.93?3:availability>=.88?4:availability>=.83?5:availability>=.78?6:availability>=.73?7:availability>=.68?8:availability>=.63?9:availability>=.58?10:availability>=.53?11:availability>=.48?12:availability>=.40?13:availability>=.30?14:15;
   const sample=Math.min(1,recent.length/5);
@@ -61,12 +63,13 @@ function scoreHidden(p,rows){
   if(done.length>=3){
     const pp=done.map(r=>r.pts||0),mean=pp.reduce((a,b)=>a+b,0)/pp.length;
     const cv=mean>0?Math.sqrt(pp.reduce((a,b)=>a+(b-mean)**2,0)/pp.length)/mean:0;
-    const rates=done.map(r=>r.gp/seasonGames(r.year)),avg=rates.reduce((a,b)=>a+b,0)/rates.length;
-    const sd=Math.sqrt(rates.reduce((a,b)=>a+(b-avg)**2,0)/rates.length);
+    const stable=completed.length>=3?completed:done.filter(r=>r.year<2027);
+    const rates=stable.map(r=>r.gp/expectedFor(r)),avg=rates.reduce((a,b)=>a+b,0)/Math.max(1,rates.length);
+    const sd=Math.sqrt(rates.reduce((a,b)=>a+(b-avg)**2,0)/Math.max(1,rates.length));
     p.hidden.consistency=clamp(17-Math.min(8,cv*9)-Math.min(5,sd*12)+Math.max(0,avg-.85)*8);
     p.hiddenEvidence.consistency="ESPN 다년간 평균 득점 변동계수 + 시즌별 출전율";
   }
-  const po=done.filter(r=>r.playoffs?.gp>0);
+  const po=completed.filter(r=>r.playoffs?.gp>0);
   const poGp=po.reduce((n,r)=>n+r.playoffs.gp,0);
   if(poGp>=8){
     const regPts=done.reduce((n,r)=>n+r.pts*r.gp,0)/Math.max(1,done.reduce((n,r)=>n+r.gp,0));
@@ -78,9 +81,9 @@ function scoreHidden(p,rows){
     p.hiddenEvidence.pressure="ESPN 플레이오프 득점 변화와 출전 표본 기반 대리 지표(공식 클러치 지표 아님)";
   }
   p.hidden.injuryProneness=clamp(p.hidden.injuryProneness,1,15);
-  p.career=done.map(r=>({season:(r.year-1)+"-"+String(r.year).slice(-2),team:r.team||"NBA",gp:r.gp,pts:r.pts,reb:r.reb,ast:r.ast,stl:r.stl,blk:r.blk,playoffs:r.playoffs||null}));
+  p.career=done.map(r=>({season:(r.year-1)+"-"+String(r.year).slice(-2),league:r.league||"NBA",team:r.team||"NBA",gp:r.gp,pts:r.pts,reb:r.reb,ast:r.ast,stl:r.stl,blk:r.blk,playoffs:r.playoffs||null}));
   p.careerLoaded=true;
-  p.careerSource="ESPN 시즌별 정규시즌·플레이오프 기록 일괄 수집";
+  p.careerSource=done.some(r=>r.league==="NCAA")?"ESPN NBA + NCAA 시즌별 기록 일괄 수집":"ESPN NBA 시즌별 정규시즌·플레이오프 기록 일괄 수집";
   p.hiddenScoutedAt=new Date().toISOString();
   p.hiddenSource="ESPN 전 커리어 기록 기반 일괄 스카우팅 · 데이터로 판정 불가한 항목은 중립 10 유지";
   return true;
@@ -96,6 +99,8 @@ await mapLimit(Object.entries(TEAM_IDS),5,async([abbr,id])=>{
 });
 const byName=new Map();
 for(const [team,athletes] of rosterByTeam)for(const a of athletes)byName.set(norm(a.displayName),{id:String(a.id),team});
+const manualIds={"Labaron Philon Jr.":"4873090","Labaron Philon":"4873090","Bobby Portis Jr.":"3064482","Bobby Portis":"3064482"};
+for(const p of db.players)if(manualIds[p.name])p.espnId=manualIds[p.name];
 let unmatched=[];
 for(const p of db.players){
   const hit=byName.get(norm(p.name));
@@ -124,8 +129,7 @@ await mapLimit(unmatched,2,async p=>{
     }catch{}
   }
 });
-const knownNoCareer=new Set(db.hiddenScouting?.failedNames||[]);
-const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt&&!knownNoCareer.has(p.name));
+const targets=db.players.filter(p=>p.espnId&&!p.hiddenScoutedAt);
 if(!targets.length)throw new Error("No remaining ESPN career records to scout");
 let completed=0,failed=[];
 await mapLimit(targets,5,async p=>{
@@ -136,7 +140,7 @@ await mapLimit(targets,5,async p=>{
       if(Number.isFinite(Number(bio?.experience?.years))&&Number(bio.experience.years)>0)experience=Number(bio.experience.years);
     }catch{}
     const count=Math.max(1,Math.min(27,Math.floor(experience)+1));
-    const years=Array.from({length:count},(_,i)=>2026-i);
+    const years=Array.from({length:count+1},(_,i)=>2027-i);
     const rows=[];
     for(const year of years){
       const [regular,post]=await Promise.all([
@@ -150,7 +154,23 @@ await mapLimit(targets,5,async p=>{
       }
       await sleep(90);
     }
-    if(!rows.length)throw new Error("No career season rows");
+    if(!rows.length){
+      const age=Number(p.age)||22;
+      const firstYear=Math.max(2018,2026-Math.max(1,age-18));
+      for(let year=2026;year>=firstYear;year--){
+        const [regular,post]=await Promise.all([
+          getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/stats?season="+year),
+          getJson("https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/"+p.espnId+"/stats?season="+year+"&seasontype=3")
+        ]);
+        const cs=parseStats(regular),cgp=cs.GP||0;
+        if(cgp>0){
+          const cps=parseStats(post),cpgp=cps.GP||0;
+          rows.push({year,gp:cgp,expectedGames:32,league:"NCAA",pts:cs.PTS||0,reb:cs.REB||0,ast:cs.AST||0,stl:cs.STL||0,blk:cs.BLK||0,team:(Array.isArray(regular?.teams)?regular.teams:Object.values(regular?.teams||{})).map(t=>t?.abbreviation||t?.displayName).filter(Boolean).join("/"),playoffs:cpgp>0?{gp:cpgp,pts:cps.PTS||0,reb:cps.REB||0,ast:cps.AST||0}:null});
+        }
+        await sleep(180);
+      }
+    }
+    if(!rows.length)throw new Error("No NBA or NCAA career season rows");
     p.career=rows.sort((a,b)=>b.year-a.year);
     scoreHidden(p,rows);
     completed++;
@@ -162,14 +182,14 @@ for(const p of db.players){
   p.hiddenEvidence=p.hiddenEvidence||{};
   if(!p.hiddenEvidence.potential&&Number.isFinite(Number(p.hidden.potential))&&Number(p.hidden.potential)!==10)p.hiddenEvidence.potential="NBA 2K27 Potential";
   p.hiddenReviewedAt=new Date().toISOString();
-  if(p.hiddenScoutedAt)p.hiddenScoutingStatus="career-records";
-  else if(p.espnId)p.hiddenScoutingStatus="no-NBA-career-records";
+  if(p.hiddenScoutedAt)p.hiddenScoutingStatus=p.career?.some(r=>r.league==="NCAA")?"college-career-records":"career-records";
+  else if(p.espnId)p.hiddenScoutingStatus="no-NBA-or-NCAA-career-records";
   else p.hiddenScoutingStatus="ESPN-id-unresolved";
 }
 const scouted=db.players.filter(p=>p.hiddenScoutedAt).length;
 console.log("SCOUT_DIAGNOSTICS",JSON.stringify({rosterTeams:rosterByTeam.size,players:db.players.length,targets:targets.length,scouted,failed:failed.length,sampleFailures:failed.slice(0,30),unscouted:db.players.filter(p=>!p.hiddenScoutedAt).map(p=>({name:p.name,team:p.teamAbbr,age:p.age,experience:p.experience,espnId:p.espnId,status:p.hiddenScoutingStatus}))}));
 if(scouted<480)throw new Error("Safety stop: only "+scouted+" players were successfully scouted; data file not written");
-db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>p.hiddenScoutingStatus!=="career-records").length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
+db.hiddenScouting={version:1,source:"ESPN NBA player season statistics",updatedAt:new Date().toISOString(),totalPlayers:db.players.length,processedPlayers:db.players.filter(p=>p.hiddenReviewedAt).length,scoutedPlayers:scouted,noCareerDataPlayers:db.players.filter(p=>!p.hiddenScoutedAt).length,failedPlayers:failed.length,failedNames:failed.map(x=>x.name),notes:"Injury frequency is estimated from games played/expected season games, not a verified medical injury log. ImportantMatches and Pressure use playoff-vs-regular scoring as a proxy, not official clutch-time tracking. Professionalism, NaturalFitness and Adaptability remain neutral where public career stats cannot establish them; Potential remains NBA 2K27 Potential when available."};
 db.updatedAt=new Date().toISOString();
 await fs.writeFile(FILE,JSON.stringify(db,null,2)+"\n");
 console.log(JSON.stringify({players:db.players.length,scouted,failed:failed.length,failedNames:failed.map(x=>x.name)},null,2));
