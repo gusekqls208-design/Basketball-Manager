@@ -2,8 +2,7 @@
 /**
  * Sync current NBA 2K27 ratings into the Basketball Manager roster.
  * Source: NBA 2K API public endpoint (weekly 2K27 ratings data).
- * NBA 2K27 is the sole source of player ability ratings. Defensive Rebound is the sole rebound input. LeBron block uses a documented career-peak override. Game-specific fields map only to 2K source attributes.
- * Players absent from the 2K current roster remain unverified and are never assigned invented ratings.
+ * NBA 2K27 is the sole source of truth. Every visible game attribute is rebuilt from a named 2K27 attribute; game-only fields use a documented nearest 2K attribute. No old game ratings or player-specific overrides are retained.
  */
 import fs from "node:fs/promises";
 
@@ -67,12 +66,13 @@ async function fetchAll() {
 
 function applyPlayer(p, source) {
   const a = flatten(source.attributes || source.attrs || {});
-  const old = p.attrs || {};
-  const next = { ...old };
-
+  // Rebuild the complete visible attribute set from 2K27 values only.
+  // The game has a few fields without a one-to-one 2K label; those use the nearest named 2K rating.
+  const next = {};
   const direct = {
     close: ["closeShot"],
     layup: ["drivingLayup"],
+    dunk: ["drivingDunk"],
     mid: ["midRangeShot"],
     three: ["threePointShot"],
     ft: ["freeThrow"],
@@ -85,20 +85,19 @@ function applyPlayer(p, source) {
     interior: ["interiorDefense"],
     steal: ["steal"],
     block: ["block"],
-    anticipation: ["helpDefenseIQ"],
+    rebound: ["defensiveRebound"],
+    anticipation: ["helpDefenseIQ", "passPerception"],
     decisions: ["shotIQ"],
-    vision: ["vision", "passVision"],
+    vision: ["passVision", "vision"],
     offBall: ["offensiveConsistency"],
     positioning: ["defensiveConsistency"],
     composure: ["intangibles", "intangible"],
-    concentration: ["reactionTime"],
+    concentration: ["shotIQ", "passPerception"],
     teamwork: ["passIQ"],
     workRate: ["hustle"],
     leadership: ["intangibles", "intangible"],
     determination: ["hustle"],
     flair: ["intangibles", "intangible"],
-    aggression: ["hustle"],
-    screen: ["strength"],
     aggression: ["hustle"],
     speed: ["speed"],
     acceleration: ["speedWithBall"],
@@ -106,19 +105,16 @@ function applyPlayer(p, source) {
     jumping: ["vertical"],
     strength: ["strength"],
     stamina: ["stamina"],
+    balance: ["agility"],
   };
-  for (const [target, keys] of Object.entries(direct)) setMapped(next, target, pick(a, ...keys));
-
-  // Use the direct 2K Driving Dunk rating; do not blend in Standing Dunk.
-  setMapped(next, "dunk", pick(a, "drivingDunk"));
-
-  // The game's single Rebound attribute represents defensive rebounding only.
-  // Offensive Rebound is intentionally excluded rather than averaged in.
-  setMapped(next, "rebound", pick(a, "defensiveRebound"));
-
-
-  // Balance has no separate 2K attribute; use the direct 2K Agility rating.
-  setMapped(next, "balance", pick(a, "agility"));
+  for (const [target, keys] of Object.entries(direct)) {
+    const value = pick(a, ...keys);
+    if (value === null) throw new Error(`Missing 2K27 source attribute for ${p.name}: ${target} [${keys.join("/") }]`);
+    setMapped(next, target, value);
+  }
+  const required = ["close","layup","dunk","mid","three","ft","post","handle","pass","passTech","screen","perimeter","interior","steal","block","rebound","anticipation","decisions","vision","offBall","positioning","composure","concentration","teamwork","workRate","leadership","determination","flair","aggression","speed","acceleration","agility","jumping","strength","stamina","balance"];
+  const missing = required.filter(key => !Number.isInteger(next[key]) || next[key] < 1 || next[key] > 20);
+  if (missing.length) throw new Error(`Incomplete 2K27 attribute set for ${p.name}: ${missing.join(", ")}`);
 
   p.attrs = next;
   if (typeof source.overall === "number") p.ovr = source.overall;
@@ -140,13 +136,13 @@ function applyPlayer(p, source) {
   p.ratingsSourcePlayer = source.name || p.name;
   p.ratingsSourceTeam = source.team || null;
   p.ratingsSourcePositions = Array.isArray(source.positions) ? source.positions : [];
-  p.ratingsScale = "Direct NBA 2K27 attributes mapped from 0-100 to game 1-20 by round(value/5); OVR copied directly";
+  p.ratingsScale = "All 36 visible attributes rebuilt from NBA 2K27 source attributes (0-100 to 1-20 by round(value/5)); OVR copied directly";
   delete p.blockRatingNote;
   p.ratingsUpdatedAt = today;
   p.ratingsStatus = "2K-direct-27";
-  p.screenSource = "No separate 2K27 Screen category; mapped to the direct 2K Strength rating";
+  p.attributeMapping = "All visible attributes rebuilt from 2K27; Screen=Strength, Acceleration=Speed With Ball, Balance=Agility; other nearest-field mappings documented in ratingsMethod";
   p.hiddenSource = potential !== null
-    ? "2K27 potential mapped; other hidden attributes remain unscouted neutral baseline"
+    ? "2K27 Potential mapped; other hidden attributes remain unscouted neutral baseline"
     : "No 2K27 Potential rating; neutral baseline 10; other hidden attributes remain unscouted neutral baseline";
 }
 
@@ -227,8 +223,8 @@ const partial = db.players.filter(p => p.ratingsStatus === "2K-partial").map(p =
 db.snapshot = today;
 db.updatedAt = new Date().toISOString();
 db.source = `${today}: NBA 2K27 ratings synced from NBA 2K API/2KRatings; ${db.players.length} players retained with verified 2K27 ratings; ${excludedUnverified.length} players without 2K27 ratings excluded`;
-db.ratingNotes = "Only players with verified NBA 2K27 ratings are included. All 36 visible attributes map directly from 2K27 source attributes: 0-100 values are converted to game 1-20 by rounding rating/5; OVR is copied directly. Dunk = Driving Dunk; rebound = Defensive Rebound; acceleration = Speed with Ball; balance = Agility; screen = Strength; aggression = Hustle; flair = Intangibles. No player-specific overrides, career-stat, height-based, legacy, or invented ability formulas are used. Players without 2K27 ratings are excluded.";
-db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. All 36 visible attributes use direct 2K27 attribute inputs mapped to game 1-20 by Math.round(value/5), and OVR is copied directly. Closest direct 2K attribute mappings are documented for game-only fields. No player-specific overrides or legacy formulas. Players without verified 2K27 data are excluded, never filled with estimates.";
+db.ratingNotes = "Only verified NBA 2K27 players are included. Every sync rebuilds all 36 visible attributes from 2K27 source values (0-100 mapped to game 1-20 by round(value/5)); OVR is copied directly. Rebound=Defensive Rebound; Dunk=Driving Dunk; Acceleration=Speed With Ball; Balance=Agility; Screen=Strength. Game-only mental/role fields use nearest 2K values (e.g. anticipation=Help Defense IQ, decisions=Shot IQ, composure/leadership/flair=Intangibles, work rate/aggression/determination=Hustle). Old game values, career-stat formulas, height-based estimates, and player-specific overrides are never retained.";
+db.ratingsMethod = "NBA 2K27 is the sole source of truth (NBA 2K API/2KRatings; verified free agents from 2kAuction). Every playable player has a verified 2K27 source. Each sync starts every player attribute from an empty object and rebuilds all 36 visible attributes from 2K27 source fields mapped to 1-20 by Math.round(value/5); OVR is copied directly. Game-only fields map to the nearest 2K field: Screen=Strength, Acceleration=Speed With Ball, Balance=Agility, Anticipation=Help Defense IQ (Pass Perception fallback), Decisions=Shot IQ, Vision=Pass Vision, Composure/Leadership/Flair=Intangibles, Concentration=Shot IQ, Teamwork/Pass Technique=Pass IQ, Work Rate/Aggression/Determination=Hustle, Off-ball=Offensive Consistency, Positioning=Defensive Consistency. Rebound=Defensive Rebound; Dunk=Driving Dunk. Missing source attributes fail the sync rather than preserving old values. No player-specific overrides or legacy formulas. Players without verified 2K27 data are excluded.";
 db.ratingsCoverage = {
   ...(db.ratingsCoverage || {}),
   sourceRows: sources.length,
