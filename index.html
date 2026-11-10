@@ -307,7 +307,7 @@ async function loadPlayerCareer(p,box){
    if(Number(bio.height)>0)p.height=Math.round(Number(bio.height)*2.54);
    if(Number(bio.weight)>0)p.weight=Math.round(Number(bio.weight)*.453592);
    if(Number(bio.age)>0){p.age=Number(bio.age);p.ageApprox=false}
-   if(bio.dateOfBirth)p.birthDate=bio.dateOfBirth;
+   if(bio.dateOfBirth)p.birthDate=bio.dateOfBirth;const nat=bio.nationality||bio.citizenship||bio.country||bio.birthPlace?.country;if(nat)p.nationality=typeof nat==="string"?nat:(nat.displayName||nat.name||nat.abbreviation||"");
    if(bio.experience?.years!=null)p.experience=Number(bio.experience.years);
    if(bio.college?.name)p.college=bio.college.name;
    if(bio.draft?.year)p.draft={year:bio.draft.year,round:bio.draft.round,selection:bio.draft.selection};
@@ -514,7 +514,7 @@ async function syncOfficialRosters(){
     p.positionEstimated=isLive?(!hasExactPosition&&!stat?.pos):(!stat?.pos||!!stat?.positionEstimated);
     p.height=isLive?Math.round(Number(a.height||78)*2.54):(Number(a.height)||200);
     p.weight=isLive?Math.round(Number(a.weight||210)*.453592):(Number(a.weight)||95);p.physicalEstimated=isLive?(!a.height||!a.weight):!!a.physicalEstimated;
-    p.jersey=a.jersey||"";p.secondaryPositions=stat?.secondaryPositions||a.secondaryPositions||[];
+    p.jersey=a.jersey||"";p.nationality=stat?.nationality||stat?.country||a?.nationality||a?.citizenship||p.nationality||"";p.secondaryPositions=stat?.secondaryPositions||a.secondaryPositions||[];
     p.photoUrl=stat?.headshot||(isLive?a.headshot?.href:"")||"";
     if(stat){p.attrs={...stat.attrs};const scout=hiddenStat||stat;p.hidden={consistency:10,importantMatches:10,injuryProneness:10,potential:10,...(scout.hidden||stat.hidden||{})};delete p.hidden.professionalism;delete p.hidden.pressure;delete p.hidden.naturalFitness;delete p.hidden.adaptability;p.hiddenSource=scout.hiddenSource||stat.hiddenSource||"미스카우팅 · 중립 기준값";p.hiddenEvidence={...(scout.hiddenEvidence||stat.hiddenEvidence||{})};p.career=Array.isArray(scout.career)?scout.career:(Array.isArray(stat.career)?stat.career:[]);p.careerLoaded=!!(scout.careerLoaded||stat.careerLoaded);p.careerSource=scout.careerSource||stat.careerSource||"";p.hiddenScoutedAt=scout.hiddenScoutedAt||stat.hiddenScoutedAt||"";p.hiddenScoutingStatus=scout.hiddenScoutingStatus||stat.hiddenScoutingStatus||"";p.ovr=Number(stat.ovr)||p.ovr;p.salary=Number(stat.salary)||p.salary;const playoffGames=(p.career||[]).reduce((n,r)=>n+Number(r.playoffs?.gp||0),0);const starBase=p.ovr>=95?19:p.ovr>=90?18:p.ovr>=85?17:p.ovr>=80?15:p.ovr>=75?13:p.ovr>=70?11:10;if(!scout.hiddenEvidence?.importantMatches)p.hidden.importantMatches=Math.min(20,starBase+(playoffGames>=150?2:playoffGames>=75?1:0));p.traits=stat.traits||[];p.trait=p.traits[0]||"";p.ratingsSource=stat.ratingsSource||"2027 scouting ratings";p.ratingsStatus=stat.ratingsStatus||"";p.ratingsSourcePlayer=stat.ratingsSourcePlayer||p.name;p.ratingsScale=stat.ratingsScale||"";p.ratingsSourceUrl=stat.ratingsSourceUrl||"";}
     else p.ratingsSource="individual scouting estimate";
