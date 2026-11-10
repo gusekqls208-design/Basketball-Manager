@@ -207,13 +207,16 @@ async function loadPlayerCareer(p,box){
  const list=box.querySelector("#careerHistoryList");if(!list)return;
  let athleteId=p.espnId?String(p.espnId):"";
  if(!athleteId&&p.teamAbbr&&ESPN_TEAM_IDS[p.teamAbbr]){
-  try{const rr=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+ESPN_TEAM_IDS[p.teamAbbr]+"/roster?season=2027",{cache:"no-store"});if(rr.ok){const rp=await rr.json();const hit=(rp.athletes||[]).find(x=>cleanPlayerKey(x.displayName)===cleanPlayerKey(p.name));if(hit){athleteId=String(hit.id);p.espnId=athleteId;persist()}}}catch(e){}
+  try{const rr=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/"+ESPN_TEAM_IDS[p.teamAbbr]+"/roster?season=2027",{cache:"no-store"});if(rr.ok){const rp=await rr.json();const hit=(rp.athletes||[]).find(x=>cleanPlayerKey(x.displayName)===cleanPlayerKey(p.name));if(hit){athleteId=String(hit.id);p.espnId=athleteId;p.experience=Number(hit.experience?.years||0);p.age=Number(hit.age)||p.age;p.ageApprox=false;p.birthDate=hit.dateOfBirth||p.birthDate;p.height=Math.round(Number(hit.height||78)*2.54);p.weight=Math.round(Number(hit.weight||210)*.453592);p.jersey=hit.jersey||p.jersey;p.pos=espnPosition(hit,p.pos);persist()}}}catch(e){}
  }
  if(!athleteId){list.innerHTML='<span class="muted small">ESPN 선수 식별 정보를 확인할 수 없어 커리어 통계를 불러오지 못했습니다.</span>';return;}
  list.innerHTML='<span class="muted small">ESPN 시즌별 기록을 불러오는 중…</span>';
  try{
-  const years=Array.from({length:Math.min(24,Math.max(1,Number(p.experience)||8))},(_,i)=>2027-i);
-  const rows=await Promise.all(years.map(async year=>{
+  const seasonsCount=Math.min(24,Math.max(1,(Number.isFinite(+p.experience)?Number(p.experience):7)+1));
+  const years=Array.from({length:seasonsCount},(_,i)=>2027-i);
+  const rows=[];
+  for(let start=0;start<years.length;start+=3){
+   const batch=await Promise.all(years.slice(start,start+3).map(async year=>{
    try{
     const res=await fetch("https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/"+athleteId+"/stats?season="+year+"&seasontype=2",{cache:"force-cache"});
     if(!res.ok)return null;
@@ -227,7 +230,9 @@ async function loadPlayerCareer(p,box){
     const team=(data.teams||[]).map(t=>t.abbreviation||t.displayName).filter(Boolean).join("/");
     return{season:(year-1)+"-"+String(year).slice(-2),team:team||"NBA",gp,pts:get("PTS"),reb:get("REB"),ast:get("AST"),stl:get("STL"),blk:get("BLK"),min:get("MIN")};
    }catch(e){return null}
-  }));
+   }));
+   rows.push(...batch);
+  }
   p.career=rows.filter(Boolean).sort((a,b)=>b.season.localeCompare(a.season));
   p.careerLoaded=true;p.careerSource="ESPN season statistics";persist();
   if(list.isConnected)list.innerHTML=p.career.length?p.career.map(c=>'<div><b>'+c.season+'</b><span>'+c.team+' · '+c.gp+'경기 · '+c.pts+'득점 · '+c.reb+'리바운드 · '+c.ast+'어시스트</span></div>').join(""):'<span class="muted small">확인 가능한 시즌별 기록이 없습니다. 신인 또는 기록 제공 범위 밖의 선수일 수 있습니다.</span>';
