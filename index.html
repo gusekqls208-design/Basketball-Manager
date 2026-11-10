@@ -236,6 +236,8 @@ async function bulkScoutAllPlayers(){
  setTimeout(()=>{const n=document.getElementById("bulkScoutToast");if(n)n.remove()},15000);
 }
 function applyStatsScouting(p,st){
+ // NBA 2K direct ratings are the locked source of truth; career stats must never overwrite them.
+ if(p?.ratingsStatus==="2K-direct")return false;
  const g=st||{},a=p.attrs||{},gp=Number(g.GP)||0;if(gp<5)return false;
  const set=(k,v)=>a[k]=clampRating(v),rate=(v,lo,hi)=>statToRating(Number(v)||0,lo,hi);
  if(g["3P%"]!=null){const pct=Number(g["3P%"])||0,att=Number(g["3PA"])||0;const accuracy=4+Math.max(0,Math.min(1,(pct-.25)/(.43-.25)))*14;const volume=att>=7?2:att>=5?1:att>=3?0:-1;set("three",accuracy+volume);}
