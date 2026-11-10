@@ -48171,7 +48171,7 @@
       ]
     }
   ],
-  "updatedAt": "2026-11-10T20:50:47.850Z",
+  "updatedAt": "2026-11-10T20:51:38.099Z",
   "ratingNotes": "1-20 scale. Player ratings use NBA 2K27 source attributes mapped from 0-100 by rounding rating/5. Dunk uses the direct Driving Dunk rating only; rebound uses Defensive Rebound only. Game-only fields without a separate 2K rating use the closest named 2K source attribute; no career-stat or height-based ability estimates are used. Players absent from the 2K27 source remain explicitly unverified and are not presented as direct 2K ratings.",
   "ratingsMethod": "NBA 2K27 source of truth: NBA 2K API current-roster endpoint (2KRatings data), with verified free agents supplemented from 2kAuction. Source ratings are mapped to the game 1-20 scale by Math.round(value/5). Dunk = direct Driving Dunk; rebound = Defensive Rebound. No career-stat, height-based, or manually invented ability calculations are used. Where the game has a field with no exact 2K category, it uses the closest available 2K attribute and remains identified as a game-field mapping. Players absent from 2K27 remain unverified rather than receiving fabricated 2K ratings.",
   "ratingsCoverage": {
@@ -48216,8 +48216,6 @@
       "Alex Toohey",
       "Milos Uzan"
     ],
-    "dunkFormula": "75% Driving Dunk + 25% Standing Dunk",
-    "accelerationProxy": "2K27 direct acceleration where available; otherwise Speed with Ball proxy",
     "allPlayersEvaluatedByDirect2K": false,
     "direct2K27Matched": 544,
     "source2K27Rows": 655,
@@ -48340,6 +48338,7 @@
     "manual2K27Rows": 6,
     "hiddenAttributeCoverage": "Seven hidden attributes are neutral/unscouted; potential is direct only where 2K27 source provides it, otherwise legacy estimate",
     "screenAttributeCoverage": "Screen maps to direct 2K Strength; aggression maps to direct 2K Hustle",
-    "accelerationMapping": "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value"
+    "accelerationMapping": "Direct 2K27 Acceleration; Speed with Ball only where source has no Acceleration value",
+    "dunkMapping": "Direct Driving Dunk only; no blended rating"
   }
 }
