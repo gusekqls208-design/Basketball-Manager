@@ -1644,7 +1644,7 @@ function bmConfirmCoach(pre){
  ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);
  const tactics={off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value};
  if(pre){c.starters=ids.slice();c.bench=bench;c.instructions=instructions;c.tactics=tactics;t.tactics={...tactics};state.tactics={...state.tactics,...tactics};persist();beginQuarterGame();}
- else{c.userStarters=ids.slice();c.userBench=bench;c.userInstructions=instructions;c.userTactics=tactics;t.tactics={...tactics};state.tactics={...state.tactics,...tactics};persist();runNextQuarter();}
+ else{c.userStarters=ids.slice();c.userBench=bench;c.userInstructions=instructions;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");c.userTactics=tactics;t.tactics={...tactics};state.tactics={...state.tactics,...tactics};persist();runNextQuarter();}
 }
 function bmConfirmPreCoach(){bmConfirmCoach(true)} function bmConfirmQuarterCoach(){bmConfirmCoach(false)}
 function renderMatchSetup(){bmCoachBoard("pre")} function openQuarterAdjust(){bmCoachBoard("quarter")}
@@ -1652,14 +1652,14 @@ function renderMatchSetup(){bmCoachBoard("pre")} function openQuarterAdjust(){bm
 function savePreLineup(){const c=state.matchSetup;if(!c)return;c.starters=[0,1,2,3,4].map(i=>document.getElementById("preStarter"+i)?.value).filter(Boolean);persist();}
 function savePreBench(){const c=state.matchSetup;if(!c)return;c.bench=[...document.querySelectorAll(".preBench:checked")].map(x=>x.value).filter(id=>!c.starters.includes(id)).slice(0,5);persist();}
 function beginQuarterGame(){
- const c=state.matchSetup;if(!c)return;savePreLineup();savePreBench();
- c.tactics={off:document.getElementById("preOff").value,def:document.getElementById("preDef").value,tempo:document.getElementById("preTempo").value};
+ const c=state.matchSetup;if(!c)return;
  const g=state.schedule.find(x=>x.id===c.gameId),user=club(state.teamId);
- if(new Set(c.starters).size!==5){alert("서로 다른 선수를 선발 5명으로 지정해주세요.");return}
+ if(new Set(c.starters).size!==5){alert("서로 다른 선수 5명을 선발로 지정해주세요.");return}
  const starters=c.starters.map(id=>user.players.find(p=>p.id===id)).filter(Boolean);
  if(starters.length!==5){alert("선발 라인업을 확인해주세요.");return}
+ user.players.forEach(p=>p.gameInstruction=(c.instructions||{})[p.id]||"기본 역할");
  user.tactics={...c.tactics};state.tactics={...state.tactics,...c.tactics};
- state.gameInProgress={gameId:g.id,userIsHome:c.userIsHome,quarter:0,quarters:[],homeBox:{},awayBox:{},homeLine:[],awayLine:[],homeScore:0,awayScore:0,userStarters:c.starters.slice(),userBench:c.bench.slice(),userTactics:{...c.tactics}};
+ state.gameInProgress={gameId:g.id,userIsHome:c.userIsHome,quarter:0,quarters:[],homeBox:{},awayBox:{},homeLine:[],awayLine:[],homeScore:0,awayScore:0,userStarters:c.starters.slice(),userBench:(c.bench||[]).slice(),userTactics:{...c.tactics},userInstructions:{...(c.instructions||{})}};
  persist();runNextQuarter();
 }
 function bmQuarterLine(team,ids){
@@ -1760,4 +1760,17 @@ function openBoxPlayerProfile(pid,tid){
  const body=groups.map(([g,ks])=>'<section class="bp-group"><h3>'+g+'</h3><div>'+ks.filter(k=>a[k]!=null).map(k=>'<div><span>'+names[k]+'</span><b>'+Math.round(a[k])+'</b><i><em style="width:'+Math.max(0,Math.min(100,Number(a[k])))+'%"></em></i></div>').join("")+'</div></section>').join("");
  const el=document.createElement("div");el.className="bp-overlay";el.innerHTML='<div class="bp-card"><button class="btn ghost" onclick="this.closest(\'.bp-overlay\').remove()">닫기 ✕</button><header>'+boxPhoto(p,88)+'<div><div class="eyebrow">PLAYER PROFILE</div><h2>'+esc(p.name)+'</h2><p>'+esc(t.name)+' · '+esc(p.pos||"")+' · OVR '+p.ovr+'</p><p>컨디션 '+Math.round(p.condition||75)+'% · 피로도 '+Math.round(p.fatigue||0)+'%</p></div></header>'+body+'</div>';el.addEventListener("click",e=>{if(e.target===el)el.remove()});document.body.appendChild(el);
 }
+
+const bmBaseSimAttr=simAttr;
+simAttr=function(p,k,d=10){
+ let v=bmBaseSimAttr(p,k,d),i=p&&p.gameInstruction;if(!i)return v;
+ const bump=(keys,n)=>keys.includes(k)?n:0;
+ if(i==="공격 적극")v+=bump(["close","layup","dunk","post","mid","three"],4);
+ else if(i==="슛 우선")v+=bump(["mid","three","ft"],6);
+ else if(i==="패스 우선")v+=bump(["pass","passTech","vision","decisions"],6);
+ else if(i==="돌파 우선")v+=bump(["handle","layup","dunk","speed"],5);
+ else if(i==="수비 집중")v+=bump(["perimeter","interior","steal","block","strength"],6);
+ else if(i==="리바운드 집중")v+=bump(["rebound","jumping","strength"],7);
+ return v;
+};
 </script></body></html>
