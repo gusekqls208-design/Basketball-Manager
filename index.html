@@ -2722,4 +2722,116 @@ function bmCoachBoardBase(mode){
 }
 (function bmCoachLayoutRefresh(){const st=document.createElement("style");st.textContent='.fm-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(310px,.9fr);gap:12px;align-items:start}.fm-court-wrap{min-width:0}.fm-candidates{min-width:0;position:sticky;top:8px}.fm-candidate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:min(64vh,570px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-gutter:stable;padding:4px}.fm-roster-row{min-width:0;min-height:82px;display:grid;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;gap:3px 7px;padding:6px}.fm-roster-row>img{width:34px;height:34px;grid-row:1;grid-column:1}.fm-roster-row>span{min-width:0;grid-row:1;grid-column:2}.fm-roster-row>span b,.fm-roster-row>span small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fm-roster-row>em{grid-column:2;grid-row:2;justify-self:start}.fm-player-health{display:flex;flex-wrap:wrap;gap:3px 7px;font-size:9px;line-height:1.2;color:#b6c5d1}.fm-player-health b{color:#eaf5ff;font-weight:800}.fm-status-injury,.fm-status-danger{font-style:normal;color:#ffb3a5!important}.fm-status-danger{color:#ffd18b!important}.fm-health-bar{display:block;height:3px;border-radius:5px;background:#34485a;overflow:hidden;margin-top:3px}.fm-health-bar u{display:block;height:100%;background:#7ec8ee;text-decoration:none}.fm-inline-controls{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}.fm-inline-controls>section{background:#111c28;border:1px solid #2c4052;border-radius:10px;padding:10px}.fm-inline-controls h3{margin:0 0 8px;font-size:13px}.fm-tactic-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fm-tactic-fields label,.fm-personal label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#b9c7d2}.fm-tactic-fields select,.fm-personal select{width:100%;min-width:0}.fm-personal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.fm-personal label{font-size:10px}.fm-personal select{font-size:10px;padding:7px 4px}.fm-pcard .fm-player-health,.fm-pcard .fm-health-bar{grid-column:1/-1}.fm-slot{width:126px}.fm-slot .fm-pcard{grid-template-columns:30px minmax(0,1fr);font-size:10px}.fm-slot .fm-pcard img{width:30px;height:30px}.fm-slot .fm-player-health{font-size:8px;gap:2px 4px}.fm-slot .fm-health-bar{margin-top:1px}.fm-excluded-drop{position:sticky;bottom:0;z-index:3}.q-mvp{display:grid;grid-template-columns:56px minmax(0,1fr);justify-content:start;align-items:center;gap:12px}.q-mvp>img{display:block;width:56px;height:56px;flex:0 0 56px;margin:0 0 0 -4px;justify-self:start;object-position:center}@media(max-width:1000px){.fm-main{grid-template-columns:minmax(0,1.1fr) minmax(285px,.9fr)}.fm-personal{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:760px){.fm-main{grid-template-columns:1fr}.fm-candidates{position:static}.fm-candidate-list{max-height:360px}.fm-halfcourt{height:360px}.fm-slot{width:100px}.fm-personal{grid-template-columns:repeat(5,minmax(0,1fr))}}';document.head.appendChild(st)})();
 
+
+/* COACHING UI REFINEMENT · touch scrolling, unified player status, auto lineup and live ratings */
+function bmCoachRating(p,box){
+ const x=box?.[p.id]||{},min=Number(x.min)||0;
+ if(!min)return "—";
+ const fg=Number(x.fgm)||0,fga=Number(x.fga)||0,threeM=Number(x.threeM)||0,threeA=Number(x.threeA)||0;
+ let v=6.0+(Number(x.pts)||0)*.105+(Number(x.reb)||0)*.16+(Number(x.ast)||0)*.20+(Number(x.stl)||0)*.34+(Number(x.blk)||0)*.32-(Number(x.tov)||0)*.25;
+ if(fga)v+=(fg/fga-.43)*2.2;
+ if(threeA)v+=(threeM/threeA-.34)*.55;
+ return Math.max(4,Math.min(10,Math.round(v*10)/10)).toFixed(1);
+}
+function bmAutoLineup(){
+ const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;
+ const best=bmBestFive(t),ids=best.map(p=>p.id),bench=t.players.filter(p=>!ids.some(id=>String(id)===String(p.id))).sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a)).slice(0,8).map(p=>p.id);
+ if(pre){c.starters=ids;c.bench=bench;c.excluded=t.players.filter(p=>!ids.includes(p.id)&&!bench.includes(p.id)).map(p=>p.id);c.instructions=c.instructions||{}}
+ else{c.userStarters=ids;c.userBench=bench;c.userExcluded=t.players.filter(p=>!ids.includes(p.id)&&!bench.includes(p.id)).map(p=>p.id);c.userInstructions=c.userInstructions||{}}
+ persist();bmCoachBoard(pre?"pre":"quarter");
+}
+function bmCoachPointerDown(e,id){
+ if(e.button!==undefined&&e.button!==0)return;
+ const card=e.currentTarget,startX=e.clientX,startY=e.clientY;
+ window.bmDragV2={id,x:startX,y:startY,src:card,dragging:false,scrolling:false};
+ window.bmLastDragId=id;
+ const move=ev=>{
+  const d=window.bmDragV2;if(!d)return;
+  const dx=ev.clientX-d.x,dy=ev.clientY-d.y;
+  if(!d.dragging&&!d.scrolling&&Math.hypot(dx,dy)>9){
+   if(Math.abs(dy)>Math.abs(dx)*1.15){d.scrolling=true;return}
+   if(Math.abs(dx)>9){d.dragging=true;d.ghost=d.src.cloneNode(true);d.ghost.classList.add("fm-drag-ghost");d.src.classList.add("is-dragging");document.body.appendChild(d.ghost)}
+  }
+  if(d.dragging&&d.ghost){
+   d.ghost.style.left=ev.clientX+"px";d.ghost.style.top=ev.clientY+"px";
+   document.querySelectorAll(".fm-slot,.fm-excluded-drop").forEach(x=>x.classList.remove("drop-ready"));
+   document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-excluded-drop")?.classList.add("drop-ready");
+  }
+ };
+ const finish=ev=>{
+  const d=window.bmDragV2;if(!d)return;
+  document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",finish);document.removeEventListener("pointercancel",cancel);
+  d.src.classList.remove("is-dragging");d.ghost?.remove();
+  document.querySelectorAll(".fm-slot,.fm-excluded-drop").forEach(x=>x.classList.remove("drop-ready"));
+  if(d.dragging){
+   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-excluded-drop");
+   if(target?.classList.contains("fm-slot"))bmCoachAssign(d.id,+target.dataset.slot);
+   else if(target?.classList.contains("fm-excluded-drop"))bmDropExcluded(ev);
+   else window.bmLastDragId=null;
+  }else if(!d.scrolling){bmPickCoachPlayer(d.id)}
+  window.bmDragV2=null;
+ };
+ const cancel=()=>{const d=window.bmDragV2;if(d){d.ghost?.remove();d.src.classList.remove("is-dragging")}window.bmDragV2=null;window.bmLastDragId=null};
+ document.addEventListener("pointermove",move,{passive:true});document.addEventListener("pointerup",finish,{once:true});document.addEventListener("pointercancel",cancel,{once:true});
+}
+const bmCoachBoardBeforeRefine=bmCoachBoard;
+bmCoachBoard=function(mode){
+ if(mode==="emergency"){bmCoachBoardBeforeRefine(mode);return}
+ bmCoachBoardBase(mode);
+ const pre=mode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);
+ if(!c||!t)return;
+ const ids=pre?c.starters:c.userStarters,box=pre?{}:(c.userIsHome?c.homeBox:c.awayBox)||{};
+ const actions=document.querySelector(".fm-header-actions")||document.querySelector(".fm-coach header>div:last-child");
+ if(actions&&!actions.querySelector(".fm-auto-lineup")){
+  const b=document.createElement("button");b.className="btn fm-auto-lineup";b.textContent="체력·능력치 기준 자동 선발";b.onclick=bmAutoLineup;actions.insertBefore(b,actions.firstChild);
+ }
+ document.querySelectorAll(".fm-pcard,.fm-roster-row").forEach(el=>{
+  const p=t.players.find(x=>String(x.id)===String(el.dataset.pid));if(!p)return;
+  const old=el.querySelector(".fm-player-health");
+  if(old){const second=old.querySelectorAll(":scope > span")[1];if(second)second.remove()}
+  const rating=bmCoachRating(p,box);
+  let r=el.querySelector(".fm-live-rating");
+  if(!r){r=document.createElement("span");r.className="fm-live-rating";el.appendChild(r)}
+  r.textContent=rating==="—"?"평점 —":"평점 "+rating;
+  if(ids.some(id=>String(id)===String(p.id)))r.classList.add("is-starter");
+ });
+};
+(function bmCoachUiPolish(){
+ const st=document.createElement("style");st.id="bmCoachUiPolish";st.textContent=`
+ .fm-coach{color:#f1f5f9}
+ .fm-coach h1{font-size:clamp(21px,2.5vw,30px);letter-spacing:-.5px}
+ .fm-main{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:14px}
+ .fm-candidates{min-height:0;position:relative;top:auto}
+ .fm-candidate-list.fm-all-roster{display:flex;flex-direction:column;gap:5px;max-height:min(68vh,650px);overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:5px}
+ .fm-roster-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;gap:4px 9px;min-height:68px;padding:7px 9px;border:1px solid #344252;border-radius:9px;background:#172331;touch-action:pan-y}
+ .fm-roster-row>img{width:40px;height:40px;grid-column:1;grid-row:1}
+ .fm-roster-row>span{grid-column:2;grid-row:1;min-width:0}
+ .fm-roster-row>span b{font-size:12px;color:#f4f7fb}
+ .fm-roster-row>span small{font-size:10px;color:#aebdca}
+ .fm-roster-row>em{grid-column:3;grid-row:1;font-size:10px}
+ .fm-pcard{display:grid;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto auto;align-items:center;gap:2px 7px;min-width:0;padding:5px 7px;border-radius:8px;touch-action:pan-y}
+ .fm-pcard>img,.fm-pcard>.bs-avatar{grid-column:1;grid-row:1/3;width:34px;height:34px;object-fit:cover}
+ .fm-pcard>b{grid-column:2;grid-row:1;font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .fm-pcard>small{grid-column:2;grid-row:2;font-size:9px;line-height:1.2}
+ .fm-player-health{grid-column:1/-1;grid-row:3;display:flex;flex-wrap:wrap;gap:3px 7px;font-size:9px}
+ .fm-player-health>span:nth-child(2){display:none!important}
+ .fm-health-bar{grid-column:1/-1;height:4px;margin-top:1px}
+ .fm-live-rating{display:inline-flex;align-items:center;justify-content:center;margin-top:3px;padding:2px 6px;border-radius:5px;background:#26394b;color:#c5d8e8;font-size:10px;font-weight:800;white-space:nowrap}
+ .fm-live-rating.is-starter{background:#17445a;color:#9be3ff}
+ .fm-slot{width:clamp(96px,10vw,126px)}
+ .fm-slot .fm-pcard{grid-template-columns:28px minmax(0,1fr);padding:4px;gap:2px 5px}
+ .fm-slot .fm-pcard>img,.fm-slot .fm-pcard>.bs-avatar{width:28px;height:28px}
+ .fm-slot .fm-pcard .fm-live-rating{grid-column:1/-1;font-size:9px}
+ .fm-auto-lineup{font-size:11px;font-weight:800;white-space:nowrap;padding:8px 11px;background:#23465b;border:1px solid #39718d;color:#e5f7ff;border-radius:8px}
+ .fm-header-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+ .fm-inline-controls{gap:8px}
+ .fm-inline-controls>section{background:#172331;border:1px solid #344252;border-radius:9px;padding:10px}
+ .fm-tactic-fields label,.fm-personal label{font-size:12px;color:#d2dce5}
+ .fm-tactic-fields select,.fm-personal select{min-height:38px;font-size:12px}
+ .fm-confirm{min-height:48px;font-size:15px;font-weight:800;letter-spacing:.1px}
+ .fm-status-injury,.fm-status-danger{font-size:9px}
+ @media(max-width:760px){.fm-main{grid-template-columns:minmax(0,1fr)}.fm-candidate-list.fm-all-roster{max-height:44vh}.fm-coach header{gap:8px}.fm-header-actions{justify-content:flex-start}.fm-slot{width:90px}.fm-slot .fm-pcard{font-size:9px}}
+ `;document.head.appendChild(st);
+})();
+
 </script></body></html>
