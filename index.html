@@ -2579,7 +2579,7 @@ function finishQuarterGame(){
   const box=team===home?m.homeBox:m.awayBox;
   for(const p of team.players){
    const st=box[p.id]||simMakeStats(p);p.seasonStats=p.seasonStats||{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0,tov:0};
-   p.careerStats=p.careerStats||{gp:Number(p.seasonStats.gp)||0,pts:Number(p.pts)||0,reb:Number(p.reb)||0,ast:Number(p.ast)||0,stl:Number(p.seasonStats.stl)||0,blk:Number(p.seasonStats.blk)||0,tov:Number(p.seasonStats.tov)||0,min:Number(p.minutes)||0};
+   p.careerStats=p.careerStats||(()=>{const rows=Array.isArray(p.career)?p.career:[],hist=k=>rows.reduce((n,x)=>n+(Number(x[k])||0)*(Number(x.gp)||0),0);return {gp:rows.reduce((n,x)=>n+(Number(x.gp)||0),0)+(Number(p.seasonStats.gp)||0),pts:Number(p.pts)||hist("pts"),reb:Number(p.reb)||hist("reb"),ast:Number(p.ast)||hist("ast"),stl:hist("stl")+(Number(p.seasonStats.stl)||0),blk:hist("blk")+(Number(p.seasonStats.blk)||0),tov:hist("tov")+(Number(p.seasonStats.tov)||0),min:Number(p.minutes)||hist("min")}})();
    p.pts=(Number(p.pts)||0)+st.pts;p.reb=(Number(p.reb)||0)+st.reb;p.ast=(Number(p.ast)||0)+st.ast;
    if(!st.dnp&&st.min>0){
     p.seasonStats.gp++;for(const k of ["pts","reb","ast","stl","blk","tov"])p.seasonStats[k]=(p.seasonStats[k]||0)+(st[k]||0);
