@@ -1913,7 +1913,7 @@ function playNext(){
  state.matchSetup={gameId:g.id,userIsHome,starters:plan.starters.slice(),bench:plan.bench.slice(),excluded:(plan.excluded||[]).slice(),tactics:{...plan.tactics},instructions:{...plan.instructions},scope:"all"};
  renderMatchSetup();
 }
-function bmCoachBoard(mode){
+function bmCoachBoardBase(mode){
  const pre=mode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
  const t=club(state.teamId),g=state.schedule.find(x=>x.id===c.gameId),ids=pre?c.starters:c.userStarters,bench=pre?c.bench:(c.userBench||[]),excluded=pre?(c.excluded||[]):(c.userExcluded||[]),tac=pre?c.tactics:(c.userTactics||{}),pool=t.players,xy=bmFormationCoords(tac.formation||"4-Out 1-In"),scope=pre?(c.scope||"all"):"all";
  const card=p=>'<div class="fm-pcard" data-pid="'+bmEsc(p.id)+'" onpointerdown="bmCoachPointerDown(event,\''+bmEsc(p.id)+'\')">'+boxPhoto(p,38)+'<b>'+bmEsc(p.name)+'</b><small>'+bmEsc(p.pos||"")+' · '+p.ovr+' OVR</small></div>';
@@ -1969,5 +1969,142 @@ function beginQuarterGame(){
  state.gameInProgress={gameId:g.id,userIsHome:c.userIsHome,quarter:0,quarters:[],homeBox:{},awayBox:{},homeLine:[],awayLine:[],homeScore:0,awayScore:0,userStarters:c.starters.slice(),userBench:c.bench.slice(),userExcluded:(c.excluded||[]).slice(),userTactics:{...c.tactics},userInstructions:{...(c.instructions||{})},scope:c.scope||"all",oneGamePlan:c.oneGamePlan||null};
  persist();runNextQuarter();
 }
+
+
+/* Possession-by-possession quarter engine. */
+function bmBlankTeamBox(team){const b={};team.players.forEach(p=>b[p.id]=simMakeStats(p));return b}
+function bmQuarterActiveFive(team,starters,bench,segment){
+ const all=[...starters.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean),...bench.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean)];
+ const picked=starters.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean);
+ const replacements=Math.min(4,Math.floor(segment/2));
+ const benchRank=bench.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean).sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a));
+ for(let n=0;n<replacements&&benchRank.length;n++){
+  const incoming=benchRank[n],outgoing=picked.slice().sort((a,b)=>(simAttr(a,"stamina")-simAttr(b,"stamina"))||(bmPlayerQuality(a)-bmPlayerQuality(b)))[0];
+  if(outgoing&&incoming){picked[picked.indexOf(outgoing)]=incoming}
+ }
+ const seen=new Set();return picked.filter(p=>{if(seen.has(String(p.id)))return false;seen.add(String(p.id));return true}).slice(0,5);
+}
+function bmPickShooter(line,box,style){
+ return simWeighted(line,p=>{
+  let w=Math.max(1,bmPlayerQuality(p)*.32+simAttr(p,"close")+simAttr(p,"layup")+simAttr(p,"three")+simAttr(p,"handle"));
+  if(style==="포스트업"||style==="포스트업 중심")w*=["PF","C"].includes(p.pos)?1.65:["PG","SG"].includes(p.pos)?.72:1;
+  if(p.gameInstruction==="패스 우선")w*=.62;
+  if(p.gameInstruction==="외곽슛 우선")w*=1.12;
+  return w;
+ });
+}
+function bmPossession(offTeam,defTeam,offFive,defFive,offBox,defBox){
+ const style=offTeam.tactics?.off||"균형",shooter=bmPickShooter(offFive,offBox,style);if(!shooter)return 0;
+ const st=offBox[shooter.id],defender=simWeighted(defFive,p=>Math.max(.1,simAttr(p,"perimeter")*.5+simAttr(p,"interior")*.35+simAttr(p,"anticipation")*.15));
+ const ds=defender?defBox[defender.id]:null;
+ const inside=(simAttr(shooter,"close")+simAttr(shooter,"layup")+simAttr(shooter,"dunk"))/3,threeBias=style==="3점슛 중심"?.47:style==="포스트업"||style==="포스트업 중심"?.17:style==="픽앤롤 중심"?.3:style==="모션 오펜스"?.32:style==="속공"?.25:.34;
+ const isThree=Math.random()<simClamp(threeBias+(simAttr(shooter,"three")-inside)*.012+(shooter.gameInstruction==="외곽슛 우선"?.12:0),.12,.65);
+ const skill=isThree?simAttr(shooter,"three"):(shooter.gameInstruction==="돌파 우선"||style==="속공"||style==="포스트업"||style==="포스트업 중심"?inside:(Math.random()<.4?simAttr(shooter,"mid"):inside));
+ const defSkill=defender?(isThree?simAttr(defender,"perimeter"):simAttr(defender,"interior")):10;
+ const tacticBonus=style==="픽앤롤 중심"?.025:style==="모션 오펜스"?.02:style==="속공"?.018:0;
+ const chance=simClamp((isThree?.355:.515)+(skill-10)*.012-(defSkill-10)*.008+(simTeamStrength(offTeam,offFive,"off").off-simTeamStrength(defTeam,defFive,"def").def)*.00045+tacticBonus,.22,.78);
+ const turnover=simClamp(.105+(simAttr(shooter,"handle")-10)*-.004+(simAttr(shooter,"decisions")-10)*-.003+(simAttr(defender||shooter,"steal")-10)*.001,.035,.2);
+ if(Math.random()<turnover){st.tov++;if(defender&&ds&&Math.random()<simClamp(.2+simAttr(defender,"steal")*.012,.15,.6))ds.stl++;return 0}
+ st.fga++;if(isThree)st.threeA++;
+ const made=Math.random()<chance,shootFoul=Math.random()<simClamp(.055+(inside-10)*.003+(simAttr(shooter,"aggression")-10)*.002,.02,.13);
+ let points=0;
+ if(made){st.fgm++;if(isThree)st.threeM++;points+=isThree?3:2}
+ if(shootFoul){
+  if(defender&&ds)ds.pf++;
+  const count=made?1:(isThree?3:2),ft=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);
+  for(let n=0;n<count;n++){st.fta++;if(Math.random()<ft){st.ftm++;points++}}
+ }else if(defender&&ds&&Math.random()<.07)ds.pf++;
+ st.pts+=points;
+ if(made){
+  const passer=simWeighted(offFive.filter(p=>p.id!==shooter.id),p=>{let w=simAttr(p,"pass")*.45+simAttr(p,"vision")*.35+simAttr(p,"teamwork")*.2;if(p.gameInstruction==="패스 우선")w*=1.4;if(style==="모션 오펜스")w*=1.15;if((style==="포스트업"||style==="포스트업 중심")&&["PG","SG"].includes(p.pos)&&["PF","C"].includes(shooter.pos))w*=1.6;return Math.max(.1,w)});
+  if(passer&&Math.random()<simClamp(.46+(simAttr(passer,"vision")-10)*.018+(simAttr(passer,"pass")-10)*.012+(style==="모션 오펜스"?.12:0)+(style==="픽앤롤 중심"?.07:0),.2,.88))offBox[passer.id].ast++;
+ }else{
+  if(defender&&ds&&Math.random()<simClamp((simAttr(defender,"block")-8)*.012+(simAttr(defender,"jumping")-10)*.004,.01,.16))ds.blk++;
+  const offensive=Math.random()<.24,reb=simWeighted(offensive?offFive:defFive,p=>Math.max(.1,simAttr(p,"rebound")*.65+simAttr(p,"strength")*.15+simAttr(p,"jumping")*.2));
+  if(reb){const rb=offensive?offBox[reb.id]:defBox[reb.id];rb.reb++;if(offensive)rb.oreb++;else rb.dreb++}
+ }
+ return points;
+}
+function bmInitQuarter(m,home,away){
+ const user=club(state.teamId),opp=m.userIsHome?away:home;
+ const uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()},oLine=simLine(opp);
+ const hLine=m.userIsHome?uLine:{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)};
+ const aLine=m.userIsHome?{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)}:uLine;
+ return {hbox:bmBlankTeamBox(home),abox:bmBlankTeamBox(away),hscore:0,ascore:0,step:0,possessions:m.quarter>=4?20:48,hLine,aLine,home,away,homeTeam:home,awayTeam:away,minutes:{home:{},away:{}},userHome:m.userIsHome};
+}
+function bmEmergencyReason(team,box,mins,p){
+ const x=box[p.id]||{},fat=(Number(p.fatigue)||0)+(mins[p.id]||0)*1.6;
+ if(p.injured||p.injury)return "부상";
+ if((x.pf||0)>=6)return "6반칙 퇴장";
+ if(fat>=99)return "체력 고갈";
+ return "";
+}
+function bmRunQuarterLoop(){
+ const m=state.gameInProgress,q=m.liveQuarter;if(!m||!q)return;
+ const home=q.home,away=q.away,user=club(state.teamId),limit=q.possessions;
+ for(;q.step<limit;q.step++){
+  const segment=Math.floor(q.step/6),hfive=bmQuarterActiveFive(home,q.hLine.starters,q.hLine.bench,segment),afive=bmQuarterActiveFive(away,q.aLine.starters,q.aLine.bench,segment);
+  for(const p of hfive){q.minutes.home[p.id]=(q.minutes.home[p.id]||0)+.25;q.hbox[p.id].min+=.25}
+  for(const p of afive){q.minutes.away[p.id]=(q.minutes.away[p.id]||0)+.25;q.abox[p.id].min+=.25}
+  const firstHome=Math.random()<.5;
+  if(firstHome){q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox);q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox)}
+  else{q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox);q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox)}
+  const userBox=m.userIsHome?q.hbox:q.abox,userMins=m.userIsHome?q.minutes.home:q.minutes.away;
+  const danger=user.players.map(p=>({p,reason:bmEmergencyReason(user,userBox,userMins,p)})).filter(x=>x.reason&&m.userStarters.some(id=>String(id)===String(x.p.id)));
+  if(danger.length){
+   m.pendingEmergency=danger.map(x=>({id:x.p.id,name:x.p.name,reason:x.reason}));m.pendingEmergencyStep=q.step;m.homeScore+=q.hscore;m.awayScore+=q.ascore;m.homeBox=m.homeBox||{};m.awayBox=m.awayBox||{};m._partialQuarter=true;persist();bmShowEmergency();return;
+  }
+ }
+ const hb=q.hbox,ab=q.abox;
+ for(const p of home.players){hb[p.id].dnp=!(hb[p.id].min>0);hb[p.id].starter=q.hLine.starters.some(id=>String(id)===String(p.id));hb[p.id].min=Math.round(hb[p.id].min*10)/10}
+ for(const p of away.players){ab[p.id].dnp=!(ab[p.id].min>0);ab[p.id].starter=q.aLine.starters.some(id=>String(id)===String(p.id));ab[p.id].min=Math.round(ab[p.id].min*10)/10}
+ const oldHome=m.homeScore,oldAway=m.awayScore;m.homeScore=oldHome+q.hscore;m.awayScore=oldAway+q.ascore;
+ bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);
+ const quarter={home:q.hscore,away:q.ascore,homeBox:hb,awayBox:ab};quarter.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(quarter);m.homeLine=q.hLine.starters.slice();m.awayLine=q.aLine.starters.slice();m.liveQuarter=null;m.pendingEmergency=null;m.quarter++;
+ for(const [team,box] of [[home,hb],[away,ab]])for(const p of team.players){const st=box[p.id];if(st.min>0){p.fatigue=simClamp((p.fatigue||0)+Math.round(st.min/4),0,100);p.condition=simClamp((p.condition||75)-Math.max(1,Math.round(st.min/16)),40,100)}}
+ persist();renderQuarterBreak();
+}
+function bmShowEmergency(){
+ const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),team=club(state.teamId);
+ document.getElementById("main").innerHTML='<div class="fm-coach"><h1>경기 중단 · 필수 선수 교체</h1><p>아래 선수는 경기를 계속 뛸 수 없는 상태야. 직접 교체한 뒤 경기를 재개해줘.</p><div class="fm-health-list">'+m.pendingEmergency.map(x=>'<div class="fm-health-player"><b>'+bmEsc(x.name)+'</b><br><span style="color:#ffb4a6">'+x.reason+'</span></div>').join("")+'</div><button class="btn primary fm-confirm" onclick="bmCoachBoard(\'emergency\')">선수 교체하기</button></div>';
+}
+function bmResumeEmergency(){
+ const m=state.gameInProgress,user=club(state.teamId);if(!m||!m.liveQuarter)return;
+ const q=m.liveQuarter;
+ for(const danger of (m.pendingEmergency||[])){if(m.userStarters.some(id=>String(id)===String(danger.id))){alert(danger.name+" 선수를 반드시 선발에서 빼야 해.");return}}
+ const uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};
+ if(m.userIsHome){q.hLine=uLine}else{q.aLine=uLine}
+ m.pendingEmergency=null;persist();bmRunQuarterLoop();
+}
+function runNextQuarter(){
+ const m=state.gameInProgress;if(!m)return;
+ const g=state.schedule.find(x=>x.id===m.gameId),home=club(g.home),away=club(g.away);
+ if(m.quarter>=4&&m.homeScore!==m.awayScore){finishQuarterGame();return}
+ m.liveQuarter=bmInitQuarter(m,home,away);bmRunQuarterLoop();
+}
+function bmConfirmCoach(pre){
+ const c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId),ids=pre?c.starters:c.userStarters;
+ if(new Set(ids.map(String)).size!==5||ids.some(id=>!t.players.some(p=>String(p.id)===String(id)))){alert("서로 다른 선수를 선발로 지정해주세요.");return}
+ const bench=pre?c.bench.slice():(c.userBench||[]).slice(),excluded=pre?(c.excluded||[]).slice():(c.userExcluded||[]).slice();
+ if(bench.length>8){alert("벤치 선수는 최대 8명입니다.");return}
+ const instructions={};ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);
+ const tactics={formation:document.getElementById("fmFormation").value,off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value};
+ if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=excluded;c.instructions=instructions;c.tactics=tactics;const plan={starters:ids.slice(),bench,excluded,tactics,instructions};if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}
+ c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=excluded;c.userInstructions=instructions;c.userTactics=tactics;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");
+ if(c.scope!=="one")bmPersistPlan(t,{starters:ids.slice(),bench,excluded,tactics,instructions});
+ persist();if(window.bmCoachMode==="emergency")bmResumeEmergency();else runNextQuarter();
+}
+function bmConfirmPreCoach(){bmConfirmCoach(true)}function bmConfirmQuarterCoach(){bmConfirmCoach(false)}
+function bmConfirmEmergencyCoach(){bmConfirmCoach(false)}
+function bmCoachBoard(mode){
+ if(mode!=="emergency"){return bmCoachBoardV2(mode)}
+ const c=state.gameInProgress;if(!c)return;const user=club(state.teamId);
+ const oldMode=window.bmCoachMode;window.bmCoachMode="emergency";
+ bmCoachBoardV2("quarter");
+ const h=document.querySelector(".fm-coach h1");if(h)h.textContent="경기 중단 · 선수 교체";
+ const btn=document.querySelector(".fm-confirm");if(btn){btn.textContent="교체 확정 · 경기 재개";btn.setAttribute("onclick","bmConfirmEmergencyCoach()")}
+ const p=document.querySelector(".fm-coach header p");if(p)p.textContent="퇴장·부상·체력 고갈 선수는 반드시 선발에서 제외해야 경기를 재개할 수 있어.";
+}
+function bmCoachBoardV2(mode){return bmCoachBoardBase(mode)}
 
 </script></body></html>
