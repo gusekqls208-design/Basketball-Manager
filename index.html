@@ -2316,13 +2316,15 @@ function bmGetPlan(team){
 function bmConfirmCoach(pre){
  const c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId),ids=pre?c.starters:c.userStarters;
  if(new Set(ids.map(String)).size!==5||ids.some(id=>!t.players.some(p=>String(p.id)===String(id)))){alert("서로 다른 선수를 선발로 지정해주세요.");return}
- const bench=pre?c.bench.slice():(c.userBench||[]).slice(),excluded=pre?(c.excluded||[]).slice():(c.userExcluded||[]).slice();
- if(bench.length>8){alert("벤치 선수는 최대 8명입니다.");return}
- const instructions={};ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);
+ const bench=pre?c.bench.slice():(c.userBench||[]).slice(),instructions={};
+ if(bench.some(id=>ids.some(x=>String(x)===String(id)))||new Set(bench.map(String)).size!==bench.length){alert("선발과 벤치 명단을 확인해주세요.");return}
+ ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);
  const tactics={formation:document.getElementById("fmFormation").value,off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value};
- if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=excluded;c.instructions=instructions;c.tactics=tactics;const plan={starters:ids.slice(),bench,excluded,tactics,instructions};if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}
- c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=excluded;c.userInstructions=instructions;c.userTactics=tactics;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");t.tactics={...tactics};state.tactics={...state.tactics,...tactics};
- if(c.scope!=="one")bmPersistPlan(t,{starters:ids.slice(),bench,excluded,tactics,instructions});
+ const plan={starters:ids.slice(),bench:bench.slice(),excluded:[],tactics,instructions};
+ if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=[];c.instructions=instructions;c.tactics=tactics;if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}
+ c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=[];c.userInstructions=instructions;c.userTactics=tactics;
+ t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");
+ if(c.scope!=="one"){t.tactics={...tactics};state.tactics={...state.tactics,...tactics};bmPersistPlan(t,plan)}
  persist();if(window.bmCoachMode==="emergency")bmResumeEmergency();else runNextQuarter();
 }
 function bmRunQuarterLoop(){
@@ -2436,15 +2438,14 @@ function bmCoachBoardBase(mode){
  window.bmCoachMode=mode;window.bmCoachSelected=null;
 }
 function bmCoachAssign(id,i){
- const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const pre=window.bmCoachMode==="pre"||window.bmCoachMode==="emergency",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
  const ids=pre?c.starters:c.userStarters,bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
  const old=ids[i],j=ids.findIndex(x=>String(x)===String(id));if(j>=0){ids[j]=old;ids[i]=id;return bmCoachBoard(window.bmCoachMode)}
  const wasExcluded=excluded.some(x=>String(x)===String(id));
- if(wasExcluded&&bench.length>=8){alert("벤치가 이미 8명입니다. 먼저 벤치 선수 한 명을 명단 제외 영역으로 옮겨주세요.");return}
- const danger=(c.pendingEmergency||[]).some(x=>String(x.id)===String(old));
  ids[i]=id;const bi=bench.findIndex(x=>String(x)===String(id));if(bi>=0)bench.splice(bi,1);
- if(danger){if(!excluded.some(x=>String(x)===String(old)))excluded.push(old)}else if(!bench.some(x=>String(x)===String(old)))bench.push(old);
- const ei=excluded.findIndex(x=>String(x)===String(id));if(ei>=0)excluded.splice(ei,1);bmCoachBoard(window.bmCoachMode);
+ if(!bench.some(x=>String(x)===String(old)))bench.push(old);
+ const ei=excluded.findIndex(x=>String(x)===String(id));if(ei>=0)excluded.splice(ei,1);
+ bmCoachBoard(window.bmCoachMode);
 }
 function bmDropExcluded(e){
  const id=window.bmLastDragId;if(!id)return;const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
@@ -2561,9 +2562,9 @@ function bmGetPlan(team){
  const saved=state.teamGamePlan||team.gamePlan||{},valid=id=>team.players.find(p=>String(p.id)===String(id));
  let starters=(Array.isArray(saved.starters)?saved.starters:[]).filter((id,i,a)=>valid(id)&&a.findIndex(x=>String(x)===String(id))===i).slice(0,5);
  for(const p of bmBestFive(team))if(starters.length<5&&!starters.some(id=>String(id)===String(p.id)))starters.push(p.id);
- let bench=(Array.isArray(saved.bench)?saved.bench:[]).filter((id,i,a)=>valid(id)&&!starters.some(x=>String(x)===String(id))&&a.findIndex(x=>String(x)===String(id))===i).slice(0,8);
- for(const p of team.players)if(bench.length<8&&!starters.some(id=>String(id)===String(p.id))&&!bench.some(id=>String(id)===String(p.id)))bench.push(p.id);
- const excluded=team.players.filter(p=>!starters.some(id=>String(id)===String(p.id))&&!bench.some(id=>String(id)===String(p.id))).map(p=>p.id);
+ let bench=(Array.isArray(saved.bench)?saved.bench:[]).filter((id,i,a)=>valid(id)&&!starters.some(x=>String(x)===String(id))&&a.findIndex(x=>String(x)===String(id))===i);
+ for(const p of team.players)if(!starters.some(id=>String(id)===String(p.id))&&!bench.some(id=>String(id)===String(p.id)))bench.push(p.id);
+ const excluded=[];
  const plan={starters,bench,excluded,tactics:{...(saved.tactics||team.tactics||{off:"균형",def:"맨투맨",tempo:"보통",formation:"4-Out 1-In"})},instructions:{...(saved.instructions||{})}};
  if(!saved.starters||starters.length!==saved.starters.length||bench.length!==(saved.bench||[]).filter(id=>valid(id)).length||JSON.stringify(excluded)!==JSON.stringify(saved.excluded||[]))bmPersistPlan(team,plan);
  return plan;
@@ -2751,16 +2752,20 @@ function bmCoachRating(p,box){
 }
 function bmAutoLineup(){
  const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;
- const mins=pre?{}:(c.liveQuarter?.minutes?.[c.userIsHome?"home":"away"]||{}),energy=p=>Math.max(0,100-(Number(p.fatigue)||0)-(Number(mins[p.id])||0)),injured=p=>!!(p.injured||p.injury||Number(p.injuryWeeks)>0),quality=p=>Number(bmPlayerQuality(p))||Number(p.ovr)||50;
+ const mins=pre?{}:(c.liveQuarter?.minutes?.[c.userIsHome?"home":"away"]||{});
+ const energy=p=>Math.max(0,100-(Number(p.fatigue)||0)-(Number(mins[p.id])||0));
+ const condition=p=>Math.max(0,Math.min(100,Number(p.condition)||75));
+ const injured=p=>!!(p.injured||p.injury||Number(p.injuryWeeks)>0);
+ const quality=p=>Number(bmPlayerQuality(p))||Number(p.ovr)||50;
  const proficiency=(p,pos)=>{for(const k of ["positionSkills","positionRatings","posRatings","positionProficiency"]){const v=p[k];if(v&&Number.isFinite(Number(v[pos])))return Number(v[pos]);}if(p.pos===pos)return 100;if((p.secondaryPositions||[]).includes(pos))return 84;if((p.positions||[]).includes(pos))return 78;return 55;};
- const score=(p,pos)=>{const skill=proficiency(p,pos),fit=p.pos===pos?24:(p.secondaryPositions||[]).includes(pos)?15:skill>=70?10:skill>=60?3:-13,st=energy(p),tired=st<18?-24:st<30?-12:st<45?-5:0;return quality(p)*.42+st*.30+fit+(skill-70)*.18+tired+(injured(p)?-42:0);};
+ const score=(p,pos)=>{const skill=proficiency(p,pos),fit=p.pos===pos?24:(p.secondaryPositions||[]).includes(pos)?15:skill>=70?10:skill>=60?3:-13,st=energy(p),cond=condition(p),tired=st<18?-30:st<30?-16:st<45?-7:0;return quality(p)*.42+st*.34+cond*.12+fit+(skill-70)*.18+tired+(injured(p)?-65:0);};
  const pool=[...t.players],picked=[];
  ["PG","SG","SF","PF","C"].forEach(pos=>{const cand=pool.filter(p=>!picked.includes(p)).sort((x,y)=>score(y,pos)-score(x,pos));if(cand[0])picked.push(cand[0]);});
  const ids=picked.map(p=>p.id),remaining=pool.filter(p=>!ids.some(id=>String(id)===String(p.id)));
- remaining.sort((x,y)=>(quality(y)*.55+energy(y)*.35+(injured(y)?-40:0))-(quality(x)*.55+energy(x)*.35+(injured(x)?-40:0)));
- const bench=remaining.slice(0,8).map(p=>p.id);
- if(pre){c.starters=ids;c.bench=bench;c.excluded=remaining.slice(8).map(p=>p.id);c.instructions=c.instructions||{}}
- else{c.userStarters=ids;c.userBench=bench;c.userExcluded=remaining.slice(8).map(p=>p.id);c.userInstructions=c.userInstructions||{}}
+ remaining.sort((x,y)=>(quality(y)*.5+energy(y)*.32+condition(y)*.18-(injured(y)?65:0))-(quality(x)*.5+energy(x)*.32+condition(x)*.18-(injured(x)?65:0)));
+ const bench=remaining.map(p=>p.id);
+ if(pre){c.starters=ids;c.bench=bench;c.excluded=[];c.instructions=c.instructions||{}}
+ else{c.userStarters=ids;c.userBench=bench;c.userExcluded=[];c.userInstructions=c.userInstructions||{}}
  persist();bmCoachBoard(pre?"pre":"quarter");
 }
 function bmCoachPointerDown(e,id){
@@ -3257,3 +3262,12 @@ bmCoachPointerDown=function(e,id){
 /* Final roster layout: bench cards share the starter-card visual scale; no excluded-player area. */
 (function(){const st=document.createElement("style");st.textContent='.fm-position-groups{display:flex!important;flex-direction:column!important;gap:10px!important}.fm-position-group{display:flex;flex-direction:column;gap:5px}.fm-position-group h4{margin:2px 3px 3px;font-size:10px;letter-spacing:1.2px;color:#f2a45f}.fm-roster-row{display:grid!important;grid-template-columns:34px minmax(0,1fr)!important;grid-template-rows:1fr!important;align-items:center!important;gap:0 9px!important;width:100%!important;min-height:58px!important;height:58px!important;padding:6px 9px!important;box-sizing:border-box!important;overflow:hidden!important;background:#1b2d40!important;border:1px solid #3b566f!important;border-radius:8px!important;touch-action:pan-y!important}.fm-roster-row>.bs-avatar{grid-column:1!important;grid-row:1!important;width:34px!important;height:34px!important;min-width:34px!important;max-width:34px!important;min-height:34px!important;max-height:34px!important;overflow:hidden!important;border-radius:50%!important}.fm-roster-row>.bs-avatar img,.fm-roster-row>.bs-avatar .bs-avatar-fallback{width:34px!important;height:34px!important;object-fit:cover!important}.fm-roster-row>.fm-roster-info{grid-column:2!important;grid-row:1!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;min-width:0!important;overflow:hidden!important}.fm-roster-info>b{font-size:11px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.fm-roster-info>small{font-size:9px!important;white-space:nowrap!important}.fm-roster-info .fm-player-health{font-size:8px!important;gap:2px 6px!important}.fm-roster-row>em{display:none!important}.fm-excluded-drop{display:none!important}@media(max-width:760px){.fm-candidate-list{max-height:55vh!important}}';document.head.appendChild(st)})();
 </script></body></html>
+/* Exact starter-to-bench-card swap: never substitute a different player automatically. */
+function bmCoachSwapWithBench(starterId,benchId){
+ const pre=window.bmCoachMode==="pre"||window.bmCoachMode==="emergency",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const ids=pre?c.starters:c.userStarters,bench=pre?c.bench:c.userBench||[];
+ const si=ids.findIndex(x=>String(x)===String(starterId)),bi=bench.findIndex(x=>String(x)===String(benchId));
+ if(si<0||bi<0)return;
+ const outgoing=ids[si];ids[si]=bench[bi];bench[bi]=outgoing;
+ bmCoachBoard(window.bmCoachMode);
+}
