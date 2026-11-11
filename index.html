@@ -2919,4 +2919,51 @@ showGame=function(id){
  bmShowGameBeforeFm(id);
 };
 
+
+/* FINAL FIX: coaching room and match are a true full-viewport workspace */
+(function bmFullViewportWorkspaceFix(){
+ const st=document.createElement("style");st.id="bmFullViewportWorkspaceFix";
+ st.textContent=`
+ body.fm-match-mode{overflow:hidden!important}
+ body.fm-match-mode #app{display:block!important;width:100vw!important;max-width:none!important;height:100dvh!important;margin:0!important}
+ body.fm-match-mode #app>header,body.fm-match-mode #app>.layout>.side,body.fm-match-mode #app>.layout>aside{display:none!important}
+ body.fm-match-mode .layout{display:block!important;width:100vw!important;height:100dvh!important;min-height:0!important}
+ body.fm-match-mode main#main,body.fm-match-mode main{position:fixed!important;inset:0!important;z-index:10000!important;display:block!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;max-width:none!important;min-width:0!important;margin:0!important;padding:clamp(10px,1.6vw,24px)!important;overflow:auto!important;background:#11100e!important}
+ body.fm-match-mode .fm-coach{width:100%!important;max-width:none!important;min-height:calc(100dvh - 24px)!important;margin:0!important}
+ body.fm-match-mode .fm-main{display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr)!important;gap:14px!important;width:100%!important;max-width:none!important}
+ body.fm-match-mode .fm-candidates{min-width:0!important;width:100%!important}
+ body.fm-match-mode .fm-candidate-list.fm-all-roster{max-height:calc(100dvh - 270px)!important;overflow-y:auto!important;overflow-x:hidden!important}
+ body.fm-match-mode .bs-page{width:100%!important;max-width:none!important;min-height:calc(100dvh - 24px)!important;margin:0!important}
+ body.fm-match-mode .q-break-grid{display:grid!important;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)!important;gap:14px!important}
+ .fm-roster-row{display:grid!important;grid-template-columns:40px minmax(0,1fr) minmax(54px,auto)!important;grid-template-rows:auto auto!important;grid-template-areas:"avatar info rating" "avatar info status"!important;align-items:center!important;column-gap:8px!important;row-gap:3px!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:66px!important;height:auto!important;padding:7px 8px!important;overflow:hidden!important}
+ .fm-roster-row>.bs-avatar,.fm-roster-row>img{grid-area:avatar!important;display:block!important;width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;align-self:center!important;object-fit:cover!important}
+ .fm-roster-row>.fm-roster-info{grid-area:info!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;gap:3px!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+ .fm-roster-row>.fm-roster-info>b{display:block!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:12px!important;line-height:1.2!important}
+ .fm-roster-row>.fm-roster-info>small{display:block!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:9px!important;line-height:1.2!important}
+ .fm-roster-row .fm-player-health{display:flex!important;flex-wrap:wrap!important;gap:2px 6px!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;font-size:9px!important;line-height:1.15!important}
+ .fm-roster-row .fm-health-bar{display:block!important;width:100%!important;max-width:100%!important;height:3px!important;margin:1px 0 0!important;overflow:hidden!important}
+ .fm-roster-row>.fm-live-rating{grid-area:rating!important;justify-self:end!important;align-self:center!important;display:inline-flex!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:2px 5px!important;font-size:9px!important;white-space:nowrap!important}
+ .fm-roster-row>em{grid-area:status!important;justify-self:end!important;align-self:center!important;display:block!important;max-width:100%!important;margin:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:9px!important}
+ @media(max-width:900px){body.fm-match-mode .fm-main{grid-template-columns:minmax(0,1fr)!important}body.fm-match-mode .fm-candidate-list.fm-all-roster{max-height:38dvh!important}body.fm-match-mode .q-break-grid{grid-template-columns:1fr!important}}
+ @media(max-width:600px){.fm-roster-row{grid-template-columns:34px minmax(0,1fr) minmax(48px,auto)!important;min-height:62px!important;column-gap:6px!important;padding:6px!important}.fm-roster-row>.bs-avatar,.fm-roster-row>img{width:32px!important;height:32px!important;min-width:32px!important;max-width:32px!important}}
+ `;
+ document.head.appendChild(st);
+ const oldBoard=bmCoachBoard;
+ bmCoachBoard=function(mode){
+  document.body.classList.add("fm-match-mode");
+  oldBoard(mode);
+  document.body.classList.add("fm-match-mode");
+ };
+ const oldRenderSetup=renderMatchSetup;
+ renderMatchSetup=function(){document.body.classList.add("fm-match-mode");oldRenderSetup();document.body.classList.add("fm-match-mode")};
+ const oldOpenQuarter=openQuarterAdjust;
+ openQuarterAdjust=function(){document.body.classList.add("fm-match-mode");oldOpenQuarter();document.body.classList.add("fm-match-mode")};
+ const oldNav=nav;
+ nav=function(page){document.body.classList.remove("fm-match-mode");oldNav(page)};
+ const oldShowGame=showGame;
+ showGame=function(id){document.body.classList.remove("fm-match-mode");oldShowGame(id)};
+ const oldFinish=finishQuarterGame;
+ finishQuarterGame=function(){oldFinish();document.body.classList.remove("fm-match-mode")};
+})();
+
 </script></body></html>
