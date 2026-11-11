@@ -2153,4 +2153,48 @@ function renderQuarterBreak(){
  const oldEnd=window.__unused;return bmRenderQuarterBreakV2();
 }
 
+
+function bmCoachAssign(id,i){
+ const pre=window.bmCoachMode==="pre"||window.bmCoachMode==="emergency",c=pre?state.matchSetup:state.gameInProgress,ids=pre?c.starters:c.userStarters,bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
+ if(!c)return;const old=ids[i],j=ids.findIndex(x=>String(x)===String(id));
+ if(j>=0){ids[j]=old;ids[i]=id;return bmCoachBoard(window.bmCoachMode)}
+ const isDanger=(c.pendingEmergency||[]).some(x=>String(x.id)===String(old));
+ ids[i]=id;
+ const bi=bench.findIndex(x=>String(x)===String(id));if(bi>=0)bench.splice(bi,1);
+ if(isDanger){if(!excluded.some(x=>String(x)===String(old)))excluded.push(old)}
+ else if(!bench.some(x=>String(x)===String(old)))bench.push(old);
+ const ei=excluded.findIndex(x=>String(x)===String(id));if(ei>=0)excluded.splice(ei,1);
+ bmCoachBoard(window.bmCoachMode);
+}
+function bmDropBench(e){
+ const id=window.bmLastDragId;if(!id)return;const pre=window.bmCoachMode==="pre"||window.bmCoachMode==="emergency",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
+ const ix=excluded.findIndex(x=>String(x)===String(id));if(ix>=0)excluded.splice(ix,1);
+ if(!bench.some(x=>String(x)===String(id)))bench.push(id);
+ window.bmLastDragId=null;bmCoachBoard(window.bmCoachMode);
+}
+function bmCoachPointerDown(e,id){
+ if(e.button!==undefined&&e.button!==0)return;e.preventDefault();const card=e.currentTarget;window.bmDragV2={id,x:e.clientX,y:e.clientY,src:card};window.bmLastDragId=id;
+ const move=ev=>{const d=window.bmDragV2;if(!d)return;if(!d.ghost&&Math.hypot(ev.clientX-d.x,ev.clientY-d.y)>7){d.ghost=d.src.cloneNode(true);d.ghost.classList.add("fm-drag-ghost");d.src.classList.add("is-dragging");document.body.appendChild(d.ghost)}if(d.ghost){d.ghost.style.left=ev.clientX+"px";d.ghost.style.top=ev.clientY+"px";document.querySelectorAll(".fm-slot,.fm-excluded-drop,.fm-candidate-list").forEach(x=>x.classList.remove("drop-ready"));document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-excluded-drop,.fm-candidate-list")?.classList.add("drop-ready")}};
+ const up=ev=>{const d=window.bmDragV2;if(!d)return;document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);d.src.classList.remove("is-dragging");d.ghost?.remove();document.querySelectorAll(".fm-slot,.fm-excluded-drop,.fm-candidate-list").forEach(x=>x.classList.remove("drop-ready"));if(d.ghost){const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-excluded-drop,.fm-candidate-list");if(target?.classList.contains("fm-slot"))bmCoachAssign(d.id,+target.dataset.slot);else if(target?.classList.contains("fm-excluded-drop"))bmDropExcluded(ev);else if(target?.classList.contains("fm-candidate-list"))bmDropBench(ev);else window.bmLastDragId=null}else bmPickCoachPlayer(d.id);window.bmDragV2=null};
+ document.addEventListener("pointermove",move,{passive:true});document.addEventListener("pointerup",up,{once:true});
+}
+function bmResumeEmergency(){
+ const m=state.gameInProgress;if(!m||!m.liveQuarter)return;
+ const q=m.liveQuarter,active=[...m.userStarters,...m.userBench];
+ for(const d of (m.pendingEmergency||[])){if(active.some(id=>String(id)===String(d.id))){alert(d.name+" 선수를 반드시 경기 명단에서 제외해야 해.");return}}
+ const uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};
+ if(m.userIsHome)q.hLine=uLine;else q.aLine=uLine;
+ m.pendingEmergency=null;persist();bmRunQuarterLoop();
+}
+function openBoxPlayerProfile(pid,tid){
+ const t=club(tid),p=t&&t.players.find(x=>String(x.id)===String(pid));if(!p)return;editPlayer(pid);
+ const root=document.querySelector(".profile-overlay .profile-shell");if(!root)return;
+ const st=p.seasonStats||{},gp=Number(st.gp)||0,avg=k=>gp?(Number(st[k])||0)/gp:0;
+ const careerSection=[...root.querySelectorAll(".profile-section")].find(x=>x.textContent.includes("CAREER HISTORY"));
+ const panel=document.createElement("div");panel.className="profile-section";panel.innerHTML='<h3>CAREER PER-GAME AVERAGES</h3><div class="stat-cards">'+[["GP",gp],["PTS",avg("pts")],["REB",avg("reb")],["AST",avg("ast")],["STL",avg("stl")],["BLK",avg("blk")],["TO",avg("tov")],["MIN",gp?(Number(p.minutes)||0)/gp:0]].map(x=>'<div><span>'+x[0]+'</span><b>'+Number(x[1]).toFixed(x[0]==="GP"?0:1)+'</b></div>').join("")+'</div>';
+ if(careerSection)careerSection.appendChild(panel);else root.appendChild(panel);
+}
+(function bmCoachRosterStyle(){const st=document.createElement("style");st.textContent='.fm-header-actions{display:flex;gap:6px;align-items:center}.fm-scope{background:#172738;color:#b9c8d4;border:1px solid #34495c;padding:9px 13px;border-radius:8px;font-size:12px}.fm-scope.active{background:#25445b;color:#fff;border-color:#8dcdf0}.fm-candidate-list.fm-roster-list{display:flex;flex-direction:column;gap:7px;max-height:430px;overflow:auto}.fm-roster-list .fm-pcard{min-height:48px}.fm-excluded-drop{min-height:66px;border:1px dashed #8c9ba9;border-radius:10px;margin:12px 0;padding:16px 8px;text-align:center;color:#a9bac8;font-size:12px;background:#0d1721}.fm-excluded-drop.drop-ready,.fm-candidate-list.drop-ready{outline:2px solid #9bdcff;background:#1d3b50}.fm-excluded-list{opacity:.75}@media(max-width:850px){.fm-header-actions{flex-wrap:wrap;justify-content:flex-end}.fm-candidate-list.fm-roster-list{max-height:330px}}';document.head.appendChild(st)})();
+
 </script></body></html>
