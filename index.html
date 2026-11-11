@@ -1211,5 +1211,154 @@ async function syncOfficialRosters(){
  }
 }
 
+
+/* INSTANT BOX SCORE ENGINE · replaces live court broadcast */
+function simClamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function simAttr(p,k,d=10){const v=Number(p?.attrs?.[k]);return Number.isFinite(v)?v:d}
+function simTrait(p){return (p.traits||[p.trait]).filter(Boolean)}
+function simHas(p,n){return simTrait(p).includes(n)}
+function simWeighted(list,fn){if(!list.length)return null;const ws=list.map(p=>Math.max(.05,fn(p))),sum=ws.reduce((a,b)=>a+b,0);let r=Math.random()*sum;for(let i=0;i<list.length;i++){r-=ws[i];if(r<=0)return list[i]}return list[list.length-1]}
+function simLine(team){
+ const starters=selectStartingFive(team), pool=(team.players||[]).filter(p=>!starters.some(x=>x.id===p.id));
+ const reserve=pool.sort((a,b)=>(Number(b.ovr||0)+Number(b.condition||0)*.08-Number(b.fatigue||0)*.12)-(Number(a.ovr||0)+Number(a.condition||0)*.08-Number(a.fatigue||0)*.12)).slice(0,5);
+ return {starters,rotation:[...starters,...reserve]};
+}
+function simTeamStrength(team,rotation,side){
+ const players=rotation,avg=k=>players.reduce((s,p)=>s+simAttr(p,k),0)/Math.max(1,players.length);
+ const condition=players.reduce((s,p)=>s+simClamp((Number(p.condition)||75)/100,.45,1.08),0)/Math.max(1,players.length);
+ const fatigue=players.reduce((s,p)=>s+simClamp((Number(p.fatigue)||0)/100,0,1),0)/Math.max(1,players.length);
+ const traits=players.reduce((s,p)=>s+simTrait(p).length,0);
+ const off=(avg("close")*.08+avg("layup")*.07+avg("dunk")*.035+avg("mid")*.07+avg("three")*.10+avg("ft")*.025+avg("post")*.035+avg("handle")*.07+avg("pass")*.06+avg("passTech")*.04+avg("vision")*.045+avg("decisions")*.045+avg("offBall")*.04+avg("teamwork")*.035+avg("composure")*.03+avg("stamina")*.02);
+ const def=(avg("perimeter")*.10+avg("interior")*.10+avg("steal")*.055+avg("block")*.07+avg("rebound")*.09+avg("positioning")*.06+avg("anticipation")*.05+avg("strength")*.04+avg("agility")*.035+avg("workRate")*.04+avg("teamwork")*.025);
+ const tactical=team.tactics||{};
+ const offFit=(tactical.off==="3점슛 중심"?avg("three")*.10:tactical.off==="픽앤롤 중심"?(avg("handle")+avg("pass")+avg("screen"))*.035:tactical.off==="포스트업 중심"?(avg("post")+avg("strength")+avg("close"))*.035:tactical.off==="속공"||tactical.off==="빠른 공격"?(avg("speed")+avg("acceleration")+avg("stamina"))*.035:tactical.off==="모션 오펜스"?(avg("offBall")+avg("pass")+avg("teamwork"))*.04:0);
+ const defFit=(String(tactical.def||"").includes("지역")?(avg("interior")+avg("rebound")+avg("positioning"))*.025:tactical.def==="압박 수비"?(avg("perimeter")+avg("steal")+avg("aggression"))*.03:tactical.def==="스위치 수비"?(avg("agility")+avg("perimeter")+avg("strength"))*.025:avg("perimeter")*.015);
+ const pace=tactical.tempo==="빠르게"?1.035:tactical.tempo==="느리게"?.965:1;
+ return {off:(off+offFit)*condition*(1-fatigue*.12),def:(def+defFit)*condition*(1-fatigue*.10),condition,fatigue,pace,avg,traits};
+}
+function simMakeStats(p){return {pts:0,reb:0,oreb:0,dreb:0,ast:0,stl:0,blk:0,tov:0,pf:0,fga:0,fgm:0,threeA:0,threeM:0,fta:0,ftm:0,min:0,starter:false,dnp:false}}
+function simDistributeMinutes(line){
+ const active=line.rotation,mins={};
+ if(!active.length)return mins;
+ const base=active.map((p,i)=>i<5?32:16);
+ let total=base.reduce((a,b)=>a+b,0);
+ const weights=active.map((p,i)=>Math.max(.3,(Number(p.ovr)||50)/70)*simClamp((Number(p.condition)||75)/85,.65,1.12)*simClamp(1-(Number(p.fatigue)||0)/170,.55,1));
+ let remaining=240-total;
+ while(remaining>0){const ix=simWeighted(active,p=>weights[active.indexOf(p)]);if(!ix)break;const i=active.indexOf(ix);base[i]++;remaining--}
+ while(remaining<0){let i=base.findIndex((v,j)=>v>(j<5?26:8));if(i<0)break;base[i]--;remaining++}
+ active.forEach((p,i)=>mins[p.id]=base[i]);
+ return mins;
+}
+function simBoxTeam(team,line,opponent,minutes,seedSide){
+ const box={};(team.players||[]).forEach(p=>{box[p.id]=simMakeStats(p);box[p.id].dnp=true});
+ line.rotation.forEach(p=>{box[p.id].min=minutes[p.id]||0;box[p.id].dnp=false;box[p.id].starter=line.starters.some(x=>x.id===p.id)});
+ return box;
+}
+function simulateBoxScore(home,away){
+ const hl=simLine(home),al=simLine(away),hm=simDistributeMinutes(hl),am=simDistributeMinutes(al);
+ const hb=simBoxTeam(home,hl,away,hm,"home"),ab=simBoxTeam(away,al,home,am,"away");
+ const hs=simTeamStrength(home,hl.rotation,"home"),as=simTeamStrength(away,al.rotation,"away");
+ const teamPoss=(teamStrength,oppStrength)=>Math.round(simClamp((97+(teamStrength.pace-1)*40+(Math.random()-.5)*8),88,106));
+ const hposs=teamPoss(hs,as),aposs=teamPoss(as,hs);
+ const run=(offTeam,defTeam,offLine,defLine,offBox,defBox,offStrength,defStrength,poss,homeSide)=>{
+  let score=0;
+  const active=offLine.rotation,defenders=defLine.rotation;
+  const shotWeights=p=>Math.max(.1,(Number(p.ovr)||50)*.35+(simAttr(p,"close")+simAttr(p,"layup")+simAttr(p,"mid")+simAttr(p,"three")+simAttr(p,"handle"))*.65+(p.role==="프랜차이즈 스타"?9:p.role==="핵심 선수"?5:0));
+  for(let n=0;n<poss;n++){
+   const shooter=simWeighted(active,p=>shotWeights(p)*Math.max(.45,(offBox[p.id].min||0)/28));
+   if(!shooter)continue;
+   const st=offBox[shooter.id],defender=simWeighted(defenders,p=>Math.max(.2,simAttr(p,"perimeter")*.45+simAttr(p,"interior")*.35+simAttr(p,"anticipation")*.2));
+   const ds=defender?defBox[defender.id]:null;
+   const threeBias=offTeam.tactics?.off==="3점슛 중심"?.43:offTeam.tactics?.off==="포스트업 중심"?.19:.34;
+   const threeSkill=simAttr(shooter,"three"),insideSkill=(simAttr(shooter,"close")+simAttr(shooter,"layup")+simAttr(shooter,"dunk"))/3;
+   const isThree=Math.random()<simClamp(threeBias+(threeSkill-insideSkill)*.012,.18,.52);
+   const shotSkill=isThree?threeSkill:(Math.random()<.42?simAttr(shooter,"mid"):insideSkill);
+   const defenseSkill=defender?(isThree?simAttr(defender,"perimeter"):simAttr(defender,"interior")):10;
+   let chance=simClamp((isThree?.355:.515)+(shotSkill-10)*.012-(defenseSkill-10)*.008+(offStrength.off-defStrength.def)*.00065+(Number(shooter.condition||75)-75)*.0007-(Number(shooter.fatigue||0))*.00035,.22,.78);
+   if(simHas(shooter,"캐치 앤 슛")&&isThree)chance+=.035;
+   if(simHas(shooter,"미드레인지 전문가")&&!isThree)chance+=.025;
+   if(simHas(shooter,"림 프로텍터")&&!isThree)chance-=.01;
+   chance=simClamp(chance,.2,.8);
+   st.fga++;if(isThree)st.threeA++;
+   const turnoverChance=simClamp(.105+(simAttr(shooter,"handle")-10)*-.004+(defStrength.def-offStrength.off)*.00025-(simAttr(shooter,"decisions")-10)*.003,.045,.19);
+   if(Math.random()<turnoverChance){
+    st.tov++;if(defender&&Math.random()<simClamp(.18+simAttr(defender,"steal")*.018,.15,.55))ds.stl++;
+    continue;
+   }
+   const shootingFoul=Math.random()<simClamp(.075+(simAttr(shooter,"aggression")-10)*.003+(insideSkill-10)*.004,.035,.16);
+   if(Math.random()<chance){
+    st.fgm++;if(isThree)st.threeM++;
+    const points=isThree?3:2;st.pts+=points;score+=points;
+    const passer=simWeighted(active.filter(p=>p.id!==shooter.id),p=>Math.max(.1,simAttr(p,"pass")*.45+simAttr(p,"vision")*.35+simAttr(p,"teamwork")*.2));
+    if(passer&&Math.random()<simClamp(.48+(simAttr(passer,"vision")-10)*.018+(simAttr(passer,"pass")-10)*.012,.28,.78))offBox[passer.id].ast++;
+   }else{
+    const rebounder=simWeighted(defenders,p=>Math.max(.1,simAttr(p,"rebound")*.65+simAttr(p,"strength")*.15+simAttr(p,"jumping")*.2));
+    if(rebounder){defBox[rebounder.id].reb++;defBox[rebounder.id].dreb++}
+    else {const own=simWeighted(active,p=>Math.max(.1,simAttr(p,"rebound")));if(own){offBox[own.id].reb++;offBox[own.id].oreb++;if(Math.random()<.18){own.id&& (offBox[own.id].fga+=0)}}}
+   }
+   if(shootingFoul){
+    const ftCount=isThree&&Math.random()<.28?3:2;
+    const ftPct=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);
+    for(let z=0;z<ftCount;z++){st.fta++;if(Math.random()<ftPct){st.ftm++;st.pts++;score++}}
+    if(defender&&ds)ds.pf++;
+   }else if(Math.random()<.075&&defender&&ds)ds.pf++;
+   if(defender&&Math.random()<simClamp((simAttr(defender,"block")-8)*.012+(simAttr(defender,"jumping")-10)*.004,.015,.13))ds.blk++;
+  }
+  active.forEach(p=>{const st=offBox[p.id];st.pf+=Math.random()<.12?1:0});
+  return score;
+ };
+ let hscore=run(home,away,hl,al,hb,ab,hs,as,hposs,true);
+ let ascore=run(away,home,al,hl,ab,hb,as,hs,aposs,false);
+ const totalImpact=(box,players)=>players.reduce((s,p)=>{const x=box[p.id];return s+x.pts+x.reb*.72+x.ast*1.15+x.stl*1.5+x.blk*1.25-x.tov*.8},0);
+ if(hscore===ascore){const team=Math.random()<.5?home:away,line=team===home?hl:al,box=team===home?hb:ab,p=simWeighted(line.rotation,x=>shotWeightsFallback(x));if(p){box[p.id].pts+=2;box[p.id].fga++;box[p.id].fgm++;if(team===home)hscore+=2;else ascore+=2}}
+ return {homeScore:hscore,awayScore:ascore,homeBox:hb,awayBox:ab,homeLine:hl,awayLine:al,homeMinutes:hm,awayMinutes:am,homeStrength:hs,awayStrength:as,possessions:{home:hposs,away:aposs}};
+}
+function shotWeightsFallback(p){return Math.max(1,(Number(p.ovr)||50)+simAttr(p,"close")+simAttr(p,"three"))}
+function playNext(){
+ const g=nextGame();if(!g)return;
+ const home=club(g.home),away=club(g.away);if(!home||!away)return;
+ const result=simulateBoxScore(home,away);
+ g.played=true;g.hs=result.homeScore;g.as=result.awayScore;
+ g.boxscore={home:result.homeBox,away:result.awayBox,homeLine:result.homeLine.starters.map(p=>p.id),awayLine:result.awayLine.starters.map(p=>p.id),possessions:result.possessions,version:1};
+ home.pf+=g.hs;home.pa+=g.as;away.pf+=g.as;away.pa+=g.hs;
+ if(g.hs>g.as){home.w++;away.l++}else{away.w++;home.l++}
+ for(const team of [home,away]){
+  const box=team===home?result.homeBox:result.awayBox;
+  for(const p of team.players){
+   const st=box[p.id]||simMakeStats(p);
+   p.pts=(Number(p.pts)||0)+st.pts;p.reb=(Number(p.reb)||0)+st.reb;p.ast=(Number(p.ast)||0)+st.ast;
+   p.seasonStats=p.seasonStats||{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0,tov:0};
+   if(!st.dnp){p.seasonStats.gp++;for(const k of ["pts","reb","ast","stl","blk","tov"])p.seasonStats[k]=(p.seasonStats[k]||0)+(st[k]||0);p.minutes=(Number(p.minutes)||0)+st.min;p.fatigue=simClamp((Number(p.fatigue)||0)+Math.round(st.min/5.5)+2,0,100);p.condition=simClamp((Number(p.condition)||75)-Math.max(1,Math.round(st.min/13)),45,100)}
+   else{p.fatigue=Math.max(0,(Number(p.fatigue)||0)-2);p.condition=simClamp((Number(p.condition)||75)+1,45,100)}
+  }
+ }
+ state.gameCount=(state.gameCount||0)+1;state.round=g.round;state.log.unshift({text:teamName(g.home)+" "+g.hs+" - "+g.as+" "+teamName(g.away),round:g.round});persist();
+ showGame(g.id);
+}
+function showGame(id){
+ const g=state.schedule.find(x=>x.id===id);if(!g||!g.played||!g.boxscore){nav("schedule");return}
+ document.body.classList.remove("broadcast-mode");
+ const main=document.getElementById("main"),home=club(g.home),away=club(g.away),bs=g.boxscore;
+ const esc=bmEsc,fmtMin=v=>{const n=Math.max(0,Math.round(Number(v)||0));return n+ "분"};
+ const teamTable=(team,box,starterIds)=>{
+  const rows=team.players.map(p=>({p,s:box[p.id]||simMakeStats(p)}));
+  const active=rows.filter(x=>!x.s.dnp).sort((a,b)=>(starterIds.includes(b.p.id)?1:0)-(starterIds.includes(a.p.id)?1:0)||b.s.min-a.s.min||b.s.pts-a.s.pts);
+  const dnp=rows.filter(x=>x.s.dnp);
+  const renderRows=arr=>arr.map(({p,s})=>'<tr class="'+(starterIds.includes(p.id)?'starter-row':'')+'"><td class="bs-player"><b>'+esc(p.name)+'</b><small>'+esc(p.pos||"—")+(starterIds.includes(p.id)?' · 선발':' · 벤치')+'</small></td><td>'+fmtMin(s.min)+'</td><td><b>'+s.pts+'</b></td><td>'+s.reb+'</td><td>'+s.ast+'</td><td>'+s.stl+'</td><td>'+s.blk+'</td><td>'+s.tov+'</td><td>'+s.pf+'</td><td>'+s.fgm+'/'+s.fga+'</td><td>'+s.threeM+'/'+s.threeA+'</td><td>'+s.ftm+'/'+s.fta+'</td></tr>').join("");
+  return '<section class="bs-team"><div class="bs-team-head"><h3>'+esc(team.name)+'</h3><span>'+active.filter(x=>starterIds.includes(x.p.id)).length+' 선발 · '+active.filter(x=>!starterIds.includes(x.p.id)).length+' 벤치 출전</span></div><div class="bs-scroll"><table class="bs-table"><thead><tr><th>선수</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th><th>FG</th><th>3P</th><th>FT</th></tr></thead><tbody>'+renderRows(active)+(dnp.length?'<tr class="bs-subhead"><td colspan="12">DID NOT PLAY</td></tr>'+renderRows(dnp):'')+'</tbody></table></div></section>';
+ };
+ const totals=(box,team)=>{const out={};for(const k of ["pts","reb","ast","stl","blk","tov","pf","fga","fgm","threeA","threeM","fta","ftm"])out[k]=team.players.reduce((s,p)=>s+(box[p.id]?.[k]||0),0);return out};
+ const ht=totals(bs.home,home),at=totals(bs.away,away);
+ main.innerHTML='<div class="bs-page"><div class="bs-top"><div><div class="eyebrow">GAME CENTER · ROUND '+g.round+'</div><h1>FINAL BOX SCORE</h1></div><button class="btn ghost" onclick="nav(\'schedule\')">일정으로 돌아가기</button></div><div class="bs-score"><div><small>HOME</small><b>'+esc(home.name)+'</b><strong>'+g.hs+'</strong></div><span>FINAL</span><div><small>AWAY</small><b>'+esc(away.name)+'</b><strong>'+g.as+'</strong></div></div><div class="bs-team-summary"><div><b>'+ht.reb+'</b><small>REB</small><b>'+ht.ast+'</b><small>AST</small><b>'+ht.tov+'</b><small>TO</small></div><div><b>'+at.reb+'</b><small>REB</small><b>'+at.ast+'</b><small>AST</small><b>'+at.tov+'</b><small>TO</small></div></div>'+teamTable(home,bs.home,bs.homeLine||[])+teamTable(away,bs.away,bs.awayLine||[])+'<div class="bs-foot">출전시간은 팀별 240분 기준 · DNP는 미출전 선수 · FG / 3P / FT는 성공-시도</div></div>';
+}
+function schedulePage(m){
+ const t=my();m.innerHTML=head("SEASON CALENDAR","일정 / 결과","총 50경기 · 종료된 경기는 선수별 전체 박스스코어를 확인할 수 있습니다.")+'<div class="tablewrap"><table><thead><tr><th>ROUND</th><th>HOME</th><th>점수</th><th>AWAY</th><th>상태</th><th></th></tr></thead><tbody>'+state.schedule.filter(g=>g.home===t.id||g.away===t.id).map(g=>'<tr><td>'+g.round+'</td><td>'+teamName(g.home)+'</td><td class="rating">'+(g.played?g.hs+" - "+g.as:"—")+'</td><td>'+teamName(g.away)+'</td><td>'+(g.played?'<span class="pill good">종료</span>':'<span class="pill">예정</span>')+'</td><td>'+(g.played?'<button class="btn ghost" onclick="showGame('+g.id+')">박스스코어</button>':g===nextGame()?'<button class="btn primary" onclick="playNext()">경기 시작</button>':'')+'</td></tr>').join("")+'</tbody></table></div>';
+}
+function homePage(m){
+ let t=my(),g=nextGame(),wins=t.w,loss=t.l,played=wins+loss,roster=[...t.players].sort((a,b)=>b.ovr-a.ovr);
+ m.innerHTML=head("FRONT OFFICE / OVERVIEW","구단 대시보드",state.season+" 시즌 · "+(state.round)+" 라운드 진행 중")+'<div class="grid"><div class="card"><h3>전적</h3><div class="metric">'+wins+' - '+loss+'</div><div class="metric-sub">승률 '+(played?(wins/played*100).toFixed(1):"0.0")+'% · '+played+'/50 경기</div></div><div class="card"><h3>팀 전력</h3><div class="metric">'+Math.round(roster.slice(0,8).reduce((s,p)=>s+p.ovr,0)/Math.max(1,Math.min(8,roster.length)))+'</div><div class="metric-sub">상위 8인 평균 OVR</div></div><div class="card"><h3>구단 예산</h3><div class="metric">'+money(state.cash)+'</div><div class="metric-sub">가용 예산 · 선수단 급여 별도</div></div><div class="card"><h3>리그 순위</h3><div class="metric">'+(standings().findIndex(x=>x.id===t.id)+1)+'위</div><div class="metric-sub">'+t.conf+' 컨퍼런스</div></div></div><div class="section"><div class="sectionbar"><h2>NEXT MATCH</h2><span class="pill">'+(g?"ROUND "+g.round:"시즌 종료")+'</span></div>'+(g?'<div class="matchbox"><div><div class="small muted">'+(g.home===t.id?"HOME":"AWAY")+'</div><div class="club">'+(g.home===t.id?t.name:teamName(g.home))+'</div></div><div><div class="score">VS</div><button class="btn primary" onclick="playNext()">경기 시작하기 →</button></div><div><div class="small muted">'+(g.away===t.id?"HOME":"AWAY")+'</div><div class="club">'+(g.away===t.id?t.name:teamName(g.away))+'</div></div></div>':'<div class="card empty">정규시즌 모든 경기를 마쳤습니다.</div>')+'</div><div class="section" style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px"><div class="card"><div class="sectionbar"><h2>KEY PLAYERS</h2><button class="btn ghost" onclick="nav(\'roster\')">선수단 보기</button></div>'+roster.slice(0,5).map(p=>'<div class="click-row" onclick="editPlayer(\''+p.id+'\')" style="display:flex;justify-content:space-between;padding:8px 10px;border-top:1px solid #39332b;border-radius:5px"><span><b>'+p.name+'</b> <span class="muted">'+p.pos+'</span></span><span class="rating" style="color:'+ovrColor(p.ovr)+'">'+p.ovr+' OVR</span></div>').join("")+'</div><div class="card"><div class="sectionbar"><h2>COACH REPORT</h2><span class="pill">REPORT</span></div><p class="small muted" style="line-height:1.8">경기는 선수 능력치와 특성, 컨디션, 피로도, 전술, 포지션 조합 및 상대 매치업을 반영해 즉시 계산됩니다. 결과 화면에서 양 팀 전원의 박스스코어를 확인할 수 있습니다.</p><button class="btn" onclick="nav(\'tactics\')">전술 센터 열기</button></div></div>';
+}
+(function installBoxScoreStyles(){if(document.getElementById("instantBoxScoreStyles"))return;const st=document.createElement("style");st.id="instantBoxScoreStyles";st.textContent='.bs-page{padding:clamp(12px,2vw,26px);max-width:1450px;margin:auto}.bs-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.bs-top h1{font-size:clamp(22px,3vw,34px);margin:4px 0}.bs-score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;gap:14px;padding:22px 12px;background:linear-gradient(135deg,#202a35,#151b23);border:1px solid #344250;border-radius:14px}.bs-score>div{display:flex;flex-direction:column;gap:5px}.bs-score small,.bs-score>span{color:#9cabb8;font-size:11px;letter-spacing:1.3px}.bs-score b{font-size:clamp(13px,2vw,19px)}.bs-score strong{font-size:clamp(34px,6vw,58px);line-height:1.05}.bs-team-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 22px}.bs-team-summary>div{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;background:#1a222c;border-radius:9px}.bs-team-summary b{font-size:18px}.bs-team-summary small{font-size:10px;color:#9ba8b5;margin-right:9px}.bs-team{margin:18px 0 24px}.bs-team-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.bs-team-head h3{font-size:18px;margin:0 0 10px}.bs-team-head span,.bs-foot{font-size:11px;color:#91a0ae}.bs-scroll{overflow-x:auto;border:1px solid #303b47;border-radius:9px}.bs-table{width:100%;min-width:790px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.bs-table th{background:#202a35;color:#9eafbd;font-size:10px;letter-spacing:.5px;padding:10px 8px;text-align:right;white-space:nowrap}.bs-table th:first-child,.bs-table td:first-child{text-align:left}.bs-table td{padding:9px 8px;text-align:right;border-top:1px solid #29333e;white-space:nowrap}.bs-table .bs-player{min-width:135px}.bs-player b,.bs-player small{display:block}.bs-player small{font-size:10px;color:#91a0ae;margin-top:2px}.bs-table .starter-row{background:#1c2935}.bs-subhead td{background:#151d26;color:#91a0ae;font-size:10px;letter-spacing:1px;text-align:left!important}.bs-foot{padding:8px 0 20px}@media(max-width:700px){.bs-top{align-items:flex-start}.bs-score{gap:6px;padding:16px 6px}.bs-score b{font-size:12px}.bs-team-summary>div{gap:5px}.bs-team-summary small{margin-right:3px}}';document.head.appendChild(st)})();
+
 if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters().then(()=>{state.bulkScoutingVersion=3;persist();});}else renderSetup();
 </script></body></html>
