@@ -862,9 +862,9 @@ function animateLiveShot(shooter,defender,done){
  if(phase===0){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) 드리블로 공격을 시작합니다.");}
  if(phase===1){
   const action=Math.random(),screener=offense.find(p=>p.pos==="C")||offense[4];
-  if(action<.34){const wing=offense.find(p=>p.pos==="SG"||p.pos==="SF");if(wing){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) "+wing.name+"의 스크린을 이용해 돌파합니다.");moveLivePlayer(screener,(screener._x||50)+ (m.possHome?5:-5),50,"screen")}}
-  else if(action<.68)liveComment("공격 전개: 선수들이 컷인과 외곽 공간을 동시에 만듭니다.");
-  else liveComment("하이포스트에서 공격을 조율하며 수비의 빈틈을 찾습니다.");
+  if(m.tactic==="픽앤롤 중심"||action<.34){const wing=offense.find(p=>p.pos==="SG"||p.pos==="SF");if(wing){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) "+wing.name+"의 스크린을 이용해 돌파합니다.");moveLivePlayer(screener,(screener._x||50)+ (m.possHome?5:-5),50,"screen")}}
+  else if(m.tactic==="속공"||action<.68)liveComment("빠른 템포로 수비가 정렬되기 전에 속공 기회를 노립니다.");
+  else if(m.tactic==="아이솔레이션"){const iso=offense.slice().sort((a,b)=>(Number(b.attrs?.handle)||10)+(Number(b.attrs?.decisions)||10)-(Number(a.attrs?.handle)||10)-(Number(a.attrs?.decisions)||10))[0];if(iso)m.ballHandlerId=iso.id;liveComment((iso||handler).name+"에게 공간을 만들어 1대1 공격을 맡깁니다.");}else liveComment("하이포스트에서 공격을 조율하며 수비의 빈틈을 찾습니다.");
  }
  if(phase===2){
   const options=offense.filter(p=>p.id!==handler.id),receiver=options[Math.floor(Math.random()*options.length)];
@@ -896,12 +896,13 @@ function animateLiveShot(shooter,defender,done){
  const threeChance=Math.max(0,Math.min(.85,(Number(attrs.three)||10)/20*.72+(m.tactic==="3점슛 중심"?.2:0)));
  const closeChance=Math.max(0,Math.min(.9,(Number(attrs.close)||10)/20*.48+(Number(attrs.layup)||10)/20*.25+(Number(attrs.dunk)||10)/20*.22));
  let type;
- if(dist>33&&Math.random()<threeChance)type="3점슛";
+ if(dist>18&&Math.random()<Math.min(.92,threeChance+(m.tactic==="모션 오펜스"?.08:0)))type="3점슛";
  else if(dist<13){const choices=[["덩크",Number(attrs.dunk)||10],["레이업",Number(attrs.layup)||10],["골밑슛",Number(attrs.close)||10],["훅슛",Number(attrs.post)||10]];type=choices.sort((a,b)=>b[1]-a[1])[Math.floor(Math.random()*Math.min(3,choices.length))][0];if(Math.random()<.22)type="레이업"}
- else if(dist<23){const r=Math.random();type=r<.38?"레이업":r<.67?"골밑슛":r<.82?"훅슛":"미들슛"}
+ else if(dist<23){const r=Math.random(),post=Number(attrs.post)||10,lay=Number(attrs.layup)||10,mid=Number(attrs.mid)||10;type=r<.18+(lay/20)*.22?"레이업":r<.36+(post/20)*.18?"훅슛":r<.72?"골밑슛":"미들슛";if(m.tactic==="포스트업"&&post>lay&&Math.random()<.6)type="훅슛";}
  else if(dist<34)type=Math.random()<.7?"미들슛":"골밑슛";
  else type="3점슛";
- if(m.tactic==="3점슛 중심"&&dist>25&&Math.random()<.55)type="3점슛";
+ if(m.tactic==="3점슛 중심"&&dist>16&&Math.random()<.62)type="3점슛";
+ if(m.tactic==="포스트업"&&dist<28&&["C","PF"].includes(shooter.pos)&&Math.random()<.62)type=(Number(attrs.post)||10)>15?"훅슛":"골밑슛";
  if(m.tactic==="골밑 공략"&&dist<31&&Math.random()<.65)type=(Number(attrs.dunk)||0)>=(Number(attrs.layup)||0)?"덩크":"레이업";
  const isThree=type==="3점슛",rating=Number(isThree?attrs.three:type==="미들슛"?attrs.mid:type==="훅슛"?attrs.post:type==="덩크"?attrs.dunk:type==="레이업"?attrs.layup:attrs.close)||10;
  const defenseRating=Number(defAttrs.perimeter??defAttrs.interior??10),hit=Math.random()<Math.max(.16,Math.min(.78,.36+(rating-10)*.017-(defenseRating-10)*.009+(m.tactic==="3점슛 중심"&&isThree?.06:0)));
