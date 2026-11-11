@@ -2402,7 +2402,7 @@ function bmInitQuarter(m,home,away){
 /* Final coaching workflow: persistent / one-game plan, manual user substitutions only. */
 function bmSetPlanScope(scope){
  const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);
- if(!c)return;
+ if(!c)return;c.scope=scope;
  if(scope==="all"){
   const p=bmGetPlan(t);
   if(pre){c.starters=p.starters.slice();c.bench=p.bench.slice();c.excluded=(p.excluded||[]).slice();c.tactics={...p.tactics};c.instructions={...p.instructions}}
