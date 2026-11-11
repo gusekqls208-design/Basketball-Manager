@@ -2323,8 +2323,7 @@ function bmConfirmCoach(pre){
  const plan={starters:ids.slice(),bench:bench.slice(),excluded:[],tactics,instructions};
  if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=[];c.instructions=instructions;c.tactics=tactics;if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}
  c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=[];c.userInstructions=instructions;c.userTactics=tactics;
- t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");
- if(c.scope!=="one"){t.tactics={...tactics};state.tactics={...state.tactics,...tactics};bmPersistPlan(t,plan)}
+ if(c.scope!=="one"){t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");t.tactics={...tactics};state.tactics={...state.tactics,...tactics};bmPersistPlan(t,plan)}
  persist();if(window.bmCoachMode==="emergency")bmResumeEmergency();else runNextQuarter();
 }
 function bmRunQuarterLoop(){
