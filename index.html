@@ -1596,7 +1596,7 @@ function simLine(team){
  pool.sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a));
  return {starters,rotation:[...starters,...pool.slice(0,5)]};
 }
-</script></body></html>
+
 function bmPlayerQuality(p){
  const cond=simClamp((Number(p.condition)||75)/85,.65,1.12),fat=simClamp(1-(Number(p.fatigue)||0)/170,.55,1);
  const role=["프랜차이즈 스타","핵심 선수"].includes(p.role)?1.12:p.role==="전력 외"?.78:1;
@@ -1731,3 +1731,4 @@ function simLine(team){
  pool.sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a));
  return {starters,rotation:[...starters,...pool.slice(0,5)]};
 }
+</script></body></html>
