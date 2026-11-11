@@ -683,7 +683,7 @@ function power(t){let p=t.players.slice(0,8);let base=p.reduce((s,x)=>s+x.ovr*.1
 function playNext(){
  if(window.liveMatch&&!window.liveMatch.ended){window.liveMatch.paused=false;showGame(window.liveMatch.g.id);return;}
  const g=nextGame();if(!g)return;const home=club(g.home),away=club(g.away);
- window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,shotInFlight:false,paused:false,ended:false,homeLine:selectStartingFive(home),awayLine:selectStartingFive(away),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,tactic:state.tactics?.off||"균형",defTactic:"맨투맨",timeoutOverlay:false};
+ window.liveMatch={g,home,away,homeScore:0,awayScore:0,q:1,clock:720,shotClock:24,possHome:Math.random()<.5,phase:-1,phaseTick:0,possessionElapsed:0,shotInFlight:false,paused:false,ended:false,homeLine:selectStartingFive(home),awayLine:selectStartingFive(away),homeTimeouts:7,awayTimeouts:7,fouls:{home:0,away:0},stats:{},logs:[],speed:1,tactic:state.tactics?.off||"균형",defTactic:state.tactics?.def||"맨투맨",timeoutOverlay:false};
  const m=window.liveMatch;for(const p of [...home.players,...away.players])m.stats[p.id]={pts:0,reb:0,ast:0,stl:0,blk:0,tov:0,fga:0,fgm:0,threeA:0,threeM:0,min:0};showGame(g.id);
 }
 function selectStartingFive(team){
@@ -822,7 +822,7 @@ function positionJumpBall(m){
  const rimX=m.possHome?95:5,paintX=m.possHome?83:17;
  defense.forEach((p,i)=>{const mark=offense.find(o=>o.id===p._matchup)||offense[i%offense.length],onBall=mark.id===handler.id,mx=mark._tx??50,my=mark._ty??50;let x,y;
   if(m.defTactic==="2-3 지역방어"||m.defTactic==="3-2 지역방어"){const threeTwo=m.defTactic==="3-2 지역방어",back=i>=(threeTwo?3:2);x=back?rimX-(m.possHome?10:-10):paintX+(m.possHome?3:-3);y=[27,50,73,36,64][i]}
-  else{const goalSide=m.possHome?1:-1;x=mx+goalSide*(onBall?3.8:6);y=onBall?my:my+(i%2?4:-4);if(!onBall){x-=goalSide*Math.max(0,1-Math.abs(my-50)/50)*3;y+=(50-my)*.1}}
+  else{const goalSide=m.possHome?1:-1;const press=m.defTactic==="풀코트 프레스",halfPress=m.defTactic==="하프코트 프레스",drop=m.defTactic==="드롭 커버리지";x=mx+goalSide*(press?(onBall?1.5:3.5):halfPress?(onBall?2.2:4.5):(onBall?3.8:6));y=onBall?my:my+(i%2?4:-4);if(!onBall){x-=goalSide*Math.max(0,1-Math.abs(my-50)/50)*(drop&&p.pos==="C"?8:3);y+=(50-my)*.1}if(drop&&p.pos==="C"){x=rimX-(m.possHome?7:-7);y=50}}
   x=m.possHome?Math.max(54,Math.min(94,x)):Math.max(6,Math.min(46,x));y=Math.max(12,Math.min(88,y));moveLivePlayer(p,x,y,onBall?"defend":"run");
  });
  // Separate nearby player markers to prevent faces/nameplates stacking.
@@ -836,8 +836,8 @@ function assignLiveMatchups(m,offense,defense){
  defense.forEach(d=>{
   const pool=unused.length?unused:offense,same=pool.filter(o=>o.pos===d.pos),candidates=same.length?same:pool;
   candidates.sort((a,b)=>{
-   const pa=Math.abs(order.indexOf(a.pos)-order.indexOf(d.pos))*10+Math.abs((a.height||200)-(d.height||200))*.2;
-   const pb=Math.abs(order.indexOf(b.pos)-order.indexOf(d.pos))*10+Math.abs((b.height||200)-(d.height||200))*.2;return pa-pb;
+   const pa=(m.defTactic==="스위치"?0:Math.abs(order.indexOf(a.pos)-order.indexOf(d.pos))*10)+Math.abs((a.height||200)-(d.height||200))*.2;
+   const pb=(m.defTactic==="스위치"?0:Math.abs(order.indexOf(b.pos)-order.indexOf(d.pos))*10)+Math.abs((b.height||200)-(d.height||200))*.2;return pa-pb;
   });
   const chosen=candidates[0]||offense[0];d._matchup=chosen.id;const ix=unused.findIndex(o=>o.id===chosen.id);if(ix>=0)unused.splice(ix,1);
  });
