@@ -2594,7 +2594,6 @@ function finishQuarterGame(){
 }
 editPlayer=function(id){
  bmOriginalEditPlayer(id);
- bmOriginalEditPlayerCareer(id);
  const owner=state.clubs.find(t=>t.players.some(x=>String(x.id)===String(id))),p=owner?.players.find(x=>String(x.id)===String(id)),root=document.querySelector(".profile-overlay .profile-shell");if(!p||!root)return;
  const st=p.careerStats||p.seasonStats||{},gp=Number(st.gp)||0,avg=k=>gp?(Number(st[k])||0)/gp:0;
  const panel=document.createElement("div");panel.className="profile-section";panel.innerHTML='<h3>CAREER PER-GAME AVERAGES</h3><div class="stat-cards">'+[["GP",gp],["PTS",avg("pts")],["REB",avg("reb")],["AST",avg("ast")],["STL",avg("stl")],["BLK",avg("blk")],["TO",avg("tov")],["MIN",gp?(Number(st.min??p.minutes)||0)/gp:0]].map(x=>'<div><span>'+x[0]+'</span><b>'+Number(x[1]).toFixed(x[0]==="GP"?0:1)+'</b></div>').join("")+'</div>';
