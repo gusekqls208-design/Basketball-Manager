@@ -2859,4 +2859,64 @@ bmCoachBoard=function(mode){
  `;document.head.appendChild(st);
 })();
 
+
+/* FM MATCH PRESENTATION + STRICT ROSTER CARD FIT */
+(function bmFmPresentationPatch(){
+ const style=document.createElement("style");
+ style.id="bmFmPresentationPatch";
+ style.textContent=`
+ body.fm-match-mode,#app.fm-match-mode{background:#080d13!important}
+ body.fm-match-mode #app{width:100vw;max-width:none;height:100dvh;margin:0;border-radius:0}
+ body.fm-match-mode header,body.fm-match-mode .side{display:none!important}
+ body.fm-match-mode .layout{display:block;width:100%;height:100%;min-height:0}
+ body.fm-match-mode main{width:100%;height:100dvh;max-height:100dvh;overflow:auto;padding:clamp(10px,1.5vw,22px)!important;margin:0}
+ body.fm-match-mode .bs-page,body.fm-match-mode .fm-coach{width:100%;max-width:none;margin:0 auto;min-height:calc(100dvh - 24px)}
+ body.fm-match-mode .q-break-grid{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:14px}
+ body.fm-match-mode .bs-score{width:100%}
+ body.fm-match-mode .fm-main{grid-template-columns:minmax(0,1.35fr) minmax(330px,.85fr);align-items:stretch}
+ body.fm-match-mode .fm-candidate-list.fm-all-roster{max-height:calc(100dvh - 260px)}
+ .fm-roster-row{display:grid!important;grid-template-columns:38px minmax(0,1fr) auto!important;grid-template-rows:minmax(0,1fr)!important;align-items:center!important;gap:0 8px!important;width:100%!important;min-width:0!important;max-width:100%!important;min-height:76px!important;height:auto!important;padding:7px 8px!important;overflow:hidden!important;box-sizing:border-box!important}
+ .fm-roster-row>.bs-avatar,.fm-roster-row>img{grid-column:1!important;grid-row:1!important;width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;object-fit:cover!important;align-self:center!important}
+ .fm-roster-row>.fm-roster-info,.fm-roster-row>span:not(.fm-live-rating){grid-column:2!important;grid-row:1!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;gap:2px!important;min-width:0!important;width:100%!important;overflow:hidden!important;white-space:normal!important}
+ .fm-roster-row>.fm-roster-info>b,.fm-roster-row>span>b{display:block!important;max-width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:12px!important;line-height:1.2!important}
+ .fm-roster-row>.fm-roster-info>small,.fm-roster-row>span>small{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:9px!important;line-height:1.2!important}
+ .fm-roster-row .fm-player-health{display:flex!important;flex-wrap:wrap!important;gap:2px 6px!important;max-width:100%!important;min-width:0!important;overflow:hidden!important;font-size:9px!important;line-height:1.2!important}
+ .fm-roster-row .fm-health-bar{display:block!important;width:100%!important;max-width:100%!important;height:3px!important;margin:1px 0 0!important;grid-column:auto!important}
+ .fm-roster-row>em{grid-column:3!important;grid-row:1!important;justify-self:end!important;align-self:end!important;max-width:54px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:9px!important;margin:0!important}
+ .fm-roster-row>.fm-live-rating{grid-column:3!important;grid-row:1!important;justify-self:end!important;align-self:start!important;margin:0!important;font-size:9px!important;padding:2px 5px!important}
+ @media(max-width:900px){body.fm-match-mode .fm-main{grid-template-columns:minmax(0,1fr)!important}body.fm-match-mode .fm-candidate-list.fm-all-roster{max-height:38dvh}}
+ @media(max-width:760px){body.fm-match-mode main{padding:8px!important}body.fm-match-mode .q-break-grid{grid-template-columns:1fr}.fm-roster-row{min-height:70px!important}}
+ `;
+ document.head.appendChild(style);
+})();
+const bmCoachBoardBeforeCardFit=bmCoachBoard;
+bmCoachBoard=function(mode){
+ bmCoachBoardBeforeCardFit(mode);
+ document.querySelectorAll(".fm-roster-row").forEach(row=>{
+  const avatar=row.querySelector(":scope > .bs-avatar,:scope > img");
+  const info=row.querySelector(":scope > span:not(.fm-live-rating),:scope > .fm-roster-info");
+  const rating=row.querySelector(":scope > .fm-live-rating");
+  const status=row.querySelector(":scope > em");
+  if(info&&!info.classList.contains("fm-roster-info"))info.classList.add("fm-roster-info");
+  if(avatar)avatar.style.minWidth="0";
+  if(rating)rating.style.maxWidth="54px";
+  if(status)status.style.maxWidth="54px";
+ });
+};
+const bmBeginQuarterGameBeforeFm=beginQuarterGame;
+beginQuarterGame=function(){
+ document.body.classList.add("fm-match-mode");
+ bmBeginQuarterGameBeforeFm();
+};
+const bmFinishQuarterGameBeforeFm=finishQuarterGame;
+finishQuarterGame=function(){
+ bmFinishQuarterGameBeforeFm();
+ document.body.classList.remove("fm-match-mode");
+};
+const bmShowGameBeforeFm=showGame;
+showGame=function(id){
+ document.body.classList.remove("fm-match-mode");
+ bmShowGameBeforeFm(id);
+};
+
 </script></body></html>
