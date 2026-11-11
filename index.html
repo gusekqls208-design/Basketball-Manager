@@ -824,7 +824,7 @@ function liveMatchTick(){
   for(const p of [...m.homeLine,...m.awayLine]){if(m.stats[p.id])m.stats[p.id].min+=1/60;p.fatigue=Math.min(100,(Number(p.fatigue)||0)+.02)}
   updateLiveStaminaBars(m);
   if(m.clock<=0){if(m.q<4){m.q++;m.clock=720;liveComment(m.q+"쿼터 시작.");resetLivePossession(m,true)}else if(m.homeScore===m.awayScore){m.q++;m.clock=300;liveComment("동점입니다. 연장전에 들어갑니다.");resetLivePossession(m,true)}else{finishLiveMatch();return}}
-  if(m.shotClock<=0&&!m.shotInFlight&&!m._resolvingShot){m.shotClock=0;liveComment("샷클락 만료! 공격권이 넘어갑니다.");resetLivePossession(m,false)}
+  if(m.shotClock<=0&&!m.shotInFlight&&!m._resolvingShot&&!m.ballInFlight){m.shotClock=0;liveComment("샷클락 만료! 공격권이 넘어갑니다.");resetLivePossession(m,false)}
   updateLiveScoreboard();
  }
  const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine;
@@ -937,16 +937,16 @@ function animateLiveShot(shooter,defender,done){const ball=document.getElementBy
    liveComment(h.name+"이(가) 리바운드를 잡고 직접 속공을 전개합니다. 열린 코트로 질주!");m.actionWait=.9;return;
   }
   const ballProgress=progress(h),ahead=defense.filter(d=>progress(d)>ballProgress-5&&Math.abs((d._y??50)-(h._y??50))<17).sort((a,b)=>progress(b)-progress(a));
-  const open=ballProgress>=84&&!ahead.length;
-  if(open||ballProgress>=89){liveComment("앞을 막는 수비가 없습니다. 단독 속공 마무리!");shoot(h);m.fastBreak=false;return}
+  const open=ballProgress>=90&&!ahead.length;
+  if(open){liveComment("앞을 막는 수비가 없습니다. 단독 속공 레이업으로 마무리!");shoot(h,"레이업");m.fastBreak=false;return}
   if(ahead.length&&m.playStage===1){
    const receiver=offense.filter(p=>p.id!==h.id&&progress(p)>ballProgress+3).sort((a,b)=>progress(b)-progress(a))[0];
-   if(receiver&&Math.random()<.35){m.playStage=2;liveComment(ahead[0].name+"이(가) 길을 막자 앞서 달린 "+receiver.name+"에게 전방 패스!");animateBallPass(h,receiver);m.actionWait=.65;return}
+   if(receiver&&Math.random()<.65){m.playStage=2;liveComment(ahead[0].name+"이(가) 길을 막자 앞서 달린 "+receiver.name+"에게 전방 패스!");animateBallPass(h,receiver);m.actionWait=.65;return}
   }
   if(m.playStage===2){const receiver=offense.find(p=>p.id===m.ballHandlerId)||h;receiver._driveTargetX=home?91:9;receiver._driveTargetY=50;liveComment(receiver.name+"이(가) 전방 패스를 받아 림으로 마무리합니다.");m.actionWait=.7;m.playStage=3;return}
   if(m.playStage===3){shoot(offense.find(p=>p.id===m.ballHandlerId)||h);m.fastBreak=false;return}
-  if(ballProgress<84){h._driveTargetX=home?91:9;h._driveTargetY=laneY<35?39:laneY>65?61:50;liveComment(h.name+"이(가) 수비보다 앞서 달립니다. 림 어택!");m.actionWait=.8;return}
-  shoot(h);m.fastBreak=false;return;
+  if(ballProgress<90){h._driveTargetX=home?94:6;h._driveTargetY=laneY<35?39:laneY>65?61:50;liveComment(h.name+"이(가) 수비보다 앞서 달립니다. 골밑까지 속도를 유지합니다!");m.actionWait=.8;return}
+  liveComment(h.name+"이(가) 수비와 맞닥뜨려 골밑에서 마무리를 시도합니다.");shoot(h,"레이업");m.fastBreak=false;return;
  }
  if(m.playCall==="픽앤롤"&&m.playStage===0){
   const c=offense.find(p=>p.pos==="C")||offense.find(p=>p.pos==="PF");if(!c){m.playCall="아이솔레이션";m.playStage=0;return}
@@ -1063,13 +1063,22 @@ function resolveLiveShot(m,offense,defense){
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],a=shooter.attrs||{},da=defender?.attrs||{};
  const home=m.possHome,progress=home?(shooter._x??50):100-(shooter._x??50),distToRim=100-progress,py=shooter._y??50;
  let pool;
- const deliberateThree=shooter._shotIntent==="3점슛"&&m.playCall==="사이드 스페이싱"&&Math.hypot((shooter._tx??shooter._x??50)-(shooter._x??50),(shooter._ty??shooter._y??50)-(shooter._y??50))<=3&&(!defender||Math.hypot((defender._x??50)-(shooter._x??50),(defender._y??50)-(shooter._y??50))>=4.2);
- if(deliberateThree)pool=[["3점슛",a.three]];else if(distToRim>24)pool=[["미들슛",a.mid]];else if(distToRim>12)pool=[["레이업",a.layup],["덩크",a.dunk],["미들슛",a.mid]];else pool=[["레이업",a.layup],["덩크",a.dunk],["골밑슛",a.close],["훅슛",a.post]];
+ const shotGap=defender?Math.hypot((defender._x??50)-(shooter._x??50),(defender._y??50)-(shooter._y??50)):99;
+ const threePointSpot=progress>=68&&progress<=79&&distToRim>=21&&distToRim<=33;
+ const deliberateThree=shooter._shotIntent==="3점슛"&&m.playCall==="사이드 스페이싱"&&threePointSpot&&Math.hypot((shooter._tx??shooter._x??50)-(shooter._x??50),(shooter._ty??shooter._y??50)-(shooter._y??50))<=3&&shotGap>=4.2;
+ if(shooter._shotIntent==="레이업")pool=[["레이업",a.layup],["덩크",a.dunk]];
+ else if(deliberateThree)pool=[["3점슛",a.three]];
+ else if(distToRim>24)pool=[["미들슛",a.mid]];
+ else if(distToRim>12)pool=[["레이업",a.layup],["덩크",a.dunk],["미들슛",a.mid]];
+ else pool=[["레이업",a.layup],["덩크",a.dunk],["골밑슛",a.close],["훅슛",a.post]];
  shooter._shotIntent="";
  const total=pool.reduce((n,x)=>n+Math.max(1,Number(x[1])||50),0);let roll=Math.random()*total,type=pool[0][0];
  for(const x of pool){roll-=Math.max(1,Number(x[1])||50);if(roll<=0){type=x[0];break}}
  const rating=Number(type==="3점슛"?a.three:type==="미들슛"?a.mid:type==="덩크"?a.dunk:type==="레이업"?a.layup:type==="훅슛"?a.post:a.close)||50;
- const hit=Math.random()<Math.max(.2,Math.min(.76,.4+(rating-50)*.006-(Number(da.interior||da.perimeter||50)-50)*.004));
+ const contest=defender?Math.max(0,7-shotGap):0;
+ const openFastbreak=shooter._shotIntent==="레이업"&&shotGap>=9;
+ const hitChance=.4+(rating-50)*.006-(Number(da.interior||da.perimeter||50)-50)*.004-contest*.018+(openFastbreak?.22:0);
+ const hit=Math.random()<Math.max(.2,Math.min(.88,hitChance));
  const blocked=Math.random()<.07,side=home?"home":"away",st=m.stats[shooter.id],foul=Math.random()<(distToRim<18?.15:distToRim<27?.07:.02);
  st.fga++;if(type==="3점슛")st.threeA++;
  if(foul&&!blocked){recordLiveFoul(m,defender,shooter);if(hit){const pts=type==="3점슛"?3:2;st.pts+=pts;st.fgm++;if(type==="3점슛")st.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;animateHoopScore(home);updateLiveScoreboard();liveComment(shooter.name+"의 "+type+" 성공! 파울까지 얻어 앤드원!","score");startFreeThrows(m,shooter,1,true)}else startFreeThrows(m,shooter,type==="3점슛"?3:2,false);return}
