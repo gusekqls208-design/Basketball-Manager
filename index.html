@@ -913,7 +913,7 @@ function animateLiveShot(shooter,defender,done){const ball=document.getElementBy
   const d=defense.find(p=>p._matchup===cur.id)||defense[0];
   const moving=Math.hypot((cur._tx??cur._x??50)-(cur._x??50),(cur._ty??cur._y??50)-(cur._y??50));
   const gap=d?Math.hypot((d._x??50)-(cur._x??50),(d._y??50)-(cur._y??50)):99;
-  if(intent==="3점슛"&&(moving>2.8||gap<7)){if(gap<7){cur._shotIntent="";m.playCall="아이솔레이션";m.playStage=2;cur._driveTargetX=home?84:16;cur._driveTargetY=cur._y??50;liveComment(d.name+"의 강한 클로즈아웃을 읽고 슛 대신 안쪽으로 돌파합니다.");m.actionWait=.7;return}liveComment(cur.name+"이(가) 외곽에서 멈춰 슛 자세를 잡습니다.");m.actionWait=.45;return}
+  if(intent==="3점슛"&&(moving>2.8||gap<4.2)){if(gap<7){cur._shotIntent="";m.playCall="아이솔레이션";m.playStage=2;cur._driveTargetX=home?84:16;cur._driveTargetY=cur._y??50;liveComment(d.name+"의 강한 클로즈아웃을 읽고 슛 대신 안쪽으로 돌파합니다.");m.actionWait=.7;return}liveComment(cur.name+"이(가) 외곽에서 멈춰 슛 자세를 잡습니다.");m.actionWait=.45;return}
   cur._shotIntent=intent||"";m.shotInFlight=true;m.shotResolved=false;m.shotInFlightSince=Date.now();liveComment(cur.name+"이(가) 균형을 잡고 슛을 시도합니다.");
   animateLiveShot(cur,d,()=>{if(!m.shotResolved){m.shotResolved=true;m.shotInFlight=false;resolveLiveShot(m,offense,defense)}});
  };
@@ -994,7 +994,7 @@ function resolveLiveShot(m,offense,defense){
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],a=shooter.attrs||{},da=defender?.attrs||{};
  const home=m.possHome,progress=home?(shooter._x??50):100-(shooter._x??50),distToRim=100-progress,py=shooter._y??50;
  let pool;
- const deliberateThree=shooter._shotIntent==="3점슛"&&m.playCall==="사이드 스페이싱"&&Math.hypot((shooter._tx??shooter._x??50)-(shooter._x??50),(shooter._ty??shooter._y??50)-(shooter._y??50))<=3&&(!defender||Math.hypot((defender._x??50)-(shooter._x??50),(defender._y??50)-(shooter._y??50))>=7);
+ const deliberateThree=shooter._shotIntent==="3점슛"&&m.playCall==="사이드 스페이싱"&&Math.hypot((shooter._tx??shooter._x??50)-(shooter._x??50),(shooter._ty??shooter._y??50)-(shooter._y??50))<=3&&(!defender||Math.hypot((defender._x??50)-(shooter._x??50),(defender._y??50)-(shooter._y??50))>=4.2);
  if(deliberateThree)pool=[["3점슛",a.three]];else if(distToRim>24)pool=[["미들슛",a.mid]];else if(distToRim>12)pool=[["레이업",a.layup],["덩크",a.dunk],["미들슛",a.mid]];else pool=[["레이업",a.layup],["덩크",a.dunk],["골밑슛",a.close],["훅슛",a.post]];
  shooter._shotIntent="";
  const total=pool.reduce((n,x)=>n+Math.max(1,Number(x[1])||50),0);let roll=Math.random()*total,type=pool[0][0];
