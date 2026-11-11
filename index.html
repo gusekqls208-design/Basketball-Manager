@@ -1720,9 +1720,15 @@ function bmReconcilePoints(box,team,target){
 }
 
 function sortBoxScore(side,key){
- if(key==="name")boxSortState[side]={key:"",dir:-1};
- else {const old=boxSortState[side]||{key:"",dir:-1};boxSortState[side]={key,dir:old.key===key?-old.dir:-1};}
- const g=state.schedule.find(x=>x.id===window.currentBoxGameId);if(g)showGame(g.id);
+ // "undefined" is the legacy unlabeled header: clicking it restores the original lineup order.
+ if(!key||key==="undefined"||key==="name"||key==="reset"){
+  boxSortState[side]={key:"",dir:-1};
+ }else{
+  const old=boxSortState[side]||{key:"",dir:-1};
+  boxSortState[side]={key,dir:old.key===key?-old.dir:-1};
+ }
+ const g=state.schedule.find(x=>x.id===window.currentBoxGameId);
+ if(g)showGame(g.id);
 }
 
 function selectStartingFive(team){return bmBestFive(team);}
