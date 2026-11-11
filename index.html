@@ -2518,8 +2518,8 @@ function bmRunQuarterLoop(){
  const m=state.gameInProgress,q=m.liveQuarter;if(!m||!q)return;const home=q.home,away=q.away,user=club(state.teamId);
  for(;q.step<q.possessions;q.step++){
   const segment=Math.floor(q.step/3),hfive=bmQuarterActiveFive(home,q.hLine.starters,q.hLine.bench,segment),afive=bmQuarterActiveFive(away,q.aLine.starters,q.aLine.bench,segment);
-  if(q.step<q.homePossessions)for(const p of hfive){q.minutes.home[p.id]=(q.minutes.home[p.id]||0)+q.homeMinuteStep/5;q.hbox[p.id].min+=q.homeMinuteStep/5}
-  if(q.step<q.awayPossessions)for(const p of afive){q.minutes.away[p.id]=(q.minutes.away[p.id]||0)+q.awayMinuteStep/5;q.abox[p.id].min+=q.awayMinuteStep/5}
+  if(q.step<q.homePossessions)for(const p of hfive){q.minutes.home[p.id]=(q.minutes.home[p.id]||0)+q.homeMinuteStep;q.hbox[p.id].min+=q.homeMinuteStep}
+  if(q.step<q.awayPossessions)for(const p of afive){q.minutes.away[p.id]=(q.minutes.away[p.id]||0)+q.awayMinuteStep;q.abox[p.id].min+=q.awayMinuteStep}
   if(q.step<q.homePossessions&&q.step<q.awayPossessions){if(Math.random()<.5){q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox);q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox)}else{q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox);q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox)}}else if(q.step<q.homePossessions)q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox);else if(q.step<q.awayPossessions)q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox);
   const current=m.userIsHome?q.hbox:q.abox,prior=m.userIsHome?m.homeBox:m.awayBox,userMins=m.userIsHome?q.minutes.home:q.minutes.away,activeIds=[...m.userStarters,...m.userBench],checkBox={};for(const p of user.players)checkBox[p.id]={...(current[p.id]||{}),pf:(prior[p.id]?.pf||0)+(current[p.id]?.pf||0)};
   const danger=user.players.map(p=>({p,reason:bmEmergencyReason(user,checkBox,userMins,p)})).filter(x=>x.reason&&activeIds.some(id=>String(id)===String(x.p.id))&&userMins[x.p.id]>0);
