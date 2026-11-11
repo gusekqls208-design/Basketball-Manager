@@ -2686,4 +2686,16 @@ editPlayer=function(id){
  const career=[...root.querySelectorAll(".profile-section")].find(x=>x.textContent.includes("CAREER HISTORY"));if(career)career.appendChild(panel);else root.appendChild(panel);
 }
 
+
+function bmPickShooter(line,box,style){
+ return simWeighted(line,p=>{
+  let w=Math.max(1,bmPlayerQuality(p)*.32+simAttr(p,"close")+simAttr(p,"layup")+simAttr(p,"three")+simAttr(p,"handle"));
+  if(style==="포스트업"||style==="포스트업 중심")w*=["PF","C"].includes(p.pos)?1.65:["PG","SG"].includes(p.pos)?.72:1;
+  if(p.gameInstruction==="패스 우선")w*=.62;
+  if(p.gameInstruction==="외곽슛 우선")w*=1.12;
+  if(p.gameInstruction==="수비 집중")w*=.58;
+  return w;
+ });
+}
+
 </script></body></html>
