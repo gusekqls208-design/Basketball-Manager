@@ -3041,3 +3041,100 @@ bmAutoLineup=(function(old){return function(){old();const pre=window.bmCoachMode
 bmConfirmCoach=function(pre){const c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId),ids=pre?c.starters:c.userStarters;if(new Set(ids.map(String)).size!==5||ids.some(id=>!t.players.some(p=>String(p.id)===String(id)))){alert("서로 다른 선수를 선발로 지정해주세요.");return}const raw=pre?(c.bench||[]):(c.userBench||[]),bench=raw.filter((id,i,a)=>!ids.some(x=>String(x)===String(id))&&a.findIndex(x=>String(x)===String(id))===i&&t.players.some(p=>String(p.id)===String(id)));const instructions={};ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);const tactics={formation:document.getElementById("fmFormation").value,off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value},plan={starters:ids.slice(),bench,excluded:[],tactics,instructions};if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=[];c.instructions=instructions;c.tactics=tactics;if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=[];c.userInstructions=instructions;c.userTactics=tactics;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");t.tactics={...tactics};state.tactics={...state.tactics,...tactics};if(c.scope!=="one")bmPersistPlan(t,plan);persist();if(window.bmCoachMode==="emergency")bmResumeEmergency();else runNextQuarter()};
 
 </script></body></html>
+(function(){
+ const st=document.createElement("style");st.id="bmCoachFinalCompactAndDrag";
+ st.textContent=`
+ .fm-position-players{display:flex!important;flex-direction:column!important;gap:5px!important;padding:6px!important}
+ .fm-roster-row{display:grid!important;grid-template-columns:36px minmax(0,1fr)!important;grid-template-rows:1fr!important;align-items:center!important;gap:0 9px!important;width:100%!important;min-height:62px!important;height:62px!important;padding:7px 9px!important;box-sizing:border-box!important;overflow:hidden!important;background:#1b2d40!important;border:1px solid #3b566f!important;border-radius:8px!important;box-shadow:none!important}
+ .fm-roster-row>.bs-avatar{display:inline-grid!important;grid-column:1!important;grid-row:1!important;width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;min-height:36px!important;max-height:36px!important;flex:none!important;align-self:center!important;overflow:hidden!important;border-radius:50%!important}
+ .fm-roster-row>.bs-avatar img,.fm-roster-row>.bs-avatar .bs-avatar-fallback{display:block!important;width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;min-height:36px!important;max-height:36px!important;object-fit:cover!important;border-radius:50%!important}
+ .fm-roster-row>.fm-roster-info{display:flex!important;grid-column:2!important;grid-row:1!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;min-width:0!important;width:100%!important;max-width:100%!important;overflow:hidden!important;line-height:1.15!important}
+ .fm-roster-info>b{display:block!important;width:100%!important;margin:0!important;font-size:11px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ .fm-roster-info>small{display:block!important;font-size:9px!important;line-height:1.15!important;white-space:nowrap!important}
+ .fm-roster-info .fm-player-health{display:flex!important;flex-wrap:wrap!important;gap:2px 7px!important;font-size:8px!important;line-height:1.1!important}
+ .fm-roster-info .fm-health-bar{display:block!important;width:100%!important;height:3px!important;margin-top:2px!important;overflow:hidden!important;border-radius:4px!important}
+ .fm-roster-info .fm-health-bar u{display:block!important;height:100%!important}
+ .fm-roster-row>em,.fm-roster-row>.fm-live-rating{display:none!important}
+ .fm-roster-row.is-dragging,.fm-pcard.is-dragging{opacity:.25!important}
+ .fm-drag-ghost{position:fixed!important;z-index:999999!important;left:0;top:0;width:190px!important;height:54px!important;min-height:54px!important;max-height:54px!important;display:flex!important;align-items:center!important;gap:9px!important;padding:7px 9px!important;box-sizing:border-box!important;overflow:hidden!important;transform:translate(-50%,-50%)!important;pointer-events:none!important;background:#203a52!important;border:1px solid #79c9ec!important;border-radius:9px!important;box-shadow:0 8px 20px #0008!important}
+ .fm-drag-ghost img,.fm-drag-ghost .ghost-avatar{width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;object-fit:cover!important;border-radius:50%!important}
+ .fm-drag-ghost .ghost-name{min-width:0!important;overflow:hidden!important;color:#fff!important;font-size:11px!important;font-weight:800!important;white-space:nowrap!important;text-overflow:ellipsis!important}
+ .fm-roster-row,.fm-pcard{touch-action:pan-y!important;user-select:none!important;-webkit-user-select:none!important}
+ .fm-candidate-list.fm-position-groups{touch-action:pan-y!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+ .fm-slot.drop-ready,.fm-candidate-list.drop-ready{outline:2px solid #65c9f1!important;outline-offset:2px!important}
+ `;
+ document.head.appendChild(st);
+})();
+bmCoachDropToBench=function(id){
+ const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;
+ const ids=pre?c.starters:c.userStarters,bench=pre?(c.bench||(c.bench=[])):(c.userBench||(c.userBench=[]));
+ const idx=ids.findIndex(x=>String(x)===String(id));if(idx<0)return;
+ const outgoing=ids[idx],outPlayer=t.players.find(p=>String(p.id)===String(outgoing));
+ const available=bench.filter(x=>!ids.some(v=>String(v)===String(x))&&String(x)!==String(id));
+ if(!available.length){const fallback=t.players.filter(p=>!ids.some(v=>String(v)===String(p.id))&&String(p.id)!==String(id));fallback.forEach(p=>{if(!bench.some(x=>String(x)===String(p.id)))bench.push(p.id)});}
+ const candidates=bench.filter(x=>!ids.some(v=>String(v)===String(x))&&String(x)!==String(id)).map(x=>t.players.find(p=>String(p.id)===String(x))).filter(Boolean);
+ if(!candidates.length)return;
+ candidates.sort((a,b)=>((b.pos===outPlayer?.pos?100:0)+(Number(b.ovr)||0)*.01)-((a.pos===outPlayer?.pos?100:0)+(Number(a.ovr)||0)*.01));
+ const replacement=candidates[0],ri=bench.findIndex(x=>String(x)===String(replacement.id));
+ ids[idx]=replacement.id;bench.splice(ri,1);if(!bench.some(x=>String(x)===String(outgoing)))bench.push(outgoing);
+ if(pre)c.excluded=[];else c.userExcluded=[];
+ bmCoachBoard(window.bmCoachMode);
+};
+bmCoachAssign=function(id,i){
+ const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;
+ const ids=pre?c.starters:c.userStarters,bench=pre?(c.bench||(c.bench=[])):(c.userBench||(c.userBench=[]));
+ const old=ids[i],j=ids.findIndex(x=>String(x)===String(id));
+ if(j>=0){ids[j]=old;ids[i]=id;}
+ else{ids[i]=id;const ix=bench.findIndex(x=>String(x)===String(id));if(ix>=0)bench.splice(ix,1);if(old&&!bench.some(x=>String(x)===String(old)))bench.push(old);}
+ const complete=t.players.filter(p=>!ids.some(x=>String(x)===String(p.id))).map(p=>p.id);
+ if(pre){c.bench=complete;c.excluded=[];}else{c.userBench=complete;c.userExcluded=[];}
+ bmCoachBoard(window.bmCoachMode);
+};
+bmCoachPointerDown=function(e,id){
+ if(e.button!==undefined&&e.button!==0)return;
+ if(window.bmDragV2)return;
+ const src=e.currentTarget,rect=src.getBoundingClientRect(),player=club(state.teamId)?.players.find(p=>String(p.id)===String(id));
+ const d={id,x:e.clientX,y:e.clientY,src,dragging:false,scrolling:false,ghost:null,pointerId:e.pointerId};
+ window.bmDragV2=d;
+ const cleanup=()=>{
+  document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);document.removeEventListener("pointercancel",cancel);
+  d.ghost?.remove();src.classList.remove("is-dragging");
+  document.querySelectorAll(".fm-slot,.fm-candidate-list").forEach(x=>x.classList.remove("drop-ready"));
+  if(window.bmDragV2===d)window.bmDragV2=null;
+ };
+ const move=ev=>{
+  if(window.bmDragV2!==d||ev.pointerId!==d.pointerId)return;
+  const dx=ev.clientX-d.x,dy=ev.clientY-d.y;
+  if(!d.dragging&&!d.scrolling){
+   if(Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)*1.15){d.scrolling=true;return;}
+   if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.05){
+    d.dragging=true;
+    const ghost=document.createElement("div");ghost.className="fm-drag-ghost";
+    const photo=src.querySelector(".bs-avatar img");
+    if(photo&&photo.src){const im=document.createElement("img");im.src=photo.src;ghost.appendChild(im);}
+    else{const av=document.createElement("span");av.className="ghost-avatar";av.textContent=(player?.name||"?").split(/\\s+/).map(x=>x[0]||"").slice(0,2).join("").toUpperCase();ghost.appendChild(av);}
+    const name=document.createElement("span");name.className="ghost-name";name.textContent=player?.name||"선수";ghost.appendChild(name);
+    document.body.appendChild(ghost);d.ghost=ghost;src.classList.add("is-dragging");
+   }
+  }
+  if(d.dragging&&d.ghost){
+   ev.preventDefault();d.ghost.style.left=ev.clientX+"px";d.ghost.style.top=ev.clientY+"px";
+   document.querySelectorAll(".fm-slot,.fm-candidate-list").forEach(x=>x.classList.remove("drop-ready"));
+   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-candidate-list");
+   if(target)target.classList.add("drop-ready");
+  }
+ };
+ const up=ev=>{
+  if(window.bmDragV2!==d)return;
+  if(d.dragging){
+   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-candidate-list");
+   if(target?.classList.contains("fm-slot"))bmCoachAssign(id,Number(target.dataset.slot));
+   else if(target?.classList.contains("fm-candidate-list"))bmCoachDropToBench(id);
+  }else if(!d.scrolling)bmPickCoachPlayer(id);
+  cleanup();
+ };
+ const cancel=()=>cleanup();
+ document.addEventListener("pointermove",move,{passive:false});
+ document.addEventListener("pointerup",up,{once:true});
+ document.addEventListener("pointercancel",cancel,{once:true});
+};
