@@ -3197,3 +3197,62 @@ bmCoachPointerDown=function(e,id){
  document.addEventListener("pointerup",up,{once:true});
  document.addEventListener("pointercancel",cancel,{once:true});
 };
+
+(function(){
+ const st=document.createElement("style");st.id="bmCoachGestureDirectionFix";
+ st.textContent=`
+ .fm-pcard{touch-action:none!important;-webkit-user-select:none!important;user-select:none!important}
+ .fm-roster-row{touch-action:pan-y!important;-webkit-user-select:none!important;user-select:none!important}
+ .fm-drag-ghost{pointer-events:none!important;transform:translate(-50%,-50%)!important}
+ .fm-roster-row.drop-ready,.fm-slot.drop-ready{outline:2px solid #69d3ff!important;outline-offset:2px!important}
+ `;
+ document.head.appendChild(st);
+})();
+bmCoachPointerDown=function(e,id){
+ if(e.button!==undefined&&e.button!==0)return;
+ if(window.bmDragV2)return;
+ const src=e.currentTarget,fromCourt=!!src.closest(".fm-pcard"),player=club(state.teamId)?.players.find(p=>String(p.id)===String(id));
+ const d={id,x:e.clientX,y:e.clientY,src,fromCourt,dragging:false,scrolling:false,ghost:null,pointerId:e.pointerId};
+ window.bmDragV2=d;
+ const cleanup=()=>{
+  document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);document.removeEventListener("pointercancel",cancel);
+  d.ghost?.remove();src.classList.remove("is-dragging");
+  document.querySelectorAll(".fm-slot,.fm-roster-row").forEach(x=>x.classList.remove("drop-ready"));
+  if(window.bmDragV2===d)window.bmDragV2=null;
+ };
+ const move=ev=>{
+  if(window.bmDragV2!==d||ev.pointerId!==d.pointerId)return;
+  const dx=ev.clientX-d.x,dy=ev.clientY-d.y,dist=Math.hypot(dx,dy);
+  if(!d.dragging&&!d.scrolling&&dist>9){
+   // 코트 선발 카드는 상하좌우 어느 방향이든 드래그. 벤치 목록은 세로 스크롤을 보존하고 가로 이동만 드래그.
+   if(!d.fromCourt&&Math.abs(dy)>Math.abs(dx)*1.1){d.scrolling=true;return;}
+   d.dragging=true;
+   const ghost=document.createElement("div");ghost.className="fm-drag-ghost";
+   const photo=src.querySelector(".bs-avatar img");
+   if(photo?.src){const im=document.createElement("img");im.src=photo.src;ghost.appendChild(im);}
+   else{const av=document.createElement("span");av.className="ghost-avatar";av.textContent=(player?.name||"?").split(/\\s+/).map(x=>x[0]||"").slice(0,2).join("").toUpperCase();ghost.appendChild(av);}
+   const name=document.createElement("span");name.className="ghost-name";name.textContent=player?.name||"선수";ghost.appendChild(name);
+   document.body.appendChild(ghost);d.ghost=ghost;src.classList.add("is-dragging");
+  }
+  if(d.dragging&&d.ghost){
+   ev.preventDefault();d.ghost.style.left=ev.clientX+"px";d.ghost.style.top=ev.clientY+"px";
+   document.querySelectorAll(".fm-slot,.fm-roster-row").forEach(x=>x.classList.remove("drop-ready"));
+   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot,.fm-roster-row");
+   if(target)target.classList.add("drop-ready");
+  }
+ };
+ const up=ev=>{
+  if(window.bmDragV2!==d)return;
+  if(d.dragging){
+   const hit=document.elementFromPoint(ev.clientX,ev.clientY);
+   const slot=hit?.closest(".fm-slot"),benchCard=hit?.closest(".fm-roster-row");
+   if(slot)bmCoachAssign(id,Number(slot.dataset.slot));
+   else if(benchCard)bmCoachSwapWithBench(id,benchCard.dataset.pid);
+  }else if(!d.scrolling)bmPickCoachPlayer(id);
+  cleanup();
+ };
+ const cancel=()=>cleanup();
+ document.addEventListener("pointermove",move,{passive:false});
+ document.addEventListener("pointerup",up,{once:true});
+ document.addEventListener("pointercancel",cancel,{once:true});
+};
