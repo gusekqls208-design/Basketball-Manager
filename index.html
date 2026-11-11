@@ -194,6 +194,35 @@ body.broadcast-mode main{padding:10px 18px 24px!important;background:#090d13}
 .nba-live-action-menu summary{background:#243447;border:1px solid #42576d}
 @media(max-width:900px){.nba-live-bottom{grid-template-columns:1fr}.nba-live-actions{border-left:0;border-top:1px solid #344558;flex-wrap:wrap}.nba-live-bottom-comment{min-height:48px}}
 @media(max-width:760px){.nba-live-shell .nba-player-token{width:30px;height:30px}.nba-live-shell .nba-player-name{font-size:7px}.nba-live-bottom-comment>span{font-size:10px}.nba-live-actions{gap:4px}}
+
+.nba-live-top{display:grid!important;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:8px}
+.nba-tactics-menu{position:relative;color:#fff}.nba-tactics-menu summary{list-style:none;cursor:pointer;padding:9px 13px;background:#26394c;border:1px solid #52677d;border-radius:4px;font-size:12px;font-weight:800}
+.nba-tactics-panel{position:absolute;z-index:30;top:42px;left:0;width:220px;display:grid;gap:8px;padding:13px;background:#101a26;border:1px solid #52677d;border-radius:5px;box-shadow:0 12px 32px #000c}
+.nba-tactics-panel b{font-size:10px;color:#aebdcb}.nba-tactics-panel select,.nba-top-right select{width:auto;margin:0;padding:6px 20px 6px 7px;background:#1b2a3a;color:#fff;border:1px solid #42566b}
+.nba-top-right{display:flex;align-items:center;justify-self:end;gap:7px}.nba-top-right label{display:flex;align-items:center;gap:5px;color:#aebdcb;font-size:10px}
+.nba-live-court-wrap{padding:0!important;margin:8px 0}.nba-live-court{aspect-ratio:1.88!important;background:repeating-linear-gradient(90deg,#b98252 0,#b98252 5%,#c58c5d 5%,#c58c5d 10%)!important;border:0!important;box-shadow:inset 0 0 0 7px #e5c69f,0 8px 24px #0008!important}
+.nba-court-markings{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.nba-live-shell .nba-player{z-index:5!important;width:82px;height:86px;gap:3px;transition:none!important}
+.nba-live-shell .nba-player-token{width:66px!important;height:66px!important;min-width:66px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 3px 10px #000b}
+.nba-live-shell .nba-player.away .nba-player-token{border-color:#8fc9ff}.nba-live-shell .nba-player-face{display:block;width:100%;height:100%;object-fit:cover;object-position:center 22%;border-radius:50%}
+.nba-live-shell .nba-player-fallback{font-size:19px}.nba-live-shell .nba-player-name{max-width:88px;font-size:9px;padding:2px 4px}.nba-live-shell .nba-player-pos{font-size:8px;font-weight:900;color:#fff;text-shadow:0 1px 3px #000}
+.nba-live-commentbar{display:flex;align-items:center;gap:12px;min-height:36px;padding:7px 12px;background:#111c29;border:1px solid #3b4d60;border-left:3px solid #e6a85c;border-radius:3px;margin-top:8px}
+.nba-live-commentbar b{font-size:9px;letter-spacing:1.2px;color:#e9b775;white-space:nowrap}.nba-live-commentbar span{font-size:12px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nba-live-lineup{display:flex;align-items:stretch;gap:8px;margin-top:7px;padding:7px;background:#111923;border:1px solid #354353;border-radius:4px}
+.nba-bench-toggle{flex:0 0 100px;border:1px solid #52677d;background:#26394c;color:#fff;border-radius:3px;font-weight:800;font-size:11px}
+.nba-starters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;flex:1;min-width:0}
+.nba-starter-card{display:flex;align-items:center;gap:7px;min-width:0;padding:5px 7px;text-align:left;color:#f4f6f8;background:#1a2735;border:1px solid #34495d;border-radius:3px}
+.nba-starter-card img,.nba-starter-initial{width:42px;height:42px;flex:0 0 42px;object-fit:cover;object-position:center 22%;border-radius:50%;background:#42566b;color:#fff;display:grid;place-items:center;font-weight:900}
+.nba-starter-info{display:flex;flex-direction:column;min-width:0;gap:3px}.nba-starter-info b{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nba-starter-info small{font-size:8px;color:#9eacba;white-space:nowrap}.nba-starter-card>strong{margin-left:auto;font-size:11px;color:#e9b775}
+.nba-bench-panel,.nba-player-panel{margin-top:6px;padding:10px;background:#101a26;border:1px solid #40536a;border-radius:4px}
+.nba-bench-heading{font-size:10px;letter-spacing:1.4px;color:#e9b775;margin-bottom:8px}.nba-bench-player{display:inline-flex;align-items:center;gap:7px;margin:3px;padding:5px 8px;background:#1b2a3a;color:#fff;border:1px solid #3e5268;border-radius:3px}
+.nba-bench-player img,.nba-bench-player>span{width:32px;height:32px;object-fit:cover;border-radius:50%;background:#42566b;display:grid;place-items:center}.nba-bench-player b{font-size:10px}.nba-bench-player small{font-size:9px;color:#aebdcb}
+.nba-player-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.nba-player-panel-head b{font-size:13px}.nba-player-panel-head button{background:#26394c;color:#fff;border:1px solid #52677d;padding:4px 8px}
+.nba-player-panel-stats{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:9px;color:#aebdcb;font-size:10px}.nba-player-panel-stats b{color:#fff;margin-left:4px}
+.nba-player-panel>label{display:inline-flex;align-items:center;gap:6px;margin:4px 9px 4px 0;color:#aebdcb;font-size:10px}.nba-player-panel select{width:auto;margin:0;padding:6px;background:#1b2a3a;color:#fff;border:1px solid #42566b}.nba-player-panel>.btn{margin:4px;padding:6px 9px}
+.nba-live-bottom,.nba-live-toolbar,.nba-live-comment-overlay{display:none!important}
+@media(max-width:850px){.nba-live-top{grid-template-columns:1fr auto}.nba-live-brand{grid-column:1}.nba-tactics-menu{grid-column:1;grid-row:2}.nba-top-right{grid-column:2;grid-row:1/3}.nba-live-lineup{flex-wrap:wrap}.nba-bench-toggle{flex-basis:100%}.nba-starters{grid-template-columns:repeat(5,minmax(0,1fr))}.nba-starter-card{flex-direction:column;align-items:center;text-align:center}.nba-starter-info small{display:none}.nba-starter-card>strong{margin:0}}
+@media(max-width:600px){.nba-live-shell .nba-player-token{width:48px!important;height:48px!important;min-width:48px}.nba-live-shell .nba-player{width:64px;height:66px}.nba-live-shell .nba-player-name{font-size:7px;max-width:62px}.nba-live-shell .nba-player-pos{font-size:7px}.nba-starters{gap:3px}.nba-starter-card{padding:4px 2px}.nba-starter-card img,.nba-starter-initial{width:28px;height:28px;flex-basis:28px}.nba-starter-info b{font-size:8px}.nba-starter-card>strong{font-size:9px}.nba-live-commentbar span{font-size:10px}.nba-top-right{gap:3px}.nba-top-right .btn{padding:5px 6px;font-size:9px}}
 </style></head><body><div id="app"><header><div><div class="brand">BASKETBALL <span>MANAGER</span></div><div class="season-tag">FRONT OFFICE SIMULATION · 2026/27</div></div><div class="headright"><span id="teamhead">팀 미선택</span><span>예산 <b id="moneyhead">₩0</b></span></div></header><div class="layout"><aside class="side" id="sidebar"><div class="navlabel">FRONT OFFICE</div><button class="nav active" data-page="home"><span class="ico">▦</span>대시보드</button><button class="nav" data-page="roster"><span class="ico">♟</span>선수단</button><button class="nav" data-page="schedule"><span class="ico">▤</span>일정 / 결과</button><button class="nav" data-page="standings"><span class="ico">▥</span>리그 순위</button><div class="navlabel">STRATEGY</div><button class="nav" data-page="tactics"><span class="ico">⌘</span>전술 센터</button><button class="nav" data-page="market"><span class="ico">⇄</span>선수 시장</button><button class="nav" data-page="office"><span class="ico">⚙</span>구단 운영</button><div class="navlabel">CAREER</div><button class="nav" data-page="save"><span class="ico">▣</span>저장 / 백업</button></aside><main id="main"></main></div></div>
 <script>
 const teams=[
@@ -634,7 +663,22 @@ function showGame(id){
 function toggleBroadcast(){const m=window.liveMatch;if(!m)return;m.paused=!m.paused;const b=document.getElementById("broadcastPause");if(b)b.textContent=m.paused?"▶ 재개":"Ⅱ 일시정지"}
 function setBroadcastSpeed(v){const m=window.liveMatch;if(!m)return;m.speed=Math.max(.08,Math.min(.6,Number(v)||.2))}
 function callTimeout(){const m=window.liveMatch;if(!m||m.ended||m.paused)return;const side=m.g.home===state.teamId?"home":"away";const key=side+"Timeouts";if(m[key]<=0){liveComment("더 이상 사용할 수 있는 타임아웃이 없습니다.");return}m[key]--;m.paused=true;m.timeoutOverlay=true;document.getElementById("broadcastPause").textContent="▶ 재개";document.getElementById("liveStatus").textContent="TIMEOUT · 작전 타임";document.getElementById("broadcastDialogue").textContent="벤치에서 선수들을 불러 모읍니다. 수비 매치업과 다음 공격 패턴을 다시 정비합니다.";updateLiveScoreboard()}
-function changeLiveTactic(v){const m=window.liveMatch;if(!m)return;state.tactics.off=v;persist();m.tactic=v;liveComment("벤치 지시: 공격 전술을 "+v+"(으)로 조정합니다. 다음 포제션부터 적용됩니다.");}
+function changeLiveTactic(v){const m=window.liveMatch;if(!m)return;state.tactics=state.tactics||{};state.tactics.off=v;persist();m.tactic=v;liveComment("공격 전술을 "+v+"으로 변경합니다.");}
+function changeLiveDefense(v){const m=window.liveMatch;if(!m)return;m.defTactic=v;liveComment("수비 전술을 "+v+"으로 변경합니다.");}
+function toggleLiveBench(){const el=document.getElementById("liveBenchPanel");if(el)el.hidden=!el.hidden;}
+function openLivePlayer(id){
+ const m=window.liveMatch;if(!m)return;const ownHome=m.g.home===state.teamId,team=ownHome?m.home:m.away,line=ownHome?m.homeLine:m.awayLine,p=team.players.find(x=>x.id===id);if(!p)return;
+ const active=line.some(x=>x.id===id);if(active)window.liveSelectedStarter=id;
+ const panel=document.getElementById("livePlayerPanel");if(!panel)return;panel.hidden=false;
+ panel.innerHTML='<div class="nba-player-panel-head"><b>'+bmEsc(p.name)+' · '+bmEsc(p.pos)+'</b><button onclick="this.parentNode.parentNode.hidden=true">닫기</button></div><div class="nba-player-panel-stats"><span>OVR <b>'+bmEsc(p.ovr??"-")+'</b></span><span>체력 <b>'+Math.max(0,100-(Number(p.fatigue)||0))+'%</b></span><span>컨디션 <b>'+bmEsc(p.condition??"-")+'%</b></span><span>출전 <b>'+(active?"코트 위":"후보")+'</b></span></div><label>개인 전술 <select id="livePlayerInstruction"><option>기본</option><option>외곽 대기</option><option>골밑 공략</option><option>스크린 집중</option><option>수비 집중</option></select></label><button class="btn" data-player-id="'+bmEsc(id)+'" onclick="applyLivePlayerInstruction(this.dataset.playerId)">개인 전술 적용</button>'+(active?'<label>교체 투입 선수 <select id="liveSubIn"><option value="">선택</option>'+team.players.filter(x=>!line.some(a=>a.id===x.id)).map(x=>'<option value="'+bmEsc(x.id)+'">'+bmEsc(x.name)+' · '+bmEsc(x.pos)+'</option>').join("")+'</select></label><button class="btn" data-player-id="'+bmEsc(id)+'" onclick="substituteLivePlayer(this.dataset.playerId)">선수 교체</button>':'<button class="btn" data-player-id="'+bmEsc(id)+'" onclick="substituteLivePlayer(this.dataset.playerId)">코트에 투입</button>');
+}
+function applyLivePlayerInstruction(id){const m=window.liveMatch;if(!m)return;const team=m.g.home===state.teamId?m.home:m.away,p=team.players.find(x=>x.id===id),v=document.getElementById("livePlayerInstruction")?.value;if(!p)return;p.liveInstruction=v;liveComment(p.name+" 개인 전술: "+v);}
+function substituteLivePlayer(id){
+ const m=window.liveMatch;if(!m)return;const ownHome=m.g.home===state.teamId,team=ownHome?m.home:m.away,line=ownHome?m.homeLine:m.awayLine;let ix=line.findIndex(p=>p.id===id),incoming,outgoing;
+ if(ix>=0){incoming=team.players.find(p=>p.id===document.getElementById("liveSubIn")?.value);if(!incoming)return;outgoing=line[ix];line[ix]=incoming;}
+ else{incoming=team.players.find(p=>p.id===id);ix=line.findIndex(p=>p.id===window.liveSelectedStarter);if(!incoming||ix<0)return;outgoing=line[ix];line[ix]=incoming;}
+ renderLivePlayers();refreshLiveLineup();const panel=document.getElementById("livePlayerPanel");if(panel)panel.hidden=true;liveComment(outgoing.name+" 대신 "+incoming.name+"이(가) 코트에 들어옵니다.");
+}
 function makeLiveSub(){const m=window.liveMatch;if(!m||m.ended)return;const outId=document.getElementById("subOut").value,inId=document.getElementById("subIn").value;if(!outId||!inId)return;const team=m.g.home===state.teamId?m.home:m.away,line=m.g.home===state.teamId?m.homeLine:m.awayLine;const oi=line.findIndex(p=>p.id===outId),incoming=team.players.find(p=>p.id===inId);if(oi<0||!incoming||line.some(p=>p.id===inId))return;const outgoing=line[oi];line[oi]=incoming;liveComment(outgoing.name+" 대신 "+incoming.name+"이(가) 코트에 들어옵니다.");document.getElementById("broadcastDialogue").textContent="교체입니다. "+incoming.name+"이(가) 투입되고 "+outgoing.name+"은(는) 벤치로 향합니다.";renderLivePlayers();refreshLiveLineup()}
 function renderLivePlayers(){
  const m=window.liveMatch,root=document.getElementById("livePlayers");if(!m||!root)return;
@@ -754,6 +798,14 @@ function animateLiveShot(shooter,defender,done){
  const start=livePoint(s),target={x:window.liveMatch?.possHome?95:5,y:50};
  if(d)d.classList.add("is-blocking");ball.classList.add("is-shot");
  animateBallArc({x:start.x,y:start.y+1},target,1150,19,()=>{ball.classList.remove("is-shot");if(d)d.classList.remove("is-blocking");done()});
+}function runLivePhase(m,offense,defense,phase){
+ const handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0];
+ if(phase===0){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) 드리블로 하프코트를 넘어옵니다.");}
+ if(phase===1)liveComment("공격 진형을 정돈합니다. 선수들이 코트 폭을 넓게 사용합니다.");
+ if(phase===2){const screener=offense.find(p=>p.pos==="C")||offense[4];liveComment(screener.name+"이(가) 볼 스크린을 준비합니다.");}
+ if(phase===3){const receiver=offense.find(p=>p.id!==handler.id&&p.pos==="SG")||offense.find(p=>p.id!==handler.id);if(receiver){m.ballHandlerId=receiver.id;liveComment(handler.name+"이(가) "+receiver.name+"에게 패스합니다.");animateBallPass(handler,receiver);}}
+ if(phase===4)liveComment("공격 제한 시간 안에 슛을 준비합니다.");
+ if(phase===5&&!m.shotInFlight){m.shotInFlight=true;m.shotClock=Math.max(1,m.shotClock);const shooter=offense.find(p=>p.id===m.ballHandlerId)||handler,defender=defense.find(p=>p._matchup===shooter.id)||defense[0];liveComment(shooter.name+"이(가) 슛을 시도합니다.");animateLiveShot(shooter,defender,()=>{m.shotInFlight=false;resolveLiveShot(m,offense,defense)});}
 }function moveLivePlayer(p,x,y,action){
  const el=document.getElementById("liveP_"+p.id);if(!el)return;
  p._tx=Math.max(5,Math.min(95,x));p._ty=Math.max(9,Math.min(91,y));
