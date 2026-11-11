@@ -1773,4 +1773,107 @@ simAttr=function(p,k,d=10){
  else if(i==="리바운드 집중")v+=bump(["rebound","jumping","strength"],7);
  return v;
 };
+
+(function(){
+ if(document.getElementById("coachV2Style"))return;
+ const st=document.createElement("style");st.id="coachV2Style";st.textContent=`
+ .fm-coach{max-width:1400px;margin:auto;padding:16px;color:#e8f0f7}.fm-main{display:grid;grid-template-columns:1.3fr .8fr;gap:14px}
+ .fm-court-wrap,.fm-candidates,.fm-control-grid>section,.fm-health-panel{background:#111c28;border:1px solid #2c4052;border-radius:13px;padding:14px;min-width:0}
+ .fm-halfcourt{position:relative;width:min(100%,650px);height:420px;margin:12px auto;background:linear-gradient(#b98555,#986440);border:7px solid #d0a477;overflow:hidden}
+ .fm-halfcourt:before{content:"";position:absolute;left:17%;right:17%;top:-24%;height:48%;border:2px solid #f0d2ae;border-radius:50%}
+ .fm-hoop{position:absolute;top:4%;left:50%;transform:translateX(-50%);width:44px;height:28px;border-top:5px solid #fff;border-radius:50%}
+ .fm-backboard{position:absolute;top:2%;left:50%;transform:translateX(-50%);width:66px;border-top:4px solid #fff}
+ .fm-key{position:absolute;top:5%;left:35%;width:30%;height:39%;border:2px solid #f0d2ae;border-top:0}
+ .fm-ftline{position:absolute;top:43%;left:35%;width:30%;border-top:2px solid #f0d2ae}
+ .fm-arc{position:absolute;left:8%;right:8%;top:7%;height:85%;border:2px solid #f0d2ae;border-top:0;border-radius:0 0 48% 48%}
+ .fm-slot{position:absolute;transform:translate(-50%,-50%);width:112px;min-height:68px;border:1px dashed #e7c59b;border-radius:10px;background:#152536ed;padding:5px;display:flex;align-items:center;justify-content:center;z-index:4;touch-action:none}
+ .fm-slot.sel,.fm-slot.drop-ready{border:2px solid #b9e7ff;background:#1b3c52;box-shadow:0 0 15px #83cfff66}
+ .fm-slot>label{position:absolute;top:-17px;left:3px;font-size:10px;font-weight:900;color:#f3d8b4}
+ .fm-pcard{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;align-items:center;gap:2px 6px;width:100%;padding:5px;border:1px solid #344b5e;border-radius:8px;background:#172838;cursor:grab;user-select:none;touch-action:none}
+ .fm-pcard img{grid-row:1/3;width:34px;height:34px;object-fit:cover;border-radius:50%}.fm-pcard b{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fm-pcard small{font-size:9px;color:#9eb0bf}
+ .fm-pcard.is-selected{border-color:#9bdcff;background:#21435a}.fm-pcard.is-dragging{opacity:.25}
+ .fm-candidate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:370px;overflow:auto}
+ .fm-bench-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.fm-bench-list label{font-size:10px;background:#192735;padding:6px;border-radius:6px}
+ .fm-control-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.fm-control-grid label{display:block;margin:9px 0;font-size:11px}.fm-control-grid select{display:block;width:100%;margin-top:4px}
+ .fm-personal{display:grid;grid-template-columns:1fr 1fr;gap:6px}.fm-confirm{width:100%;margin-top:14px;padding:13px}
+ .fm-health-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.fm-health-player{padding:8px;background:#182634;border:1px solid #314557;border-radius:8px;font-size:10px}
+ .fm-meter{height:5px;background:#334353;border-radius:9px;margin-top:4px}.fm-meter i{display:block;height:100%;background:#7bc9ee}
+ .fm-drag-ghost{position:fixed;z-index:99999;pointer-events:none;opacity:.95;transform:translate(-50%,-50%);width:130px;filter:drop-shadow(0 8px 16px #000)}
+ .q-mvp{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #49657c;border-radius:10px;background:#152638;margin:12px 0}.q-mvp img{width:56px;height:56px;object-fit:cover;border-radius:50%}
+ .q-analysis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.q-analysis>div{padding:9px;background:#172533;border:1px solid #2c4153;border-radius:8px;font-size:11px;line-height:1.5}
+ .q-player-table{width:100%;border-collapse:collapse;font-size:10px;font-variant-numeric:tabular-nums}.q-player-table th,.q-player-table td{padding:6px;border-bottom:1px solid #2c3d4d;text-align:right;white-space:nowrap}.q-player-table th:first-child,.q-player-table td:first-child{text-align:left}
+ @media(max-width:850px){.fm-main,.fm-control-grid{grid-template-columns:1fr}.fm-halfcourt{height:360px}.fm-slot{width:95px}.fm-candidate-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+ `;document.head.appendChild(st);
+})();
+function bmFormationCoords(n){const f={"4-Out 1-In":[[50,68],[17,47],[83,47],[17,23],[50,24]],"5-Out":[[50,68],[17,47],[83,47],[28,24],[72,24]],"3-Out 2-In":[[50,68],[18,48],[82,48],[38,28],[62,28]],"Horns":[[50,68],[18,48],[82,48],[39,39],[61,39]],"1-4 High":[[50,68],[16,51],[38,51],[62,51],[84,51]]};return f[n]||f["4-Out 1-In"]}
+function bmCoachCard(p){return '<div class="fm-pcard" data-pid="'+bmEsc(p.id)+'" onpointerdown="bmCoachPointerDown(event,\''+bmEsc(p.id)+'\')">'+boxPhoto(p,36)+'<b>'+bmEsc(p.name)+'</b><small>'+bmEsc(p.pos||"")+' · '+p.ovr+' OVR</small></div>'}
+function bmCoachPointerDown(e,id){
+ if(e.button!==undefined&&e.button!==0)return;e.preventDefault();const card=e.currentTarget;window.bmDragV2={id,x:e.clientX,y:e.clientY,src:card};
+ const move=ev=>{const d=window.bmDragV2;if(!d)return;if(!d.ghost&&Math.hypot(ev.clientX-d.x,ev.clientY-d.y)>7){d.ghost=d.src.cloneNode(true);d.ghost.classList.add("fm-drag-ghost");d.src.classList.add("is-dragging");document.body.appendChild(d.ghost)}
+ if(d.ghost){d.ghost.style.left=ev.clientX+"px";d.ghost.style.top=ev.clientY+"px";document.querySelectorAll(".fm-slot").forEach(x=>x.classList.remove("drop-ready"));document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot")?.classList.add("drop-ready")}};
+ const up=ev=>{const d=window.bmDragV2;if(!d)return;document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);d.src.classList.remove("is-dragging");d.ghost?.remove();document.querySelectorAll(".fm-slot").forEach(x=>x.classList.remove("drop-ready"));if(d.ghost){const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".fm-slot");if(target)bmCoachAssign(d.id,+target.dataset.slot)}window.bmDragV2=null};
+ document.addEventListener("pointermove",move,{passive:true});document.addEventListener("pointerup",up,{once:true});
+}
+function bmCoachAssign(id,i){const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;const ids=pre?c.starters:c.userStarters,old=ids[i],j=ids.findIndex(x=>String(x)===String(id));if(j>=0)ids[j]=old;ids[i]=id;bmCoachBoard(window.bmCoachMode)}
+function bmCoachSlotTap(i){if(window.bmCoachSelected){bmCoachAssign(window.bmCoachSelected,i);window.bmCoachSelected=null;return}document.querySelectorAll(".fm-slot").forEach((x,n)=>x.classList.toggle("sel",n===i))}
+function bmPickCoachPlayer(id){window.bmCoachSelected=window.bmCoachSelected===id?null:id;document.querySelectorAll(".fm-pcard").forEach(x=>x.classList.toggle("is-selected",x.dataset.pid===window.bmCoachSelected))}
+function bmSelectCoachSlot(i){bmCoachSlotTap(i)}
+function bmBenchLimit(el){if(document.querySelectorAll(".fm-bench-check:checked").length>8){el.checked=false;alert("벤치 출전 선수는 최대 8명입니다.")}}
+function bmCoachBoard(mode){
+ const pre=mode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;const t=club(state.teamId),g=state.schedule.find(x=>x.id===c.gameId),ids=pre?c.starters:c.userStarters,bench=pre?c.bench:(c.userBench||[]),tac=pre?c.tactics:(c.userTactics||{}),pool=[...t.players].sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a)),xy=bmFormationCoords(tac.formation||"4-Out 1-In");
+ const court='<div class="fm-halfcourt"><div class="fm-backboard"></div><div class="fm-hoop"></div><div class="fm-key"></div><div class="fm-ftline"></div><div class="fm-arc"></div>'+["PG","SG","SF","PF","C"].map((v,i)=>{const p=t.players.find(x=>String(x.id)===String(ids[i]));return '<div class="fm-slot" data-slot="'+i+'" style="left:'+xy[i][0]+'%;top:'+xy[i][1]+'%" onclick="bmCoachSlotTap('+i+')"><label>'+v+'</label>'+(p?bmCoachCard(p):"배치")+'</div>'}).join("")+'</div>';
+ const opts=(arr,sel)=>arr.map(x=>'<option value="'+bmEsc(x)+'" '+(sel===x?'selected':'')+'>'+bmEsc(x)+'</option>').join("");
+ const active=[...ids,...bench],status=pool.filter(p=>active.includes(p.id)).map(p=>{const b=(c.homeBox?.[p.id]||c.awayBox?.[p.id]||{}),fat=Math.min(100,Math.round((p.fatigue||0)+(c.liveMinutes?.[p.id]||0)*.65));return '<div class="fm-health-player"><b>'+bmEsc(p.name)+' · '+(ids.includes(p.id)?"선발":"벤치")+'</b><br>체력 '+(100-fat)+'% · 컨디션 '+Math.round(p.condition||75)+'% · 파울 '+(b.pf||0)+'개<div class="fm-meter"><i style="width:'+(100-fat)+'%"></i></div>'+(p.injured||p.injury?'<small>부상 확인</small>':'')+'</div>'}).join("");
+ const inst=["기본 역할","외곽슛 우선","패스 우선","돌파 우선","수비 집중","리바운드 집중"];
+ document.getElementById("main").innerHTML='<div class="fm-coach"><header><div><div class="eyebrow">COACHING ROOM · ROUND '+g.round+'</div><h1>'+(pre?'경기 전 전술 설정':(c.quarter+1)+'쿼터 전술 타임')+'</h1><p>선수를 탭한 뒤 포지션을 탭하거나, 카드를 끌어 코트의 원하는 위치에 놓으세요.</p></div><button class="btn ghost" onclick="bmCloseCoach()">닫기</button></header><div class="fm-main"><section class="fm-court-wrap"><h3>공격 하프코트 · 선발 5명</h3>'+court+'</section><aside class="fm-candidates"><h3>출전 후보 ('+active.length+'/13)</h3><div class="fm-candidate-list">'+pool.filter(p=>!ids.includes(p.id)).map(bmCoachCard).join("")+'</div><h3>벤치 출전 명단 ('+bench.length+'/8)</h3><p class="fm-explain">체크한 선수만 이번 경기 출전 가능. 미선택 선수는 이번 경기 DNP이며 팀 로스터에는 남습니다.</p><div class="fm-bench-list">'+pool.filter(p=>!ids.includes(p.id)).map(p=>'<label><input type="checkbox" class="fm-bench-check" value="'+bmEsc(p.id)+'" '+(bench.includes(p.id)?'checked':'')+' onchange="bmBenchLimit(this)"> '+bmEsc(p.name)+'</label>').join("")+'</div></aside></div>'+(pre?'':'<section class="fm-health-panel" style="margin-top:12px"><h3>선수 체력 · 컨디션 · 파울</h3><div class="fm-health-list">'+status+'</div></section>')+'<div class="fm-control-grid"><section><h3>팀 전술</h3><label>포메이션<select id="fmFormation">'+opts(["4-Out 1-In","5-Out","3-Out 2-In","Horns","1-4 High"],tac.formation||"4-Out 1-In")+'</select></label><label>공격<select id="fmOff">'+opts(["균형","픽앤롤 중심","3점슛 중심","속공","포스트업","아이솔레이션","모션 오펜스","컷인 중심"],tac.off||"균형")+'</select></label><label>수비<select id="fmDef">'+opts(["맨투맨","2-3 지역방어","3-2 지역방어","풀코트 프레스","하프코트 프레스","스위치","드롭 커버리지"],tac.def||"맨투맨")+'</select></label><label>템포<select id="fmTempo">'+opts(["빠르게","보통","느리게"],tac.tempo||"보통")+'</select></label></section><section><h3>개인 전술</h3><p class="fm-explain">기본 역할은 지시 없이 능력과 상황에 따라 자동으로 움직입니다.</p><div class="fm-personal">'+["PG","SG","SF","PF","C"].map((v,i)=>{const p=t.players.find(x=>String(x.id)===String(ids[i]));return '<label>'+(p?bmEsc(p.name):v)+'<select id="fmInst'+i+'">'+opts(inst,(pre?c.instructions:c.userInstructions||{})?.[ids[i]]||"기본 역할")+'</select></label>'}).join("")+'</div></section></div><button class="btn primary fm-confirm" onclick="'+(pre?'bmConfirmPreCoach()':'bmConfirmQuarterCoach()')+'">'+(pre?'전술 확정 · 1쿼터 시작':'변경 적용 · 다음 쿼터 시작')+'</button></div>';
+ window.bmCoachMode=mode;window.bmCoachSelected=null;
+}
+function bmCloseCoach(){if(window.bmCoachMode==="pre")nav("schedule");else renderQuarterBreak()}
+function bmConfirmCoach(pre){
+ const c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId),ids=pre?c.starters:c.userStarters;if(new Set(ids).size!==5||ids.some(id=>!t.players.some(p=>String(p.id)===String(id)))){alert("서로 다른 선수를 선발로 지정해주세요.");return}
+ const bench=[...document.querySelectorAll(".fm-bench-check:checked")].map(x=>x.value).filter(id=>!ids.includes(id));if(bench.length>8||bench.length+5<8){alert("경기 출전 명단은 선발 포함 8~13명이어야 합니다.");return}
+ const instructions={};ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);
+ const tactics={formation:document.getElementById("fmFormation").value,off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value};
+ if(pre){c.starters=ids.slice();c.bench=bench;c.instructions=instructions;c.tactics=tactics;t.tactics={...tactics};state.tactics={...state.tactics,...tactics};persist();beginQuarterGame()}
+ else{c.userStarters=ids.slice();c.userBench=bench;c.userInstructions=instructions;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");c.userTactics=tactics;t.tactics={...tactics};state.tactics={...state.tactics,...tactics};persist();runNextQuarter()}
+}
+function bmConfirmPreCoach(){bmConfirmCoach(true)}function bmConfirmQuarterCoach(){bmConfirmCoach(false)}
+function renderMatchSetup(){bmCoachBoard("pre")}function openQuarterAdjust(){bmCoachBoard("quarter")}
+function bmQuarterLine(team,ids,benchIds){const starters=ids.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean),rest=(benchIds||[]).map(id=>team.players.find(p=>String(p.id)===String(id))).filter(p=>p&&!ids.includes(p.id));return {starters,rotation:[...starters,...rest]}}
+function bmQuarterMinutes(line){const out={},xs=line.rotation.map(p=>({p,w:Math.max(.1,bmPlayerQuality(p))*(line.starters.includes(p)?1.08:1)}));let left=60;while(left-->0){let sum=xs.reduce((a,x)=>a+x.w,0),r=Math.random()*sum,z=xs[xs.length-1];for(const x of xs){r-=x.w;if(r<=0){z=x;break}}out[z.p.id]=(out[z.p.id]||0)+1}return out}
+function bmQuarterMvp(hb,ab,home,away){let best=null;for(const [team,box] of [[home,hb],[away,ab]])for(const p of team.players){const x=box[p.id];if(!x||x.dnp||!x.min)continue;const score=x.pts+x.reb*1.15+x.ast*1.45+x.stl*2.2+x.blk*2.1-x.tov*1.25-Math.max(0,x.fga-x.fgm)*.22;if(!best||score>best.score)best={player:p,team,stats:x,score}}return best}
+function bmCoachAdvice(q,home,away,userHome){
+ const own=userHome?q.homeBox:q.awayBox,opp=userHome?q.awayBox:q.homeBox,other=userHome?away:home;
+ const sum=x=>Object.values(x).reduce((a,s)=>{["pts","reb","ast","tov","fga","fgm","threeA","threeM"].forEach(k=>a[k]=(a[k]||0)+(s[k]||0));return a},{});
+ const a=sum(own),b=sum(opp),pct=x=>x.fga?Math.round(x.fgm/x.fga*100):0,out=[];
+ if(pct(a)<40)out.push(["공격 효율","야투 성공률 "+pct(a)+"%. 픽앤롤이나 모션 오펜스로 더 나은 슛 기회를 만드세요."]);
+ if(a.threeA<b.threeA*.7)out.push(["외곽 공격","상대보다 3점 시도가 적습니다. 3점슛 중심 또는 5-Out을 검토하세요."]);
+ if(a.reb<b.reb-3)out.push(["리바운드","리바운드 열세입니다. 리바운드 집중과 3-Out 2-In을 고려하세요."]);
+ if(a.tov>b.tov+2)out.push(["턴오버","실책이 많습니다. 템포를 낮추고 패스 우선 지시를 검토하세요."]);
+ if(pct(b)>48)out.push(["수비","상대 야투 성공률이 "+pct(b)+"%. 맨투맨·스위치와 수비 집중 지시를 검토하세요."]);
+ const leader=other.players.map(p=>({p,x:opp[p.id]})).filter(z=>z.x&&!z.x.dnp).sort((a,b)=>b.x.pts*1.2+b.x.ast+b.x.reb*.4-(a.x.pts*1.2+a.x.ast+a.x.reb*.4))[0];
+ if(leader&&(leader.x.pts>=8||leader.x.ast>=3))out.push(["집중 견제",leader.p.name+" · "+leader.x.pts+"점 "+leader.x.ast+"AST. 수비 매치업을 조정하세요."]);
+ if(!out.length)out.push(["경기 흐름","뚜렷한 열세가 없습니다. 현재 전술을 유지하고 상대 1옵션을 견제하세요."]);return out;
+}
+function bmQuarterRows(box,team){return team.players.map(p=>({p,x:box[p.id]})).filter(z=>z.x&&!z.x.dnp&&z.x.min>0).sort((a,b)=>b.x.pts-a.x.pts).map(z=>'<tr><td>'+bmEsc(z.p.name)+'</td><td>'+z.x.min+'</td><td>'+z.x.pts+'</td><td>'+z.x.reb+'</td><td>'+z.x.ast+'</td><td>'+z.x.stl+'</td><td>'+z.x.blk+'</td><td>'+z.x.tov+'</td><td>'+z.x.fgm+'/'+z.x.fga+'</td><td>'+z.x.threeM+'/'+z.x.threeA+'</td><td>'+z.x.pf+'</td></tr>').join("")}
+function runNextQuarter(){
+ const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),home=club(g.home),away=club(g.away),user=club(state.teamId),ul=bmQuarterLine(user,m.userStarters,m.userBench),opp=m.userIsHome?away:home,ol=simLine(opp),hl=m.userIsHome?ul:ol,al=m.userIsHome?ol:ul,old=simLine,oldm=simDistributeMinutes;
+ try{simLine=t=>t.id===user.id?ul:ol;simDistributeMinutes=l=>bmQuarterMinutes(l);const r=simulateBoxScore(home,away),hs=Math.round(r.homeScore/4),as=Math.round(r.awayScore/4),hb=bmQuarterBox(r.homeBox,home,r.homeMinutes||bmQuarterMinutes(hl),hl),ab=bmQuarterBox(r.awayBox,away,r.awayMinutes||bmQuarterMinutes(al),al);bmReconcilePoints(hb,home,hs);bmReconcilePoints(ab,away,as);bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);m.liveMinutes=m.liveMinutes||{};for(const [id,x] of Object.entries(m.userIsHome?hb:ab))m.liveMinutes[id]=(m.liveMinutes[id]||0)+x.min;m.homeScore+=hs;m.awayScore+=as;const q={home:hs,away:as,homeBox:hb,awayBox:ab};q.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(q);m.homeLine=hl.starters.map(p=>p.id);m.awayLine=al.starters.map(p=>p.id);m.quarter++}finally{simLine=old;simDistributeMinutes=oldm}persist();renderQuarterBreak();
+}
+function renderQuarterBreak(){
+ const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),h=club(g.home),a=club(g.away),n=m.quarter,end=n>=4,q=m.quarters[n-1],v=q?.mvp,ad=q?bmCoachAdvice(q,h,a,m.userIsHome):[];
+ const score=m.quarters.map((x,i)=>'<tr><td>'+(i+1)+'Q</td><td>'+x.home+'</td><td>'+x.away+'</td></tr>').join("");
+ const mv=v?'<div class="q-mvp">'+boxPhoto(v.player,56)+'<div><small>QUARTER MVP · '+n+'Q</small><b>'+bmEsc(v.player.name)+'</b><br><small>'+bmEsc(v.team.name)+' · '+v.stats.pts+' PTS / '+v.stats.reb+' REB / '+v.stats.ast+' AST / '+v.stats.stl+' STL / '+v.stats.blk+' BLK</small></div></div>':'';
+ const tbl=(box,team)=>'<div style="overflow:auto"><table class="q-player-table"><thead><tr><th>선수</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>FG</th><th>3P</th><th>PF</th></tr></thead><tbody>'+bmQuarterRows(box,team)+'</tbody></table></div>';
+ const user=m.userIsHome?h:a,ub=m.userIsHome?m.homeBox:m.awayBox,health=user.players.filter(p=>m.userStarters.includes(p.id)||(m.userBench||[]).includes(p.id)).map(p=>{const x=ub[p.id]||{},fat=Math.min(100,Math.round((p.fatigue||0)+(m.liveMinutes?.[p.id]||0)*.65));return '<div class="fm-health-player"><b>'+bmEsc(p.name)+' · '+(m.userStarters.includes(p.id)?"선발":"벤치")+'</b><br>체력 '+(100-fat)+'% · 컨디션 '+Math.round(p.condition||75)+'% · 파울 '+(x.pf||0)+'개<div class="fm-meter"><i style="width:'+(100-fat)+'%"></i></div></div>'}).join("");
+ document.getElementById("main").innerHTML='<div class="bs-page"><div class="bs-top"><div><div class="eyebrow">GAME CENTER · ROUND '+g.round+'</div><h1>'+(end?'경기 종료':'쿼터 종료 · '+n+'Q')+'</h1></div></div><div class="bs-score"><div><small>HOME</small><b>'+bmEsc(h.name)+'</b><strong>'+m.homeScore+'</strong></div><span>'+(end?'FINAL':n+'Q END')+'</span><div><small>AWAY</small><b>'+bmEsc(a.name)+'</b><strong>'+m.awayScore+'</strong></div></div><div class="q-break-grid"><section class="card"><h3>QUARTER SCORE</h3><table class="q-score-table"><tbody>'+score+'<tr><th>합계</th><th>'+m.homeScore+'</th><th>'+m.awayScore+'</th></tr></tbody></table>'+mv+'</section><section class="card"><h3>코치 분석 · '+n+'Q</h3><p>해당 쿼터 기록을 바탕으로 다음 쿼터 보완점을 추천합니다.</p><div class="q-analysis">'+ad.map(x=>'<div><b>'+x[0]+'</b><br>'+x[1]+'</div>').join("")+'</div><button class="btn primary" style="width:100%;margin-top:12px" onclick="'+(end?'finishQuarterGame()':'openQuarterAdjust()')+'">'+(end?'최종 기록 보기':'선수·전술 조정 → '+(n+1)+'쿼터')+'</button></section></div>'+(end?'':'<section class="fm-health-panel" style="margin-top:12px"><h3>우리 팀 선수 상태</h3><div class="fm-health-list">'+health+'</div></section>')+'<section class="card" style="margin-top:12px"><h3>'+n+'Q 선수별 기록 · '+bmEsc(h.name)+'</h3>'+tbl(q?.homeBox||{},h)+'</section><section class="card" style="margin-top:12px"><h3>'+n+'Q 선수별 기록 · '+bmEsc(a.name)+'</h3>'+tbl(q?.awayBox||{},a)+'</section></div>';
+}
+const bmSimAttrPrevV2=simAttr;
+simAttr=function(p,k,d=10){let v=bmSimAttrPrevV2(p,k,d),i=p&&p.gameInstruction;if(!i||i==="기본 역할")return v;
+ if(i==="외곽슛 우선"){if(k==="three")v+=8;if(k==="mid")v-=2}
+ else if(i==="패스 우선"&&["pass","passTech","vision","decisions","teamwork"].includes(k))v+=7;
+ else if(i==="돌파 우선"&&["handle","layup","dunk","speed","agility"].includes(k))v+=6;
+ else if(i==="수비 집중"&&["perimeter","interior","steal","block","strength","anticipation"].includes(k))v+=7;
+ else if(i==="리바운드 집중"&&["rebound","jumping","strength"].includes(k))v+=8;return v};
+
 </script></body></html>
