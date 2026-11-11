@@ -1915,7 +1915,7 @@ function playNext(){
 }
 function bmCoachBoardBase(mode){
  const pre=mode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
- const t=club(state.teamId),g=state.schedule.find(x=>x.id===c.gameId),ids=pre?c.starters:c.userStarters,bench=pre?c.bench:(c.userBench||[]),excluded=pre?(c.excluded||[]):(c.userExcluded||[]),tac=pre?c.tactics:(c.userTactics||{}),pool=t.players,xy=bmFormationCoords(tac.formation||"4-Out 1-In"),scope=pre?(c.scope||"all"):"all";
+ const t=club(state.teamId),g=state.schedule.find(x=>x.id===c.gameId),ids=pre?c.starters:c.userStarters,bench=pre?c.bench:(c.userBench||[]),excluded=pre?(c.excluded||[]):(c.userExcluded||[]),tac=pre?c.tactics:(c.userTactics||{}),pool=t.players,xy=bmFormationCoords(tac.formation||"4-Out 1-In"),scope=c.scope||"all";
  const card=p=>'<div class="fm-pcard" data-pid="'+bmEsc(p.id)+'" onpointerdown="bmCoachPointerDown(event,\''+bmEsc(p.id)+'\')">'+boxPhoto(p,38)+'<b>'+bmEsc(p.name)+'</b><small>'+bmEsc(p.pos||"")+' · '+p.ovr+' OVR</small></div>';
  const court='<div class="fm-halfcourt"><div class="fm-backboard"></div><div class="fm-hoop"></div><div class="fm-key"></div><div class="fm-ftline"></div><div class="fm-arc"></div>'+["PG","SG","SF","PF","C"].map((v,i)=>{const p=pool.find(x=>String(x.id)===String(ids[i]));return '<div class="fm-slot" data-slot="'+i+'" style="left:'+xy[i][0]+'%;top:'+xy[i][1]+'%" onclick="bmCoachSlotTap('+i+')"><label>'+v+'</label>'+(p?card(p):"배치")+'</div>'}).join("")+'</div>';
  const opts=(arr,sel)=>arr.map(x=>'<option value="'+bmEsc(x)+'" '+(sel===x?'selected':'')+'>'+bmEsc(x)+'</option>').join("");
