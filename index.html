@@ -1584,3 +1584,9 @@ function bmReconcilePoints(box,team,target){
  if(diff>=0)players[0].s.pts+=diff;
  else for(const x of players){const take=Math.min(x.s.pts,-diff);x.s.pts-=take;diff+=take;if(diff>=0)break;}
 }
+
+function sortBoxScore(side,key){
+ if(key==="name")boxSortState[side]={key:"",dir:-1};
+ else {const old=boxSortState[side]||{key:"",dir:-1};boxSortState[side]={key,dir:old.key===key?-old.dir:-1};}
+ const g=state.schedule.find(x=>x.id===window.currentBoxGameId);if(g)showGame(g.id);
+}
