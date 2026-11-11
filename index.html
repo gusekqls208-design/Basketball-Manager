@@ -658,11 +658,17 @@ function positionJumpBall(m){
  const c=m.homeLine.find(p=>p.pos==="C")||m.homeLine[0],d=m.awayLine.find(p=>p.pos==="C")||m.awayLine[0];
  [...m.homeLine,...m.awayLine].forEach(p=>{const home=m.homeLine.includes(p),center=p===c||p===d;p._x=p._tx=center?(p===c?47:53):(home?24:76);p._y=p._ty=center?50:18+((home?m.homeLine:m.awayLine).indexOf(p)*15);moveLivePlayer(p,p._x,p._y,center?"jump":"run")});
  const ball=document.getElementById("liveBall");if(ball){ball.style.left="50%";ball.style.top="47%";ball.classList.remove("is-airborne")}
-}function startBroadcast(m){if(window.broadcastTimer)clearInterval(window.broadcastTimer);m.jumpBallUntil=Date.now()+1700;m.jumpBallDone=false;m.ballHandlerId=null;positionJumpBall(m);window.broadcastTimer=setInterval(()=>liveMatchTick(),50);liveComment("점프볼! 센터 두 명이 중앙에서 경합합니다.");}
-function liveMatchTick(){
+}function startBroadcast(m){
+ if(window.broadcastTimer)clearInterval(window.broadcastTimer);
+ m.jumpBallUntil=Date.now()+1700;m.jumpBallDone=false;m.ballHandlerId=null;m.ballInFlight=true;
+ positionJumpBall(m);
+ animateBallArc({x:50,y:48},{x:50,y:29},480,16,()=>animateBallArc({x:50,y:29},{x:50,y:48},560,4,()=>{m.ballInFlight=false}));
+ window.broadcastTimer=setInterval(()=>liveMatchTick(),50);
+ liveComment("심판의 점프볼! 양 팀 센터가 중앙에서 점프합니다.");
+}function liveMatchTick(){
  const m=window.liveMatch;if(!m||m.paused||m.ended)return;
- if(m.jumpBallUntil&&Date.now()<m.jumpBallUntil){positionJumpBall(m);return}
- if(m.jumpBallUntil&&!m.jumpBallDone){m.jumpBallDone=true;const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0];m.ballHandlerId=guard.id;liveComment("점프볼 승리! 공을 잡은 가드가 곧바로 드리블을 시작합니다.")}
+ if(m.jumpBallUntil&&Date.now()<m.jumpBallUntil)return;
+ if(m.jumpBallUntil&&!m.jumpBallDone){m.jumpBallDone=true;m.ballInFlight=false;const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0];m.ballHandlerId=guard.id;liveComment("점프볼 승리! 공을 잡은 가드가 곧바로 드리블을 시작합니다.")}
  [...m.homeLine,...m.awayLine].forEach(p=>{
   if(!Number.isFinite(p._x)){p._x=50;p._y=50;p._tx=50;p._ty=50}
   const dx=(p._tx??p._x)-p._x,dy=(p._ty??p._y)-p._y,dist=Math.hypot(dx,dy),step=13*.05;
@@ -679,19 +685,7 @@ function liveMatchTick(){
  const phase=elapsed<6?0:elapsed<11?1:elapsed<15?2:elapsed<18?3:elapsed<21?4:5;
  if(phase!==m.phase){m.phase=phase;runLivePhase(m,offense,defense,phase)}
  positionLiveFormation(m,offense,defense,phase);
-}function resetLivePossession(m,keepBall){
- m.possessionElapsed=0;m.shotClock=24;m.phase=-1;m.phaseTick=0;m.shotInFlight=false;m.ballInFlight=false;m.ballHandlerId=null;
- if(!keepBall)m.possHome=!m.possHome;m._matchupPossession=null;
-}function runLivePhase(m,offense,defense,phase){
- const handler=offense.find(p=>p.id===m.ballHandlerId)||offense[0];m.ballHandlerId=handler.id;
- if(phase===0)liveComment(handler.name+"이(가) 백코트에서 공을 받아 프런트코트로 운반합니다.");
- if(phase===1)liveComment("공격이 자리를 잡습니다. "+handler.name+"이(가) 탑에서 수비를 읽고 있습니다.");
- if(phase===2){const screener=offense[4];liveComment(screener.name+"이(가) 볼 스크린을 세웁니다. 수비가 스위치할지 지켜봅니다.");}
- if(phase===3){const receiver=offense.find(p=>p.id!==handler.id)||offense[1];m.ballHandlerId=receiver.id;animateBallPass(handler,receiver);liveComment(handler.name+"이(가) 윙으로 빼줍니다. "+receiver.name+"이(가) 캐치합니다.");}
- if(phase===4){const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[1];m.shotInFlight=false;liveComment(shooter.name+"이(가) 슛 동작에 들어갑니다. 수비수가 컨테스트합니다.");}
- if(phase===5&&!m.shotInFlight){m.shotInFlight=true;const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[1];const defender=defense.find(p=>p._matchup===shooter.id)||defense[0];animateLiveShot(shooter,defender,()=>resolveLiveShot(m,offense,defense));}
-}
-function positionLiveFormation(m,offense,defense,phase){
+}function positionLiveFormation(m,offense,defense,phase){
  const dir=m.possHome?1:-1,bx=m.possHome?22:78,handler=offense.find(p=>p.id===m.ballHandlerId)||offense[0];
  const slots=[{x:bx,y:50},{x:bx+dir*15,y:23},{x:bx+dir*15,y:77},{x:bx+dir*29,y:29},{x:bx+dir*29,y:71}];
  offense.forEach((p,i)=>{
