@@ -1275,9 +1275,9 @@ function simulateBoxScore(home,away){
    const offStyle=offTeam.tactics?.off,threeBias=offStyle==="3점슛 중심"?.46:offStyle==="포스트업"||offStyle==="포스트업 중심"?.19:offStyle==="픽앤롤 중심"?.31:offStyle==="모션 오펜스"?.33:offStyle==="속공"?.27:.34;
    const threeSkill=simAttr(shooter,"three"),insideSkill=(simAttr(shooter,"close")+simAttr(shooter,"layup")+simAttr(shooter,"dunk"))/3;
    const isThree=Math.random()<simClamp(threeBias+(threeSkill-insideSkill)*.012+(shooter.gameInstruction==="외곽슛 우선"?.09:0),.18,.58);
-   const shotSkill=isThree?threeSkill:(shooter.gameInstruction==="돌파 우선"?insideSkill:(Math.random()<.42?simAttr(shooter,"mid"):insideSkill));
+   const shotSkill=isThree?threeSkill:((shooter.gameInstruction==="돌파 우선"||offStyle==="속공"||offStyle==="포스트업"||offStyle==="포스트업 중심")?insideSkill:(Math.random()<.42?simAttr(shooter,"mid"):insideSkill));
    const defenseSkill=defender?(isThree?simAttr(defender,"perimeter"):simAttr(defender,"interior")):10;
-   let chance=simClamp((isThree?.355:.515)+(shotSkill-10)*.012-(defenseSkill-10)*.008+(offStrength.off-defStrength.def)*.00065+(Number(shooter.condition||75)-75)*.0007-(Number(shooter.fatigue||0))*.00035,.22,.78);
+   let chance=simClamp((isThree?.355:.515)+(shotSkill-10)*.012-(defenseSkill-10)*.008+(offStrength.off-defStrength.def)*.00065+(Number(shooter.condition||75)-75)*.0007-(Number(shooter.fatigue||0))*.00035+(offStyle==="픽앤롤 중심"?.025:offStyle==="모션 오펜스"?.018:offStyle==="속공"?.015:0),.22,.78);
    if(simHas(shooter,"캐치 앤 슛")&&isThree)chance+=.035;
    if(simHas(shooter,"미드레인지 전문가")&&!isThree)chance+=.025;
    if(simHas(shooter,"림 프로텍터")&&!isThree)chance-=.01;
@@ -1289,25 +1289,24 @@ function simulateBoxScore(home,away){
     continue;
    }
    const shootingFoul=Math.random()<simClamp(.075+(simAttr(shooter,"aggression")-10)*.003+(insideSkill-10)*.004,.035,.16);
-   if(Math.random()<chance){
+   const made=Math.random()<chance;if(made){
     st.fgm++;if(isThree)st.threeM++;
     const points=isThree?3:2;st.pts+=points;score+=points;
-    const passer=simWeighted(active.filter(p=>p.id!==shooter.id),p=>Math.max(.1,simAttr(p,"pass")*.45+simAttr(p,"vision")*.35+simAttr(p,"teamwork")*.2));
-    if(passer&&Math.random()<simClamp(.48+(simAttr(passer,"vision")-10)*.018+(simAttr(passer,"pass")-10)*.012,.28,.78))offBox[passer.id].ast++;
+    const passer=simWeighted(active.filter(p=>p.id!==shooter.id),p=>{let w=Math.max(.1,simAttr(p,"pass")*.45+simAttr(p,"vision")*.35+simAttr(p,"teamwork")*.2);if(offStyle==="포스트업"||offStyle==="포스트업 중심"){if(["PG","SG"].includes(p.pos)&&["PF","C"].includes(shooter.pos))w*=1.5}if(p.gameInstruction==="패스 우선")w*=1.35;return w});
+    if(passer&&Math.random()<simClamp(.48+(simAttr(passer,"vision")-10)*.018+(simAttr(passer,"pass")-10)*.012+(offStyle==="모션 오펜스"?.13:offStyle==="픽앤롤 중심"?.08:0),.28,.9))offBox[passer.id].ast++;
    }else{
     const rebounder=simWeighted(defenders,p=>Math.max(.1,simAttr(p,"rebound")*.65+simAttr(p,"strength")*.15+simAttr(p,"jumping")*.2));
     if(rebounder){defBox[rebounder.id].reb++;defBox[rebounder.id].dreb++}
     else {const own=simWeighted(active,p=>Math.max(.1,simAttr(p,"rebound")));if(own){offBox[own.id].reb++;offBox[own.id].oreb++;if(Math.random()<.18){own.id&& (offBox[own.id].fga+=0)}}}
    }
    if(shootingFoul){
-    const ftCount=isThree&&Math.random()<.28?3:2;
+    const ftCount=made?1:(isThree?3:2);
     const ftPct=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);
     for(let z=0;z<ftCount;z++){st.fta++;if(Math.random()<ftPct){st.ftm++;st.pts++;score++}}
     if(defender&&ds)ds.pf++;
    }else if(Math.random()<.075&&defender&&ds)ds.pf++;
    if(defender&&Math.random()<simClamp((simAttr(defender,"block")-8)*.012+(simAttr(defender,"jumping")-10)*.004,.015,.13))ds.blk++;
   }
-  active.forEach(p=>{const st=offBox[p.id];st.pf+=Math.random()<.12?1:0});
   return score;
  };
  let hscore=run(home,away,hl,al,hb,ab,hs,as,hposs,true);
@@ -1827,8 +1826,9 @@ simAttr=function(p,k,d=10){
  @media(max-width:850px){.fm-main,.fm-control-grid{grid-template-columns:1fr}.fm-halfcourt{height:360px}.fm-slot{width:95px}.fm-candidate-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
  `;document.head.appendChild(st);
 })();
+function bmApplyFormation(n){const xy=bmFormationCoords(n);document.querySelectorAll(".fm-slot").forEach((el,i)=>{if(xy[i]){el.style.left=xy[i][0]+"%";el.style.top=xy[i][1]+"%"}})}
 function bmFormationCoords(n){const f={"4-Out 1-In":[[50,68],[17,47],[83,47],[17,23],[50,24]],"5-Out":[[50,68],[17,47],[83,47],[28,24],[72,24]],"3-Out 2-In":[[50,68],[18,48],[82,48],[38,28],[62,28]],"Horns":[[50,68],[18,48],[82,48],[39,39],[61,39]],"1-4 High":[[50,68],[16,51],[38,51],[62,51],[84,51]]};return f[n]||f["4-Out 1-In"]}
-function bmCoachCard(p){return '<div class="fm-pcard" data-pid="'+bmEsc(p.id)+'" onclick="bmPickCoachPlayer(\''+bmEsc(p.id)+'\')" onpointerdown="bmCoachPointerDown(event,\''+bmEsc(p.id)+'\')">'+boxPhoto(p,36)+'<b>'+bmEsc(p.name)+'</b><small>'+bmEsc(p.pos||"")+' · '+p.ovr+' OVR</small></div>'}
+function bmCoachCard(p){return '<div class="fm-pcard" data-pid="'+bmEsc(p.id)+'" onpointerdown="bmCoachPointerDown(event,\''+bmEsc(p.id)+'\')">'+boxPhoto(p,36)+'<b>'+bmEsc(p.name)+'</b><small>'+bmEsc(p.pos||"")+' · '+p.ovr+' OVR</small></div>'}
 function bmCoachPointerDown(e,id){
  if(e.button!==undefined&&e.button!==0)return;e.preventDefault();const card=e.currentTarget;window.bmDragV2={id,x:e.clientX,y:e.clientY,src:card};
  const move=ev=>{const d=window.bmDragV2;if(!d)return;if(!d.ghost&&Math.hypot(ev.clientX-d.x,ev.clientY-d.y)>7){d.ghost=d.src.cloneNode(true);d.ghost.classList.add("fm-drag-ghost");d.src.classList.add("is-dragging");document.body.appendChild(d.ghost)}
@@ -1847,7 +1847,7 @@ function bmCoachBoard(mode){
  const opts=(arr,sel)=>arr.map(x=>'<option value="'+bmEsc(x)+'" '+(sel===x?'selected':'')+'>'+bmEsc(x)+'</option>').join("");
  const active=[...ids,...bench],status=pool.filter(p=>active.includes(p.id)).map(p=>{const b=(c.homeBox?.[p.id]||c.awayBox?.[p.id]||{}),fat=Math.min(100,Math.round((p.fatigue||0)+(c.liveMinutes?.[p.id]||0)*.65));return '<div class="fm-health-player"><b>'+bmEsc(p.name)+' · '+(ids.includes(p.id)?"선발":"벤치")+'</b><br>체력 '+(100-fat)+'% · 컨디션 '+Math.round(p.condition||75)+'% · 파울 '+(b.pf||0)+'개<div class="fm-meter"><i style="width:'+(100-fat)+'%"></i></div>'+(p.injured||p.injury?'<small>부상 확인</small>':'')+'</div>'}).join("");
  const inst=["기본 역할","외곽슛 우선","패스 우선","돌파 우선","수비 집중","리바운드 집중"];
- document.getElementById("main").innerHTML='<div class="fm-coach"><header><div><div class="eyebrow">COACHING ROOM · ROUND '+g.round+'</div><h1>'+(pre?'경기 전 전술 설정':(c.quarter+1)+'쿼터 전술 타임')+'</h1><p>선수를 탭한 뒤 포지션을 탭하거나, 카드를 끌어 코트의 원하는 위치에 놓으세요.</p></div><button class="btn ghost" onclick="bmCloseCoach()">닫기</button></header><div class="fm-main"><section class="fm-court-wrap"><h3>공격 하프코트 · 선발 5명</h3>'+court+'</section><aside class="fm-candidates"><h3>출전 후보 ('+active.length+'/13)</h3><div class="fm-candidate-list">'+pool.filter(p=>!ids.includes(p.id)).map(bmCoachCard).join("")+'</div><h3>벤치 출전 명단 ('+bench.length+'/8)</h3><p class="fm-explain">체크한 선수만 이번 경기 출전 가능. 미선택 선수는 이번 경기 DNP이며 팀 로스터에는 남습니다.</p><div class="fm-bench-list">'+pool.filter(p=>!ids.includes(p.id)).map(p=>'<label><input type="checkbox" class="fm-bench-check" value="'+bmEsc(p.id)+'" '+(bench.includes(p.id)?'checked':'')+' onchange="bmBenchLimit(this)"> '+bmEsc(p.name)+'</label>').join("")+'</div></aside></div>'+(pre?'':'<section class="fm-health-panel" style="margin-top:12px"><h3>선수 체력 · 컨디션 · 파울</h3><div class="fm-health-list">'+status+'</div></section>')+'<div class="fm-control-grid"><section><h3>팀 전술</h3><label>포메이션<select id="fmFormation">'+opts(["4-Out 1-In","5-Out","3-Out 2-In","Horns","1-4 High"],tac.formation||"4-Out 1-In")+'</select></label><label>공격<select id="fmOff">'+opts(["균형","픽앤롤 중심","3점슛 중심","속공","포스트업","아이솔레이션","모션 오펜스","컷인 중심"],tac.off||"균형")+'</select></label><label>수비<select id="fmDef">'+opts(["맨투맨","2-3 지역방어","3-2 지역방어","풀코트 프레스","하프코트 프레스","스위치","드롭 커버리지"],tac.def||"맨투맨")+'</select></label><label>템포<select id="fmTempo">'+opts(["빠르게","보통","느리게"],tac.tempo||"보통")+'</select></label></section><section><h3>개인 전술</h3><p class="fm-explain">기본 역할은 지시 없이 능력과 상황에 따라 자동으로 움직입니다.</p><div class="fm-personal">'+["PG","SG","SF","PF","C"].map((v,i)=>{const p=t.players.find(x=>String(x.id)===String(ids[i]));return '<label>'+(p?bmEsc(p.name):v)+'<select id="fmInst'+i+'">'+opts(inst,(pre?c.instructions:c.userInstructions||{})?.[ids[i]]||"기본 역할")+'</select></label>'}).join("")+'</div></section></div><button class="btn primary fm-confirm" onclick="'+(pre?'bmConfirmPreCoach()':'bmConfirmQuarterCoach()')+'">'+(pre?'전술 확정 · 1쿼터 시작':'변경 적용 · 다음 쿼터 시작')+'</button></div>';
+ document.getElementById("main").innerHTML='<div class="fm-coach"><header><div><div class="eyebrow">COACHING ROOM · ROUND '+g.round+'</div><h1>'+(pre?'경기 전 전술 설정':(c.quarter+1)+'쿼터 전술 타임')+'</h1><p>선수를 탭한 뒤 포지션을 탭하거나, 카드를 끌어 코트의 원하는 위치에 놓으세요.</p></div><button class="btn ghost" onclick="bmCloseCoach()">닫기</button></header><div class="fm-main"><section class="fm-court-wrap"><h3>공격 하프코트 · 선발 5명</h3>'+court+'</section><aside class="fm-candidates"><h3>출전 후보 ('+active.length+'/13)</h3><div class="fm-candidate-list">'+pool.filter(p=>!ids.includes(p.id)).map(bmCoachCard).join("")+'</div><h3>벤치 출전 명단 ('+bench.length+'/8)</h3><p class="fm-explain">체크한 선수만 이번 경기 출전 가능. 미선택 선수는 이번 경기 DNP이며 팀 로스터에는 남습니다.</p><div class="fm-bench-list">'+pool.filter(p=>!ids.includes(p.id)).map(p=>'<label><input type="checkbox" class="fm-bench-check" value="'+bmEsc(p.id)+'" '+(bench.includes(p.id)?'checked':'')+' onchange="bmBenchLimit(this)"> '+bmEsc(p.name)+'</label>').join("")+'</div></aside></div>'+(pre?'':'<section class="fm-health-panel" style="margin-top:12px"><h3>선수 체력 · 컨디션 · 파울</h3><div class="fm-health-list">'+status+'</div></section>')+'<div class="fm-control-grid"><section><h3>팀 전술</h3><label>포메이션<select id="fmFormation" onchange="bmApplyFormation(this.value)">'+opts(["4-Out 1-In","5-Out","3-Out 2-In","Horns","1-4 High"],tac.formation||"4-Out 1-In")+'</select></label><label>공격<select id="fmOff">'+opts(["균형","픽앤롤 중심","3점슛 중심","속공","포스트업","아이솔레이션","모션 오펜스","컷인 중심"],tac.off||"균형")+'</select></label><label>수비<select id="fmDef">'+opts(["맨투맨","2-3 지역방어","3-2 지역방어","풀코트 프레스","하프코트 프레스","스위치","드롭 커버리지"],tac.def||"맨투맨")+'</select></label><label>템포<select id="fmTempo">'+opts(["빠르게","보통","느리게"],tac.tempo||"보통")+'</select></label></section><section><h3>개인 전술</h3><p class="fm-explain">기본 역할은 지시 없이 능력과 상황에 따라 자동으로 움직입니다.</p><div class="fm-personal">'+["PG","SG","SF","PF","C"].map((v,i)=>{const p=t.players.find(x=>String(x.id)===String(ids[i]));return '<label>'+(p?bmEsc(p.name):v)+'<select id="fmInst'+i+'">'+opts(inst,(pre?c.instructions:c.userInstructions||{})?.[ids[i]]||"기본 역할")+'</select></label>'}).join("")+'</div></section></div><button class="btn primary fm-confirm" onclick="'+(pre?'bmConfirmPreCoach()':'bmConfirmQuarterCoach()')+'">'+(pre?'전술 확정 · 1쿼터 시작':'변경 적용 · 다음 쿼터 시작')+'</button></div>';
  window.bmCoachMode=mode;window.bmCoachSelected=null;
 }
 function bmCloseCoach(){if(window.bmCoachMode==="pre")nav("schedule");else renderQuarterBreak()}
