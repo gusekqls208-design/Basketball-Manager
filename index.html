@@ -1590,3 +1590,10 @@ function sortBoxScore(side,key){
  else {const old=boxSortState[side]||{key:"",dir:-1};boxSortState[side]={key,dir:old.key===key?-old.dir:-1};}
  const g=state.schedule.find(x=>x.id===window.currentBoxGameId);if(g)showGame(g.id);
 }
+
+function selectStartingFive(team){return bmBestFive(team);}
+function simLine(team){
+ const starters=selectStartingFive(team),pool=(team.players||[]).filter(p=>!starters.some(x=>x.id===p.id));
+ pool.sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a));
+ return {starters,rotation:[...starters,...pool.slice(0,5)]};
+}
