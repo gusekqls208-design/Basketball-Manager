@@ -1361,4 +1361,103 @@ function homePage(m){
 (function installBoxScoreStyles(){if(document.getElementById("instantBoxScoreStyles"))return;const st=document.createElement("style");st.id="instantBoxScoreStyles";st.textContent='.bs-page{padding:clamp(12px,2vw,26px);max-width:1450px;margin:auto}.bs-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.bs-top h1{font-size:clamp(22px,3vw,34px);margin:4px 0}.bs-score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;gap:14px;padding:22px 12px;background:linear-gradient(135deg,#202a35,#151b23);border:1px solid #344250;border-radius:14px}.bs-score>div{display:flex;flex-direction:column;gap:5px}.bs-score small,.bs-score>span{color:#9cabb8;font-size:11px;letter-spacing:1.3px}.bs-score b{font-size:clamp(13px,2vw,19px)}.bs-score strong{font-size:clamp(34px,6vw,58px);line-height:1.05}.bs-team-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 22px}.bs-team-summary>div{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;background:#1a222c;border-radius:9px}.bs-team-summary b{font-size:18px}.bs-team-summary small{font-size:10px;color:#9ba8b5;margin-right:9px}.bs-team{margin:18px 0 24px}.bs-team-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.bs-team-head h3{font-size:18px;margin:0 0 10px}.bs-team-head span,.bs-foot{font-size:11px;color:#91a0ae}.bs-scroll{overflow-x:auto;border:1px solid #303b47;border-radius:9px}.bs-table{width:100%;min-width:790px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.bs-table th{background:#202a35;color:#9eafbd;font-size:10px;letter-spacing:.5px;padding:10px 8px;text-align:right;white-space:nowrap}.bs-table th:first-child,.bs-table td:first-child{text-align:left}.bs-table td{padding:9px 8px;text-align:right;border-top:1px solid #29333e;white-space:nowrap}.bs-table .bs-player{min-width:135px}.bs-player b,.bs-player small{display:block}.bs-player small{font-size:10px;color:#91a0ae;margin-top:2px}.bs-table .starter-row{background:#1c2935}.bs-subhead td{background:#151d26;color:#91a0ae;font-size:10px;letter-spacing:1px;text-align:left!important}.bs-foot{padding:8px 0 20px}@media(max-width:700px){.bs-top{align-items:flex-start}.bs-score{gap:6px;padding:16px 6px}.bs-score b{font-size:12px}.bs-team-summary>div{gap:5px}.bs-team-summary small{margin-right:3px}}';document.head.appendChild(st)})();
 
 if(state?.clubs){document.getElementById("sidebar").classList.remove("hidden");if(state.rosterSourceVersion>=5)render();else document.getElementById("main").innerHTML='<div class="notice">저장된 커리어의 선수단을 2026–27 실제 NBA 전체 로스터로 교체하고 있습니다…</div>';syncOfficialRosters().then(()=>{state.bulkScoutingVersion=3;persist();});}else renderSetup();
+
+/* BOX SCORE PRESENTATION + ROTATION MINUTES REVISION */
+let boxSortState={home:{key:"",dir:-1},away:{key:"",dir:-1}};
+function simDistributeMinutes(line){
+ const active=line.rotation||[],mins={};if(!active.length)return mins;
+ const starters=line.starters||[],starterIds=new Set(starters.map(p=>p.id));
+ const values=active.map((p,i)=>{
+  const starter=starterIds.has(p.id);
+  const condition=simClamp((Number(p.condition)||75)/85,.65,1.12);
+  const fatigue=simClamp(1-(Number(p.fatigue)||0)/170,.55,1);
+  const quality=simClamp((Number(p.ovr)||50)/72,.72,1.22);
+  const roleBoost=["프랜차이즈 스타","핵심 선수"].includes(p.role)?1.12:p.role==="선발"?1.04:p.role==="전력 외"?.78:1;
+  const weight=quality*condition*fatigue*roleBoost*(.88+Math.random()*.24);
+  return {p,starter,weight,min:starter?27+Math.floor(Math.random()*5):8+Math.floor(Math.random()*6)};
+ });
+ let total=values.reduce((a,x)=>a+x.min,0);
+ while(total<240){
+  const eligible=values.filter(x=>x.min<(x.starter?38:26));
+  if(!eligible.length)break;
+  const sum=eligible.reduce((a,x)=>a+x.weight,0);let r=Math.random()*sum;
+  let chosen=eligible[eligible.length-1];
+  for(const x of eligible){r-=x.weight;if(r<=0){chosen=x;break}}
+  chosen.min++;total++;
+ }
+ while(total>240){
+  const eligible=values.filter(x=>x.min>(x.starter?24:5));
+  if(!eligible.length)break;
+  eligible.sort((a,b)=>(a.weight/(a.min+1))-(b.weight/(b.min+1)));
+  eligible[0].min--;total--;
+ }
+ values.forEach(x=>mins[x.p.id]=x.min);
+ return mins;
+}
+function boxPhoto(p,size=42){
+ const url=p.photoUrl||p.headshot?.href||"";
+ const initials=String(p.name||"?").split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
+ return '<span class="bs-avatar">'+(url?'<img src="'+bmEsc(url)+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'">':'')+'<span class="bs-avatar-fallback" '+(url?'style="display:none"':'')+'>'+bmEsc(initials)+'</span></span>';
+}
+function boxGameScore(s){
+ return (s.pts||0)+.4*(s.fgm||0)-.7*(s.fga||0)-.4*((s.fta||0)-(s.ftm||0))+.7*(s.oreb||0)+.3*((s.reb||0)-(s.oreb||0))+(s.ast||0)+ (s.stl||0)+.7*(s.blk||0)-.4*(s.pf||0)-(s.tov||0);
+}
+function sortBoxScore(side,key){
+ const old=boxSortState[side]||{key:"",dir:-1};
+ boxSortState[side]={key,dir:old.key===key?-old.dir:-1};
+ const g=state.schedule.find(x=>x.id===window.currentBoxGameId);
+ if(g)showGame(g.id);
+}
+function showGame(id){
+ const g=state.schedule.find(x=>x.id===id);if(!g||!g.played||!g.boxscore){nav("schedule");return}
+ window.currentBoxGameId=id;
+ document.body.classList.remove("broadcast-mode");
+ const main=document.getElementById("main"),home=club(g.home),away=club(g.away),bs=g.boxscore,esc=bmEsc;
+ const fmtMin=v=>Math.max(0,Math.round(Number(v)||0))+"분";
+ const positionOrder={PG:0,SG:1,SF:2,PF:3,C:4};
+ const sortKeys=["min","pts","reb","ast","stl","blk","tov","pf","fg","three","ft"];
+ const labels={min:"MIN",pts:"PTS",reb:"REB",ast:"AST",stl:"STL",blk:"BLK",tov:"TO",pf:"PF",fg:"FG",three:"3P",ft:"FT"};
+ const rowValue=(s,k)=>k==="fg"?s.fgm/(s.fga||1):k==="three"?s.threeM/(s.threeA||1):k==="ft"?s.ftm/(s.fta||1):Number(s[k]||0);
+ const header=(side,key)=>'<th><button class="bs-sort '+((boxSortState[side]||{}).key===key?'active':'')+'" onclick="sortBoxScore(\''+side+'\',\''+key+'\')">'+labels[key]+(((boxSortState[side]||{}).key===key)?((boxSortState[side].dir===1)?' ↑':' ↓'):' ↕')+'</button></th>';
+ const teamTable=(team,box,starterIds,side)=>{
+  const starters=(starterIds||[]).map(id=>team.players.find(p=>p.id===id)).filter(Boolean);
+  const starterRank=new Map(starters.map((p,i)=>[p.id,i]));
+  const rows=team.players.map(p=>({p,s:box[p.id]||simMakeStats(p)}));
+  const active=rows.filter(x=>!x.s.dnp&&x.s.min>0);
+  const stateSort=boxSortState[side]||{key:"",dir:-1};
+  if(stateSort.key){
+   active.sort((a,b)=>{
+    const k=stateSort.key;
+    if(k==="name")return String(a.p.name||"").localeCompare(String(b.p.name||""),"ko")*stateSort.dir;
+    return (rowValue(a.s,k)-rowValue(b.s,k))*stateSort.dir;
+   });
+  }else{
+   active.sort((a,b)=>{
+    const ar=starterRank.has(a.p.id),br=starterRank.has(b.p.id);
+    if(ar&&br)return starterRank.get(a.p.id)-starterRank.get(b.p.id);
+    if(ar!==br)return ar?-1:1;
+    return (b.s.min-a.s.min)||(b.s.pts-a.s.pts);
+   });
+  }
+  const bench=active.filter(x=>!starterRank.has(x.p.id)).sort((a,b)=>b.s.min-a.s.min);
+  const sixth=bench[0]?.p.id;
+  const dnp=rows.filter(x=>x.s.dnp||!x.s.min);
+  const renderRows=arr=>arr.map(({p,s})=>{
+   const isStarter=starterRank.has(p.id),roleLabel=isStarter?"선발":p.id===sixth?"식스맨":"벤치";
+   return '<tr class="'+(isStarter?'starter-row':'')+'"><td class="bs-player"><div class="bs-player-cell">'+boxPhoto(p)+'<span><b>'+esc(p.name)+'</b><small>'+esc(p.pos||"—")+' · '+roleLabel+'</small></span></div></td><td>'+fmtMin(s.min)+'</td><td><b>'+s.pts+'</b></td><td>'+s.reb+'</td><td>'+s.ast+'</td><td>'+s.stl+'</td><td>'+s.blk+'</td><td>'+s.tov+'</td><td>'+s.pf+'</td><td>'+s.fgm+'/'+s.fga+'</td><td>'+s.threeM+'/'+s.threeA+'</td><td>'+s.ftm+'/'+s.fta+'</td></tr>';
+  }).join("");
+  return '<section class="bs-team"><div class="bs-team-head"><h3>'+esc(team.name)+'</h3><span>'+active.filter(x=>starterRank.has(x.p.id)).length+' 선발 · '+bench.length+' 벤치 출전</span></div><div class="bs-scroll"><table class="bs-table"><thead><tr><th>선수</th>'+header(side,"min")+header(side,"pts")+header(side,"reb")+header(side,"ast")+header(side,"stl")+header(side,"blk")+header(side,"tov")+header(side,"pf")+header(side,"fg")+header(side,"three")+header(side,"ft")+'</tr></thead><tbody>'+renderRows(active)+(dnp.length?'<tr class="bs-subhead"><td colspan="12">DID NOT PLAY</td></tr>'+renderRows(dnp):'')+'</tbody></table></div></section>';
+ };
+ const allPlayers=[...home.players.map(p=>({p,s:bs.home[p.id]||simMakeStats(p),team:home})),...away.players.map(p=>({p,s:bs.away[p.id]||simMakeStats(p),team:away}))].filter(x=>!x.s.dnp&&x.s.min>0);
+ const mom=allPlayers.sort((a,b)=>boxGameScore(b.s)-boxGameScore(a.s))[0];
+ const momHtml=mom?'<section class="bs-mom"><div class="bs-mom-label">PLAYER OF THE GAME</div><div class="bs-mom-main">'+boxPhoto(mom.p,110)+'<div class="bs-mom-info"><small>'+esc(mom.team.name)+' · '+esc(mom.p.pos||"")+'</small><h2>'+esc(mom.p.name)+'</h2><div class="bs-mom-stats"><span><b>'+mom.s.pts+'</b><small>PTS</small></span><span><b>'+mom.s.reb+'</b><small>REB</small></span><span><b>'+mom.s.ast+'</b><small>AST</small></span><span><b>'+mom.s.stl+'</b><small>STL</small></span><span><b>'+mom.s.blk+'</b><small>BLK</small></span></div><div class="bs-mom-shooting">FG '+mom.s.fgm+'/'+mom.s.fga+'　 ·　 3P '+mom.s.threeM+'/'+mom.s.threeA+'　 ·　 FT '+mom.s.ftm+'/'+mom.s.fta+'　 ·　 '+fmtMin(mom.s.min)+'</div></div></div></section>':'';
+ main.innerHTML='<div class="bs-page"><div class="bs-top"><div><div class="eyebrow">GAME CENTER · ROUND '+g.round+'</div><h1>FINAL BOX SCORE</h1></div><button class="btn ghost" onclick="nav(\'schedule\')">일정으로 돌아가기</button></div><div class="bs-score"><div><small>HOME</small><b>'+esc(home.name)+'</b><strong>'+g.hs+'</strong></div><span>FINAL</span><div><small>AWAY</small><b>'+esc(away.name)+'</b><strong>'+g.as+'</strong></div></div>'+momHtml+teamTable(home,bs.home,bs.homeLine||[],"home")+teamTable(away,bs.away,bs.awayLine||[],"away")+'<div class="bs-foot">선수 사진은 실제 NBA 선수 프로필 기준 · 출전시간은 팀별 총 240분 · DNP는 미출전 선수 · 각 기록 제목을 누르면 정렬됩니다.</div></div>';
+}
+(function installBoxScoreV2Styles(){
+ if(document.getElementById("instantBoxScoreV2Styles"))return;
+ const st=document.createElement("style");st.id="instantBoxScoreV2Styles";
+ st.textContent='.bs-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;overflow:hidden;display:inline-grid;place-items:center;background:#263746;border:1px solid #526779}.bs-avatar img{width:100%;height:100%;object-fit:cover}.bs-avatar-fallback{width:100%;height:100%;display:grid;place-items:center;color:#dceaf4;font-size:12px;font-weight:800;background:linear-gradient(145deg,#476078,#172432)}.bs-player-cell{display:flex;align-items:center;gap:9px;min-width:180px}.bs-player-cell>span:last-child{display:block}.bs-player-cell b,.bs-player-cell small{display:block}.bs-player-cell small{font-size:10px;color:#91a0ae;margin-top:3px}.bs-sort{border:0;background:none;color:#a8b8c6;font:inherit;font-size:10px;font-weight:800;letter-spacing:.5px;padding:2px 1px;cursor:pointer}.bs-sort.active{color:#8bd5f4}.bs-sort:hover{color:#fff}.bs-mom{margin:16px 0 24px;padding:18px;background:linear-gradient(120deg,#1d2d3b,#17212c);border:1px solid #496176;border-radius:13px}.bs-mom-label{font-size:11px;letter-spacing:2px;color:#8bd5f4;font-weight:900;margin-bottom:13px}.bs-mom-main{display:flex;align-items:center;gap:18px}.bs-mom .bs-avatar{width:104px;height:104px;flex-basis:104px;border-width:2px}.bs-mom .bs-avatar-fallback{font-size:26px}.bs-mom-info{min-width:0;flex:1}.bs-mom-info>small{font-size:11px;color:#9fb1c0}.bs-mom-info h2{font-size:clamp(22px,3vw,30px);margin:4px 0 12px}.bs-mom-stats{display:flex;gap:clamp(12px,2.5vw,28px);flex-wrap:wrap}.bs-mom-stats span{display:flex;flex-direction:column;gap:2px}.bs-mom-stats b{font-size:22px;font-variant-numeric:tabular-nums}.bs-mom-stats small{font-size:9px;color:#91a0ae;letter-spacing:1px}.bs-mom-shooting{font-size:11px;color:#a6b5c2;margin-top:12px}@media(max-width:700px){.bs-mom{padding:13px}.bs-mom-main{gap:12px}.bs-mom .bs-avatar{width:76px;height:76px;flex-basis:76px}.bs-mom-stats{gap:12px}.bs-mom-stats b{font-size:19px}}';
+ document.head.appendChild(st);
+})();
+
 </script></body></html>
