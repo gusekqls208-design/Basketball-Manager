@@ -1526,7 +1526,7 @@ function bmMergeBox(target,part){
 }
 function runNextQuarter(){
  const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),home=club(g.home),away=club(g.away),user=club(state.teamId),userIds=m.userStarters;
- const userLine=bmQuarterLine(user,userIds),opp= m.userIsHome?away:home,oppLine=simLine(opp);
+ const userLine=bmQuarterLine(user,userIds,m.userBench),opp= m.userIsHome?away:home,oppLine=simLine(opp);
  const hLine=m.userIsHome?userLine:oppLine,aLine=m.userIsHome?oppLine:userLine;
  const oldLine=simLine,oldMinutes=simDistributeMinutes;
  try{
@@ -1534,7 +1534,7 @@ function runNextQuarter(){
   simDistributeMinutes=function(line){return bmQuarterMinutes(line)};
   const r=simulateBoxScore(home,away),q=m.quarter;
   const hq=Math.round(r.homeScore/4),aq=Math.round(r.awayScore/4);
-  const hb=bmQuarterBox(r.homeBox,home,r.homeMinutes||bmQuarterMinutes(hLine),hLine),ab=bmQuarterBox(r.awayBox,away,r.awayMinutes||bmQuarterMinutes(aLine),aLine);
+  const hb=bmQuarterBox(r.homeBox,home,r.homeMinutes||bmQuarterMinutes(hLine),hLine),ab=bmQuarterBox(r.awayBox,away,r.awayMinutes||bmQuarterMinutes(aLine),aLine);bmReconcilePoints(hb,home,hq);bmReconcilePoints(ab,away,aq);
   bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);
   m.homeScore+=hq;m.awayScore+=aq;m.quarters.push({home:hq,away:aq});m.homeLine=hLine.starters.map(p=>p.id);m.awayLine=aLine.starters.map(p=>p.id);m.quarter++;
  }finally{simLine=oldLine;simDistributeMinutes=oldMinutes}
@@ -1568,3 +1568,19 @@ function finishQuarterGame(){
  state.gameCount=(state.gameCount||0)+1;state.round=g.round;state.log.unshift({text:teamName(g.home)+" "+g.hs+" - "+g.as+" "+teamName(g.away),round:g.round});delete state.gameInProgress;delete state.matchSetup;persist();showGame(g.id);
 }
 (function installQuarterFlowStyles(){if(document.getElementById("quarterFlowStyles"))return;const st=document.createElement("style");st.id="quarterFlowStyles";st.textContent='.q-setup-grid,.q-break-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.q-setup-lineup{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.q-setup-slot label,.q-tactic-field label{display:block;font-size:10px;color:#9fb0bf;margin-bottom:5px;font-weight:800}.q-setup-slot select,.q-tactic-field select{width:100%;min-width:0}.q-bench-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.q-bench-list label{font-size:11px;display:flex;gap:6px;align-items:center}.q-bench-list small{color:#8e9ba7}.q-tactic-field{margin:12px 0}.q-score-table{width:100%;font-variant-numeric:tabular-nums}.q-score-table th,.q-score-table td{padding:12px;text-align:center}.q-adjust-overlay{position:fixed;inset:0;z-index:120;background:#05080de8;display:flex;align-items:center;justify-content:center;padding:14px}.q-adjust-modal{width:min(720px,100%);max-height:92vh;overflow:auto;background:#171f29;border:1px solid #536779;border-radius:13px;padding:18px;box-shadow:0 20px 80px #000b}.q-adjust-modal h2{margin:4px 0}.q-adjust-modal .q-setup-lineup{margin:15px 0}@media(max-width:760px){.q-setup-grid,.q-break-grid{grid-template-columns:1fr}.q-setup-lineup{grid-template-columns:repeat(2,minmax(0,1fr))}.q-setup-slot:last-child{grid-column:span 2}.q-bench-list{grid-template-columns:1fr 1fr}}';document.head.appendChild(st)})();
+
+function bmQuarterLine(team,ids,benchIds){
+ const starters=ids.map(id=>team.players.find(p=>p.id===id)).filter(Boolean);
+ let rest=(benchIds||[]).map(id=>team.players.find(p=>p.id===id)).filter(p=>p&&!ids.includes(p.id));
+ const fallback=team.players.filter(p=>!ids.includes(p.id)&&!rest.some(x=>x.id===p.id)).sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a));
+ rest=[...rest,...fallback].slice(0,5);
+ return {starters,rotation:[...starters,...rest]};
+}
+function bmReconcilePoints(box,team,target){
+ const players=team.players.map(p=>({p,s:box[p.id]})).filter(x=>x.s&&!x.s.dnp);
+ if(!players.length)return;
+ let diff=target-players.reduce((a,x)=>a+(x.s.pts||0),0);
+ players.sort((a,b)=>bmPlayerQuality(b.p)-bmPlayerQuality(a.p));
+ if(diff>=0)players[0].s.pts+=diff;
+ else for(const x of players){const take=Math.min(x.s.pts,-diff);x.s.pts-=take;diff+=take;if(diff>=0)break;}
+}
