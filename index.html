@@ -2366,4 +2366,28 @@ editPlayer=function(id){
 }
 function openBoxPlayerProfile(pid,tid){const t=club(tid);if(t?.players.some(p=>String(p.id)===String(pid)))editPlayer(pid)}
 
+
+/* No routine automatic rotation: the manager controls the five on court at each break. */
+function bmQuarterActiveFive(team,starters,bench,segment){return starters.map(id=>team.players.find(p=>String(p.id)===String(id))).filter(Boolean).slice(0,5)}
+function bmCoachAdvice(q,home,away,userHome){
+ const own=userHome?q.homeBox:q.awayBox,opp=userHome?q.awayBox:q.homeBox,user=userHome?home:away,other=userHome?away:home;
+ const sum=x=>Object.values(x).reduce((a,s)=>{for(const k of ["pts","reb","ast","tov","fga","fgm","threeA","threeM","fta","ftm"])a[k]=(a[k]||0)+(s[k]||0);return a},{});
+ const a=sum(own),b=sum(opp),pct=x=>x.fga?Math.round(x.fgm/x.fga*100):0,threePct=x=>x.threeA?Math.round(x.threeM/x.threeA*100):0,out=[];
+ if(pct(a)<40)out.push(["공격 효율 저하","우리 야투 성공률 "+pct(a)+"%. 픽앤롤이나 모션 오펜스로 더 좋은 슛 기회를 만드세요."]);
+ if(a.threeA<Math.max(3,b.threeA*.7))out.push(["외곽 공격 부족","3점 시도가 적습니다. 3점슛 중심 전술이나 5-Out 포메이션으로 외곽을 넓히세요."]);
+ if(a.threeA>=4&&threePct(a)<25)out.push(["외곽슛 난조","3점 성공률 "+threePct(a)+"%. 외곽슛보다 돌파·픽앤롤로 수비를 흔드는 편이 낫습니다."]);
+ if(a.reb<b.reb-3)out.push(["리바운드 열세","리바운드가 "+(b.reb-a.reb)+"개 뒤집혀 있습니다. 리바운드 집중 지시와 3-Out 2-In을 검토하세요."]);
+ if(a.tov>b.tov+2)out.push(["턴오버 과다","실책이 상대보다 "+(a.tov-b.tov)+"개 많습니다. 템포를 낮추고 패스 우선 지시를 검토하세요."]);
+ if(pct(b)>48)out.push(["수비 불안","상대 야투 성공률 "+pct(b)+"%. 맨투맨·스위치 전환과 수비 집중 지시를 검토하세요."]);
+ const leader=other.players.map(p=>({p,x:opp[p.id]})).filter(z=>z.x&&!z.x.dnp&&z.x.min>0).sort((x,y)=>(y.x.pts*1.2+y.x.ast+y.x.reb*.4)-(x.x.pts*1.2+x.x.ast+x.x.reb*.4))[0];
+ if(leader&&(leader.x.pts>=7||leader.x.ast>=3))out.push(["집중 견제 대상",leader.p.name+" · "+leader.x.pts+"점 "+leader.x.reb+"REB "+leader.x.ast+"AST. 해당 포지션 수비 매치업을 바꾸세요."]);
+ const cumulative=state.gameInProgress?(userHome?state.gameInProgress.homeBox:state.gameInProgress.awayBox):own;
+ const foulRisk=user.players.map(p=>({p,x:cumulative[p.id]||own[p.id]})).filter(z=>z.x.pf>=4||Number(z.p.fatigue)>=82);
+ for(const z of foulRisk.slice(0,2))out.push(["선수 교체 검토",z.p.name+" · 누적 "+(z.x.pf||0)+"파울 / 피로도 "+Math.round(z.p.fatigue||0)+"%. 다음 쿼터에는 벤치 선수 투입을 검토하세요."]);
+ const cold=user.players.map(p=>({p,x:own[p.id]})).filter(z=>z.x&&z.x.fga>=4&&z.x.fgm/z.x.fga<.25).sort((x,y)=>x.x.fgm/x.x.fga-y.x.fgm/y.x.fga)[0];
+ if(cold)out.push(["공격 옵션 조정",cold.p.name+"의 야투가 "+cold.x.fgm+"/"+cold.x.fga+"에 그쳤습니다. 슛 비중을 줄이고 다른 공격 옵션을 활용하세요."]);
+ if(!out.length)out.push(["경기 흐름","뚜렷한 열세가 없습니다. 현재 전술을 유지하면서 상대 핵심 득점원을 계속 견제하세요."]);
+ return out;
+}
+
 </script></body></html>
