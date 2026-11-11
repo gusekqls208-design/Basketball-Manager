@@ -752,7 +752,7 @@ function resetLivePossession(m,keepSide,baselineInbound){
   line.forEach((p,i)=>{const spots={PG:{x:baseX,y:50},SG:{x:m.possHome?15:85,y:24},SF:{x:m.possHome?15:85,y:76},PF:{x:m.possHome?23:77,y:36},C:{x:m.possHome?23:77,y:64}};const q=spots[p.pos]||{x:baseX,y:50};p._x=q.x;p._y=q.y;p._tx=q.x;p._ty=q.y;const el=document.getElementById("liveP_"+p.id);if(el){el.style.left=q.x+"%";el.style.top=q.y+"%"}});
   const ball=document.getElementById("liveBall");if(ball){ball.style.left=(m.possHome?1:99)+"%";ball.style.top="50%";ball.classList.add("is-airborne")}
   liveComment("득점 인정! 상대 팀은 엔드라인 밖에서 인바운드 패스로 재개합니다.","score");
-  m.ballInFlight=true;setTimeout(()=>{if(window.liveMatch!==m||m.ended)return;const el=document.getElementById("liveP_"+guard.id),to=el?livePoint(el):{x:baseX,y:50};animateBallArc({x:m.possHome?1:99,y:50},to,650,5,()=>{if(window.liveMatch!==m||m.ended)return;m.ballInFlight=false;const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne")})},420);
+  m.ballInFlight=true;m.inboundActive=true;setTimeout(()=>{if(window.liveMatch!==m||m.ended)return;const el=document.getElementById("liveP_"+guard.id),to=el?livePoint(el):{x:baseX,y:50};animateBallArc({x:m.possHome?1:99,y:50},to,650,5,()=>{if(window.liveMatch!==m||m.ended)return;m.ballInFlight=false;m.inboundActive=false;const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne")})},420);
  }else if(guard){const x=m.possHome?28:72;moveLivePlayer(guard,x,50,"dribble");const ball=document.getElementById("liveBall");if(ball){ball.style.left=x+"%";ball.style.top="49%"}}
  updateLiveScoreboard();
 }
@@ -813,8 +813,10 @@ function positionJumpBall(m){
  }
  const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine,elapsed=m.possessionElapsed||0;
  const phase=elapsed<5?0:elapsed<9?1:elapsed<13?2:elapsed<17?3:elapsed<20?4:5;
- if(phase!==m.phase&&!m.shotInFlight){m.phase=phase;runLivePhase(m,offense,defense,phase)}
- positionLiveFormation(m,offense,defense,phase);
+ if(!m.inboundActive){
+  if(phase!==m.phase&&!m.shotInFlight){m.phase=phase;runLivePhase(m,offense,defense,phase)}
+  positionLiveFormation(m,offense,defense,phase);
+ }
 }function positionLiveFormation(m,offense,defense,phase){
  const dir=m.possHome?1:-1,handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0],base=m.possHome?58:42;
  const spread={PG:{x:base,y:50},SG:{x:base+dir*12,y:22},SF:{x:base+dir*12,y:78},PF:{x:base+dir*22,y:34},C:{x:base+dir*22,y:66}};
