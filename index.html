@@ -776,48 +776,45 @@ function positionJumpBall(m){
  const ball=document.getElementById("liveBall");if(ball){ball.style.left="50%";ball.style.top="48%";ball.classList.remove("is-airborne")}
 }function startBroadcast(m){
  if(window.broadcastTimer)clearInterval(window.broadcastTimer);
- m.jumpBallUntil=Date.now()+1500;m.jumpBallDone=false;m.ballHandlerId=null;m.ballInFlight=true;
- positionJumpBall(m);
- window.broadcastTimer=setInterval(()=>liveMatchTick(),50);
- liveComment("심판의 점프볼! 양 팀 센터가 중앙에서 공을 향해 뛰어오릅니다.");
- animateBallArc({x:50,y:48},{x:50,y:34},430,15,()=>{
-  if(window.liveMatch!==m||m.ended)return;
-  const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0];
-  if(!guard){m.ballInFlight=false;return}
-  m.ballHandlerId=guard.id;
-  liveComment((m.possHome?teamName(m.g.home):teamName(m.g.away))+" 점프볼 승리! 센터가 공을 쳐내고 가드가 받아냅니다.");
-  const el=document.getElementById("liveP_"+guard.id),to=el?livePoint(el):{x:m.possHome?35:65,y:27};
-  animateBallArc({x:50,y:34},to,620,7,()=>{
-   if(window.liveMatch!==m||m.ended)return;
-   m.ballInFlight=false;m.jumpBallDone=true;
-   const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne");
-   liveComment(guard.name+"이(가) 점프볼을 받아 드리블로 첫 공격을 시작합니다.");
+ m.jumpBallActive=true;m.jumpBallDone=false;m.ballHandlerId=null;m.ballInFlight=true;m.possessionElapsed=0;m.phase=-1;
+ positionJumpBall(m);window.broadcastTimer=setInterval(()=>liveMatchTick(),50);
+ const jumpers=[m.homeLine.find(p=>p.pos==="C")||m.homeLine[0],m.awayLine.find(p=>p.pos==="C")||m.awayLine[0]],winner=m.possHome?jumpers[0]:jumpers[1],loser=m.possHome?jumpers[1]:jumpers[0],wy=winner._y,ly=loser._y;
+ liveComment("심판이 센터 서클에서 공을 올립니다. 양 팀 센터가 점프볼을 준비합니다.");
+ setTimeout(()=>{if(window.liveMatch!==m||m.ended)return;
+  winner._y=wy-7;winner._ty=wy-7;loser._y=ly+7;loser._ty=ly+7;
+  const we=document.getElementById("liveP_"+winner.id),le=document.getElementById("liveP_"+loser.id);if(we)we.style.top=(wy-7)+"%";if(le)le.style.top=(ly+7)+"%";
+  liveComment("점프볼! "+winner.name+"이(가) 공을 쳐냅니다.");
+  animateBallArc({x:50,y:48},{x:m.possHome?42:58,y:43},420,18,()=>{
+   if(window.liveMatch!==m||m.ended)return;const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0],el=document.getElementById("liveP_"+guard.id);
+   m.ballHandlerId=guard.id;liveComment(winner.name+"의 팁! "+guard.name+"이(가) 공을 잡았습니다.");
+   animateBallArc({x:m.possHome?42:58,y:43},el?livePoint(el):{x:m.possHome?35:65,y:27},520,5,()=>{
+    if(window.liveMatch!==m||m.ended)return;m.ballInFlight=false;m.jumpBallActive=false;m.jumpBallDone=true;
+    winner._y=wy;winner._ty=wy;loser._y=ly;loser._ty=ly;if(we)we.style.top=wy+"%";if(le)le.style.top=ly+"%";
+    const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne");
+    liveComment(guard.name+"이(가) 공을 받아 그 자리에서 드리블로 경기를 시작합니다.");
+   });
   });
- });
+ },350);
 }function liveMatchTick(){
- const m=window.liveMatch;if(!m||m.paused||m.ended)return;
- if(m.shotInFlight&&m.shotInFlightSince&&Date.now()-m.shotInFlightSince>2600&&!m.shotResolved){m.shotResolved=true;m.shotInFlight=false;const o=m.possHome?m.homeLine:m.awayLine,d=m.possHome?m.awayLine:m.homeLine;resolveLiveShot(m,o,d)}
- if(m.jumpBallUntil&&Date.now()<m.jumpBallUntil)return;
+ const m=window.liveMatch;if(!m||m.paused||m.ended||m.jumpBallActive)return;
  [...m.homeLine,...m.awayLine].forEach(p=>{
   if(!Number.isFinite(p._x)){p._x=50;p._y=50;p._tx=50;p._ty=50}
-  const dx=(p._tx??p._x)-p._x,dy=(p._ty??p._y)-p._y,dist=Math.hypot(dx,dy),step=17*.05;
+  const dx=(p._tx??p._x)-p._x,dy=(p._ty??p._y)-p._y,dist=Math.hypot(dx,dy),step=24*.05;
   if(dist>0){const k=Math.min(1,step/dist);p._x+=dx*k;p._y+=dy*k}
   const el=document.getElementById("liveP_"+p.id);if(el){el.style.left=p._x+"%";el.style.top=p._y+"%"}
  });
  m.phaseTick=(m.phaseTick||0)+m.speed;
- if(m.phaseTick>=1){
-  m.phaseTick-=1;m.clock--;m.shotClock--;m.possessionElapsed=(m.possessionElapsed||0)+1;
+ if(m.phaseTick>=1){m.phaseTick-=1;m.clock--;m.shotClock--;
   for(const p of [...m.homeLine,...m.awayLine]){if(m.stats[p.id])m.stats[p.id].min+=1/60;p.fatigue=Math.min(100,(Number(p.fatigue)||0)+.02)}
   updateLiveStaminaBars(m);
   if(m.clock<=0){if(m.q<4){m.q++;m.clock=720;liveComment(m.q+"쿼터 시작.");resetLivePossession(m,true)}else if(m.homeScore===m.awayScore){m.q++;m.clock=300;liveComment("동점입니다. 연장전에 들어갑니다.");resetLivePossession(m,true)}else{finishLiveMatch();return}}
-  if(m.shotClock<=0&&!m.shotInFlight){m.shotClock=0;if((m.possessionElapsed||0)<23){liveComment("샷클락 만료! 공격권이 넘어갑니다.");resetLivePossession(m,false)}}
+  if(m.shotClock<=0&&!m.shotInFlight&&!m._resolvingShot){m.shotClock=0;liveComment("샷클락 만료! 공격권이 넘어갑니다.");resetLivePossession(m,false)}
   updateLiveScoreboard();
  }
- const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine,elapsed=m.possessionElapsed||0;
- const phase=elapsed<5?0:elapsed<9?1:elapsed<13?2:elapsed<17?3:elapsed<20?4:5;
- if(!m.inboundActive){
-  if(phase!==m.phase&&!m.shotInFlight){m.phase=phase;runLivePhase(m,offense,defense,phase)}
-  positionLiveFormation(m,offense,defense,phase);
+ const offense=m.possHome?m.homeLine:m.awayLine,defense=m.possHome?m.awayLine:m.homeLine;
+ if(!m._resolvingShot&&!m.shotInFlight&&!m.ballInFlight){
+  positionLiveFormation(m,offense,defense,0);m.actionWait=(m.actionWait||0)-m.speed;
+  if(m.actionWait<=0){runLivePhase(m,offense,defense);if(!m.actionWait||m.actionWait<=0)m.actionWait=.6+Math.random()*1.4}
  }
 }function positionLiveFormation(m,offense,defense,phase){
  const dir=m.possHome?1:-1,handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0],base=m.possHome?58:42;
@@ -834,7 +831,7 @@ function positionJumpBall(m){
  const rimX=m.possHome?95:5,paintX=m.possHome?83:17;
  defense.forEach((p,i)=>{const mark=offense.find(o=>o.id===p._matchup)||offense[i%offense.length],onBall=mark.id===handler.id,mx=mark._tx??50,my=mark._ty??50;let x,y;
   if(m.defTactic==="2-3 지역방어"||m.defTactic==="3-2 지역방어"){const threeTwo=m.defTactic==="3-2 지역방어",back=i>=(threeTwo?3:2);x=back?rimX-(m.possHome?10:-10):paintX+(m.possHome?3:-3);y=[27,50,73,36,64][i]}
-  else{const goalSide=m.possHome?1:-1;const press=m.defTactic==="풀코트 프레스",halfPress=m.defTactic==="하프코트 프레스",drop=m.defTactic==="드롭 커버리지";x=mx+goalSide*(press?(onBall?1.5:3.5):halfPress?(onBall?2.2:4.5):(onBall?3.8:6));y=onBall?my:my+(i%2?4:-4);if(!onBall){x-=goalSide*Math.max(0,1-Math.abs(my-50)/50)*(drop&&p.pos==="C"?8:3);y+=(50-my)*.1}if(drop&&p.pos==="C"){x=rimX-(m.possHome?7:-7);y=50}}
+  else{const goalSide=m.possHome?1:-1;const press=m.defTactic==="압박 수비"||m.defTactic==="풀코트 프레스",halfPress=m.defTactic==="하프코트 프레스",drop=m.defTactic==="드롭 커버리지",switching=m.defTactic==="스위치 수비";x=mx+goalSide*(press?(onBall?1.5:3.5):halfPress?(onBall?2.2:4.5):switching?(onBall?2.5:4):(onBall?3.8:6));y=onBall?my:my+(i%2?4:-4);if(!onBall){x-=goalSide*Math.max(0,1-Math.abs(my-50)/50)*(drop&&p.pos==="C"?8:3);y+=(50-my)*.1}if(drop&&p.pos==="C"){x=rimX-(m.possHome?7:-7);y=50}}
   x=m.possHome?Math.max(54,Math.min(94,x)):Math.max(6,Math.min(46,x));y=Math.max(12,Math.min(88,y));moveLivePlayer(p,x,y,onBall?"defend":"run");
  });
  // Separate nearby player markers to prevent faces/nameplates stacking.
@@ -872,28 +869,24 @@ function animateLiveShot(shooter,defender,done){
  const start=livePoint(s),m=window.liveMatch,target={x:m?.possHome?93:7,y:50};
  if(d)d.classList.add("is-blocking");ball.classList.add("is-shot");
  animateBallArc({x:start.x,y:start.y-1},target,900,15,()=>{ball.classList.remove("is-shot");if(d)d.classList.remove("is-blocking");done()});
-}function runLivePhase(m,offense,defense,phase){
- const handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0];
- if(phase===0){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) 드리블로 공격을 시작합니다.");}
- if(phase===1){
-  const action=Math.random(),screener=offense.find(p=>p.pos==="C")||offense[4];
-  if(m.tactic==="픽앤롤 중심"||action<.34){const wing=offense.find(p=>p.pos==="SG"||p.pos==="SF");if(wing){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) "+wing.name+"의 스크린을 이용해 돌파합니다.");moveLivePlayer(screener,(screener._x||50)+ (m.possHome?5:-5),50,"screen")}}
-  else if(m.tactic==="속공"||action<.68)liveComment("빠른 템포로 수비가 정렬되기 전에 속공 기회를 노립니다.");
-  else if(m.tactic==="아이솔레이션"){const iso=offense.slice().sort((a,b)=>(Number(b.attrs?.handle)||10)+(Number(b.attrs?.decisions)||10)-(Number(a.attrs?.handle)||10)-(Number(a.attrs?.decisions)||10))[0];if(iso)m.ballHandlerId=iso.id;liveComment((iso||handler).name+"에게 공간을 만들어 1대1 공격을 맡깁니다.");}else liveComment("하이포스트에서 공격을 조율하며 수비의 빈틈을 찾습니다.");
+}function runLivePhase(m,offense,defense){
+ if(m.ended||m.shotInFlight||m._resolvingShot||m.ballInFlight)return;
+ const handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0];if(!handler)return;
+ const dir=m.possHome?1:-1,attrs=handler.attrs||{},r=Math.random(),distance=Math.abs((m.possHome?94:6)-(handler._x||50));
+ const options=offense.filter(p=>p.id!==handler.id),receiver=options[Math.floor(Math.random()*options.length)];
+ if(distance>38&&receiver&&r<.48){
+  m.ballHandlerId=receiver.id;moveLivePlayer(receiver,(receiver._x||50)+dir*(3+Math.random()*4),(receiver._y||50)+(Math.random()-.5)*12,"run");
+  liveComment(handler.name+"이(가) "+receiver.name+"에게 패스합니다.");animateBallPass(handler,receiver);m.actionWait=.6+Math.random();return;
  }
- if(phase===2){
-  const options=offense.filter(p=>p.id!==handler.id),receiver=options[Math.floor(Math.random()*options.length)];
-  if(receiver&&Math.random()<.72){m.ballHandlerId=receiver.id;liveComment(handler.name+"이(가) "+receiver.name+"에게 패스합니다.");animateBallPass(handler,receiver)}
-  else liveComment(handler.name+"이(가) 직접 수비를 흔들며 공격합니다.");
+ if(distance>25&&r<.72){
+  moveLivePlayer(handler,Math.max(12,Math.min(88,(handler._x||50)+dir*(4+Math.random()*9))),Math.max(15,Math.min(85,(handler._y||50)+(Math.random()-.5)*14)),"dribble");
+  liveComment(handler.name+"이(가) 드리블로 수비를 흔들며 공격합니다.");m.actionWait=.5+Math.random()*1.1;return;
  }
- if(phase===3){
-  const handlerNow=offense.find(p=>p.id===m.ballHandlerId)||handler,choices=offense.filter(p=>p.id!==handlerNow.id);
-  const receiver=choices[Math.floor(Math.random()*choices.length)];
-  if(receiver&&Math.random()<.45){m.ballHandlerId=receiver.id;liveComment("볼을 반대편으로 전환! "+receiver.name+"이(가) 공격 기회를 잡습니다.");animateBallPass(handlerNow,receiver)}
-  else liveComment(handlerNow.name+"이(가) 수비를 상대로 1대1을 시도합니다.");
+ if(receiver&&r<.84&&Math.random()<(Number(attrs.pass)||Number(attrs.passing)||10)/25){
+  m.ballHandlerId=receiver.id;liveComment(handler.name+"이(가) "+receiver.name+"에게 볼을 연결합니다.");animateBallPass(handler,receiver);m.actionWait=.5;return;
  }
- if(phase===4)liveComment("수비 압박 속에서 슛 타이밍을 잡습니다.");
- if(phase===5&&!m.shotInFlight){m.shotInFlight=true;m.shotResolved=false;m.shotInFlightSince=Date.now();const shooter=offense.find(p=>p.id===m.ballHandlerId)||handler,defender=defense.find(p=>p._matchup===shooter.id)||defense[0];const move=shooter.attrs||{};const style=(Number(move.three)||10)>15?"외곽 슈터":(Number(move.dunk)||0)>17?"강력한 림 어태커":(Number(move.post)||0)>16?"포스트 플레이어":"득점원";liveComment(shooter.name+"("+style+")이(가) 슛 기회를 만듭니다.");animateLiveShot(shooter,defender,()=>{if(m.shotResolved)return;m.shotResolved=true;m.shotInFlight=false;resolveLiveShot(m,offense,defense)});}
+ const defender=defense.find(p=>p._matchup===handler.id)||defense[0];m.shotInFlight=true;m.shotResolved=false;m.shotInFlightSince=Date.now();
+ liveComment(handler.name+"이(가) 수비를 읽고 곧바로 슛합니다.");animateLiveShot(handler,defender,()=>{if(m.shotResolved)return;m.shotResolved=true;m.shotInFlight=false;resolveLiveShot(m,offense,defense)});
 }function moveLivePlayer(p,x,y,action){
  const el=document.getElementById("liveP_"+p.id);if(!el)return;
  p._tx=Math.max(5,Math.min(95,x));p._ty=Math.max(9,Math.min(91,y));
@@ -901,10 +894,9 @@ function animateLiveShot(shooter,defender,done){
  el.dataset.action=action;
  el.classList.toggle("is-dribbling",action==="dribble");el.classList.toggle("is-shooting",action==="shoot");el.classList.toggle("is-blocking",action==="block"||action==="defend");el.classList.toggle("is-passing",action==="pass");el.classList.toggle("is-rebounding",action==="rebound");el.classList.toggle("is-screening",action==="screen");
 }function animateBallPass(from,to){
- const m=window.liveMatch,a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!a||!b)return;
- if(m)m.ballInFlight=true;
- const start=livePoint(a),end=livePoint(b);
- animateBallArc({x:start.x,y:start.y-1},{x:end.x,y:end.y-1},520,5,()=>{if(m)m.ballInFlight=false});
+ const m=window.liveMatch,a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!a||!b)return;if(m)m.ballInFlight=true;
+ const start=livePoint(a),end=livePoint(b),ball=document.getElementById("liveBall"),t0=performance.now(),duration=360;
+ const frame=now=>{if(window.liveMatch!==m||m?.ended)return;const t=Math.min(1,(now-t0)/duration);if(ball){ball.style.left=(start.x+(end.x-start.x)*t)+"%";ball.style.top=(start.y+(end.y-start.y)*t-1)+"%"}if(t<1)requestAnimationFrame(frame);else if(m)m.ballInFlight=false};requestAnimationFrame(frame);
 }function resolveLiveShot(m,offense,defense){
  if(m.ended||m._resolvingShot)return;m._resolvingShot=true;m.shotInFlight=false;m.shotInFlightSince=0;
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],attrs=shooter.attrs||{},da=defender?.attrs||{};
