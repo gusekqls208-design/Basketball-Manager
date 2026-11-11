@@ -2056,11 +2056,11 @@ function bmRunQuarterLoop(){
   }
  }
  const hb=q.hbox,ab=q.abox;
- for(const p of home.players){hb[p.id].dnp=!(hb[p.id].min>0);hb[p.id].starter=q.hLine.starters.some(id=>String(id)===String(p.id));hb[p.id].min=Math.round(hb[p.id].min*10)/10}
- for(const p of away.players){ab[p.id].dnp=!(ab[p.id].min>0);ab[p.id].starter=q.aLine.starters.some(id=>String(id)===String(p.id));ab[p.id].min=Math.round(ab[p.id].min*10)/10}
+ for(const p of home.players){hb[p.id].dnp=!(hb[p.id].min>0);hb[p.id].starter=q.hInitialStarters.some(id=>String(id)===String(p.id));hb[p.id].min=Math.round(hb[p.id].min*10)/10}
+ for(const p of away.players){ab[p.id].dnp=!(ab[p.id].min>0);ab[p.id].starter=q.aInitialStarters.some(id=>String(id)===String(p.id));ab[p.id].min=Math.round(ab[p.id].min*10)/10}
  const oldHome=m.homeScore,oldAway=m.awayScore;m.homeScore=oldHome+q.hscore;m.awayScore=oldAway+q.ascore;
  bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);
- const quarter={home:q.hscore,away:q.ascore,homeBox:hb,awayBox:ab};quarter.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(quarter);m.homeLine=q.hLine.starters.slice();m.awayLine=q.aLine.starters.slice();m.liveQuarter=null;m.pendingEmergency=null;m.quarter++;
+ const quarter={home:q.hscore,away:q.ascore,homeBox:hb,awayBox:ab};quarter.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(quarter);if(m.quarter===0){m.homeLine=q.hInitialStarters.slice();m.awayLine=q.aInitialStarters.slice()}m.liveQuarter=null;m.pendingEmergency=null;m.quarter++;
  for(const [team,box] of [[home,hb],[away,ab]])for(const p of team.players){const st=box[p.id];if(st.min>0){p.fatigue=simClamp((p.fatigue||0)+Math.round(st.min/4),0,100);p.condition=simClamp((p.condition||75)-Math.max(1,Math.round(st.min/16)),40,100)}}
  persist();renderQuarterBreak();
 }
@@ -2388,6 +2388,14 @@ function bmCoachAdvice(q,home,away,userHome){
  if(cold)out.push(["공격 옵션 조정",cold.p.name+"의 야투가 "+cold.x.fgm+"/"+cold.x.fga+"에 그쳤습니다. 슛 비중을 줄이고 다른 공격 옵션을 활용하세요."]);
  if(!out.length)out.push(["경기 흐름","뚜렷한 열세가 없습니다. 현재 전술을 유지하면서 상대 핵심 득점원을 계속 견제하세요."]);
  return out;
+}
+
+
+function bmInitQuarter(m,home,away){
+ const opp=m.userIsHome?away:home,oLine=simLine(opp),uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};
+ const hLine=m.userIsHome?uLine:{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)};
+ const aLine=m.userIsHome?{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)}:uLine;
+ return {hbox:bmBlankTeamBox(home),abox:bmBlankTeamBox(away),hscore:0,ascore:0,step:0,possessions:m.quarter>=4?10:24,hLine,aLine,hInitialStarters:hLine.starters.slice(),aInitialStarters:aLine.starters.slice(),home,away,minutes:{home:{},away:{}},userHome:m.userIsHome};
 }
 
 </script></body></html>
