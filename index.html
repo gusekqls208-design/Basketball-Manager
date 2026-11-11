@@ -2698,4 +2698,10 @@ function bmPickShooter(line,box,style){
  });
 }
 
+
+function openBoxPlayerProfile(pid,tid){
+ const t=state.clubs.find(x=>String(x.id)===String(tid)),p=t?.players.find(x=>String(x.id)===String(pid));
+ if(p)editPlayer(p.id);
+}
+
 </script></body></html>
