@@ -2735,7 +2735,21 @@ function bmCoachRating(p,box){
 }
 function bmAutoLineup(){
  const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;
- const best=bmBestFive(t),ids=best.map(p=>p.id),bench=t.players.filter(p=>!ids.some(id=>String(id)===String(p.id))).sort((a,b)=>bmPlayerQuality(b)-bmPlayerQuality(a)).slice(0,8).map(p=>p.id);
+ const box=pre?{}:((c.userIsHome?c.homeBox:c.awayBox)||{});
+ const quality=p=>{
+  let q=bmPlayerQuality(p);
+  if(!pre){const mins=Number(box[p.id]?.min)||0;q*=Math.max(.58,1-Math.max(0,mins-8)*.009)}
+  if(p.injured||p.injury||Number(p.injuryWeeks)>0)q*=.45;
+  return q;
+ };
+ const pool=[...t.players],picked=[];
+ ["PG","SG","SF","PF","C"].forEach(pos=>{
+  const cand=pool.filter(p=>!picked.includes(p)&&(p.pos===pos||(p.secondaryPositions||[]).includes(pos))).sort((a,b)=>quality(b)-quality(a));
+  if(cand[0])picked.push(cand[0]);
+ });
+ pool.sort((a,b)=>quality(b)-quality(a));
+ for(const p of pool)if(picked.length<5&&!picked.includes(p))picked.push(p);
+ const ids=picked.slice(0,5).map(p=>p.id),bench=t.players.filter(p=>!ids.some(id=>String(id)===String(p.id))).sort((a,b)=>quality(b)-quality(a)).slice(0,8).map(p=>p.id);
  if(pre){c.starters=ids;c.bench=bench;c.excluded=t.players.filter(p=>!ids.includes(p.id)&&!bench.includes(p.id)).map(p=>p.id);c.instructions=c.instructions||{}}
  else{c.userStarters=ids;c.userBench=bench;c.userExcluded=t.players.filter(p=>!ids.includes(p.id)&&!bench.includes(p.id)).map(p=>p.id);c.userInstructions=c.userInstructions||{}}
  persist();bmCoachBoard(pre?"pre":"quarter");
@@ -2804,7 +2818,7 @@ bmCoachBoard=function(mode){
  .fm-candidates{min-height:0;position:relative;top:auto}
  .fm-candidate-list.fm-all-roster{display:flex;flex-direction:column;gap:5px;max-height:min(68vh,650px);overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:5px}
  .fm-roster-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;gap:4px 9px;min-height:68px;padding:7px 9px;border:1px solid #344252;border-radius:9px;background:#172331;touch-action:pan-y}
- .fm-roster-row>img{width:40px;height:40px;grid-column:1;grid-row:1}
+ .fm-roster-row>.bs-avatar{width:40px;height:40px;grid-column:1;grid-row:1;flex:0 0 40px}.fm-roster-row>.bs-avatar img{width:100%;height:100%;object-fit:cover}
  .fm-roster-row>span{grid-column:2;grid-row:1;min-width:0}
  .fm-roster-row>span b{font-size:12px;color:#f4f7fb}
  .fm-roster-row>span small{font-size:10px;color:#aebdca}
