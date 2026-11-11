@@ -2392,7 +2392,7 @@ function bmCoachAdvice(q,home,away,userHome){
 
 
 function bmInitQuarter(m,home,away){
- const opp=m.userIsHome?away:home,oLine=simLine(opp),uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};
+ const opp=m.userIsHome?away:home,oLine=simLine(opp),uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};home._simQuarterFouls=0;away._simQuarterFouls=0;
  const hLine=m.userIsHome?uLine:{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)};
  const aLine=m.userIsHome?{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)}:uLine;
  return {hbox:bmBlankTeamBox(home),abox:bmBlankTeamBox(away),hscore:0,ascore:0,step:0,possessions:m.quarter>=4?10:24,hLine,aLine,hInitialStarters:hLine.starters.slice(),aInitialStarters:aLine.starters.slice(),home,away,minutes:{home:{},away:{}},userHome:m.userIsHome};
@@ -2496,12 +2496,12 @@ function bmPossession(offTeam,defTeam,offFive,defFive,offBox,defBox){
  const tacticBonus=style==="픽앤롤 중심"?.025:style==="모션 오펜스"?.02:style==="속공"?.018:0;
  let defenseAdjust=0;if(defStyle.includes("지역"))defenseAdjust=isThree?-.012:.018;else if(defStyle==="스위치")defenseAdjust=-.008;else if(defStyle==="드롭 커버리지")defenseAdjust=isThree?.018:-.022;else if(defStyle.includes("프레스"))defenseAdjust=-.008;
  const strengthOff=simTeamStrength(offTeam,offFive,"off"),strengthDef=simTeamStrength(defTeam,defFive,"def");
- const chance=simClamp((isThree?.355:.515)+(skill-10)*.012-(defSkill-10)*.008+(strengthOff.off-strengthDef.def)*.00045+tacticBonus+defenseAdjust,.2,.8);
+ const transitionStop=style==="속공"&&defFive.some(p=>p.gameInstruction==="수비 집중")?-.025:0;const chance=simClamp((isThree?.355:.515)+(skill-10)*.012-(defSkill-10)*.008+(strengthOff.off-strengthDef.def)*.00045+tacticBonus+defenseAdjust+transitionStop,.2,.8);
  let turnoverChance=.105+(simAttr(shooter,"handle")-10)*-.004+(simAttr(shooter,"decisions")-10)*-.003+(simAttr(defender||shooter,"steal")-10)*.001;if(defStyle.includes("프레스"))turnoverChance+=.035;if(style==="모션 오펜스"||shooter.gameInstruction==="패스 우선")turnoverChance-=.012;
  if(Math.random()<simClamp(turnoverChance,.035,.23)){st.tov++;if(defender&&ds&&Math.random()<simClamp(.2+simAttr(defender,"steal")*.012,.15,.6))ds.stl++;return 0}
- st.fga++;if(isThree)st.threeA++;const made=Math.random()<chance,shootFoul=Math.random()<simClamp(.055+(inside-10)*.003+(simAttr(shooter,"aggression")-10)*.002,.02,.13);
+ st.fga++;if(isThree)st.threeA++;const made=Math.random()<chance,shootFoul=!!defender&&Math.random()<simClamp(.055+(inside-10)*.003+(simAttr(shooter,"aggression")-10)*.002,.02,.13);
  let points=0;if(made){st.fgm++;if(isThree)st.threeM++;points+=isThree?3:2}
- if(shootFoul){if(defender&&ds)ds.pf++;const count=made?1:(isThree?3:2),ft=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);for(let n=0;n<count;n++){st.fta++;if(Math.random()<ft){st.ftm++;points++}}}else if(defender&&ds&&Math.random()<.07)ds.pf++;
+ if(shootFoul){if(ds)ds.pf++;defTeam._simQuarterFouls=(defTeam._simQuarterFouls||0)+1;const count=made?1:(isThree?3:2),ft=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);for(let n=0;n<count;n++){st.fta++;if(Math.random()<ft){st.ftm++;points++}}}else if(defender&&ds&&Math.random()<.07){ds.pf++;defTeam._simQuarterFouls=(defTeam._simQuarterFouls||0)+1;if(defTeam._simQuarterFouls>4){const ft=simClamp(.68+(simAttr(shooter,"ft")-10)*.018,.48,.96);for(let n=0;n<2;n++){st.fta++;if(Math.random()<ft){st.ftm++;points++}}}}
  st.pts+=points;
  if(made){const passer=simWeighted(offFive.filter(p=>p.id!==shooter.id),p=>{let w=simAttr(p,"pass")*.45+simAttr(p,"vision")*.35+simAttr(p,"teamwork")*.2;if(p.gameInstruction==="패스 우선")w*=1.4;if(style==="모션 오펜스")w*=1.15;if((style==="포스트업"||style==="포스트업 중심")&&["PG","SG"].includes(p.pos)&&["PF","C"].includes(shooter.pos))w*=1.6;return Math.max(.1,w)});if(passer&&Math.random()<simClamp(.46+(simAttr(passer,"vision")-10)*.018+(simAttr(passer,"pass")-10)*.012+(style==="모션 오펜스"?.12:0)+(style==="픽앤롤 중심"?.07:0),.2,.88))offBox[passer.id].ast++}
  else if(!shootFoul){if(defender&&ds&&Math.random()<simClamp((simAttr(defender,"block")-8)*.012+(simAttr(defender,"jumping")-10)*.004,.01,.16))ds.blk++;const offensive=Math.random()<.24,reb=simWeighted(offensive?offFive:defFive,p=>Math.max(.1,simAttr(p,"rebound")*.65+simAttr(p,"strength")*.15+simAttr(p,"jumping")*.2));if(reb){const rb=offensive?offBox[reb.id]:defBox[reb.id];rb.reb++;if(offensive){rb.oreb++;if(Math.random()<.42){rb.fga++;if(Math.random()<simClamp(.46+(simAttr(reb,"close")-10)*.012,.25,.72)){rb.fgm++;rb.pts+=2;points+=2}}}else rb.dreb++}}
