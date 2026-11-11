@@ -2197,4 +2197,64 @@ function openBoxPlayerProfile(pid,tid){
 }
 (function bmCoachRosterStyle(){const st=document.createElement("style");st.textContent='.fm-header-actions{display:flex;gap:6px;align-items:center}.fm-scope{background:#172738;color:#b9c8d4;border:1px solid #34495c;padding:9px 13px;border-radius:8px;font-size:12px}.fm-scope.active{background:#25445b;color:#fff;border-color:#8dcdf0}.fm-candidate-list.fm-roster-list{display:flex;flex-direction:column;gap:7px;max-height:430px;overflow:auto}.fm-roster-list .fm-pcard{min-height:48px}.fm-excluded-drop{min-height:66px;border:1px dashed #8c9ba9;border-radius:10px;margin:12px 0;padding:16px 8px;text-align:center;color:#a9bac8;font-size:12px;background:#0d1721}.fm-excluded-drop.drop-ready,.fm-candidate-list.drop-ready{outline:2px solid #9bdcff;background:#1d3b50}.fm-excluded-list{opacity:.75}@media(max-width:850px){.fm-header-actions{flex-wrap:wrap;justify-content:flex-end}.fm-candidate-list.fm-roster-list{max-height:330px}}';document.head.appendChild(st)})();
 
+
+/* Emergency mode operates on the live game, not the pre-game draft. */
+function bmCoachAssign(id,i){
+ const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const ids=pre?c.starters:c.userStarters,bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
+ const old=ids[i],j=ids.findIndex(x=>String(x)===String(id));
+ if(j>=0){ids[j]=old;ids[i]=id;return bmCoachBoard(window.bmCoachMode)}
+ const isDanger=(c.pendingEmergency||[]).some(x=>String(x.id)===String(old));
+ ids[i]=id;const bi=bench.findIndex(x=>String(x)===String(id));if(bi>=0)bench.splice(bi,1);
+ if(isDanger){if(!excluded.some(x=>String(x)===String(old)))excluded.push(old)}else if(!bench.some(x=>String(x)===String(old)))bench.push(old);
+ const ei=excluded.findIndex(x=>String(x)===String(id));if(ei>=0)excluded.splice(ei,1);bmCoachBoard(window.bmCoachMode);
+}
+function bmDropExcluded(e){
+ const id=window.bmLastDragId;if(!id)return;const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
+ const ix=bench.findIndex(x=>String(x)===String(id));if(ix>=0)bench.splice(ix,1);if(!excluded.some(x=>String(x)===String(id)))excluded.push(id);
+ window.bmLastDragId=null;bmCoachBoard(window.bmCoachMode);
+}
+function bmDropBench(e){
+ const id=window.bmLastDragId;if(!id)return;const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress;if(!c)return;
+ const bench=pre?c.bench:c.userBench,excluded=pre?(c.excluded||(c.excluded=[])):(c.userExcluded||(c.userExcluded=[]));
+ const ix=excluded.findIndex(x=>String(x)===String(id));if(ix>=0)excluded.splice(ix,1);if(!bench.some(x=>String(x)===String(id)))bench.push(id);
+ window.bmLastDragId=null;bmCoachBoard(window.bmCoachMode);
+}
+function bmRunQuarterLoop(){
+ const m=state.gameInProgress,q=m.liveQuarter;if(!m||!q)return;const home=q.home,away=q.away,user=club(state.teamId),limit=q.possessions;
+ for(;q.step<limit;q.step++){
+  const segment=Math.floor(q.step/6),hfive=bmQuarterActiveFive(home,q.hLine.starters,q.hLine.bench,segment),afive=bmQuarterActiveFive(away,q.aLine.starters,q.aLine.bench,segment);
+  for(const p of hfive){q.minutes.home[p.id]=(q.minutes.home[p.id]||0)+.25;q.hbox[p.id].min+=.25}
+  for(const p of afive){q.minutes.away[p.id]=(q.minutes.away[p.id]||0)+.25;q.abox[p.id].min+=.25}
+  if(Math.random()<.5){q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox);q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox)}
+  else{q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox);q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox)}
+  const userBox=m.userIsHome?q.hbox:q.abox,userMins=m.userIsHome?q.minutes.home:q.minutes.away,activeIds=[...m.userStarters,...m.userBench];
+  const danger=user.players.map(p=>({p,reason:bmEmergencyReason(user,userBox,userMins,p)})).filter(x=>x.reason&&activeIds.some(id=>String(id)===String(x.p.id))&&userMins[x.p.id]>0);
+  if(danger.length){q.step++;m.pendingEmergency=danger.map(x=>({id:x.p.id,name:x.p.name,reason:x.reason}));persist();bmShowEmergency();return}
+ }
+ const hb=q.hbox,ab=q.abox;
+ for(const p of home.players){hb[p.id].dnp=!(hb[p.id].min>0);hb[p.id].starter=q.hLine.starters.some(id=>String(id)===String(p.id));hb[p.id].min=Math.round(hb[p.id].min*10)/10}
+ for(const p of away.players){ab[p.id].dnp=!(ab[p.id].min>0);ab[p.id].starter=q.aLine.starters.some(id=>String(id)===String(p.id));ab[p.id].min=Math.round(ab[p.id].min*10)/10}
+ m.homeScore+=q.hscore;m.awayScore+=q.ascore;bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);
+ const quarter={home:q.hscore,away:q.ascore,homeBox:hb,awayBox:ab};quarter.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(quarter);m.homeLine=q.hLine.starters.slice();m.awayLine=q.aLine.starters.slice();m.liveQuarter=null;m.pendingEmergency=null;m.quarter++;
+ for(const [team,box] of [[home,hb],[away,ab]])for(const p of team.players){const st=box[p.id];if(st.min>0){p.fatigue=simClamp((p.fatigue||0)+Math.round(st.min/4),0,100);p.condition=simClamp((p.condition||75)-Math.max(1,Math.round(st.min/16)),40,100)}}
+ persist();renderQuarterBreak();
+}
+function bmCoachBoard(mode){
+ if(mode!=="emergency")return bmCoachBoardBase(mode);
+ bmCoachBoardBase("quarter");window.bmCoachMode="emergency";
+ const h=document.querySelector(".fm-coach h1");if(h)h.textContent="경기 중단 · 선수 교체";
+ const btn=document.querySelector(".fm-confirm");if(btn){btn.textContent="교체 확정 · 경기 재개";btn.setAttribute("onclick","bmConfirmEmergencyCoach()")}
+ const p=document.querySelector(".fm-coach header p");if(p)p.textContent="퇴장·부상·체력 고갈 선수는 반드시 선발 또는 벤치 명단에서 제외해야 경기를 재개할 수 있어.";
+ const m=state.gameInProgress,q=m?.liveQuarter,team=club(state.teamId);if(q){const box=m.userIsHome?q.hbox:q.abox,mins=m.userIsHome?q.minutes.home:q.minutes.away,root=document.querySelector(".fm-health-list");if(root)root.innerHTML=[...m.userStarters,...m.userBench].map(id=>team.players.find(x=>String(x.id)===String(id))).filter(Boolean).map(p=>{const fat=Math.min(100,Math.round((p.fatigue||0)+(mins[p.id]||0)*1.6)),x=box[p.id]||{};return '<div class="fm-health-player"><b>'+bmEsc(p.name)+'</b><br>체력 '+(100-fat)+'% · 컨디션 '+Math.round(p.condition||75)+'% · 파울 '+(x.pf||0)+'개'+((m.pendingEmergency||[]).some(d=>String(d.id)===String(p.id))?'<br><strong style="color:#ffb4a6">'+bmEsc(m.pendingEmergency.find(d=>String(d.id)===String(p.id)).reason)+'</strong>':'')+'</div>'}).join("")}
+}
+function beginQuarterGame(){
+ const c=state.matchSetup;if(!c)return;const g=state.schedule.find(x=>x.id===c.gameId),user=club(state.teamId);
+ if(new Set(c.starters.map(String)).size!==5||c.starters.some(id=>!user.players.some(p=>String(p.id)===String(id)))){alert("선발 라인업을 확인해주세요.");return}
+ user.players.forEach(p=>p.gameInstruction=(c.instructions||{})[p.id]||"기본 역할");user.tactics={...c.tactics};
+ state.gameInProgress={gameId:g.id,userIsHome:c.userIsHome,quarter:0,quarters:[],homeBox:{},awayBox:{},homeLine:[],awayLine:[],homeScore:0,awayScore:0,userStarters:c.starters.slice(),userBench:c.bench.slice(),userExcluded:(c.excluded||[]).slice(),userTactics:{...c.tactics},userInstructions:{...(c.instructions||{})},scope:c.scope||"all",oneGamePlan:c.oneGamePlan||null};
+ persist();runNextQuarter();
+}
+
 </script></body></html>
