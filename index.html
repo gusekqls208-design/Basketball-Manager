@@ -751,7 +751,7 @@ function resetLivePossession(m,keepSide,baselineInbound){
   const baseX=m.possHome?4:96;
   line.forEach((p,i)=>{const spots={PG:{x:baseX,y:50},SG:{x:m.possHome?15:85,y:24},SF:{x:m.possHome?15:85,y:76},PF:{x:m.possHome?23:77,y:36},C:{x:m.possHome?23:77,y:64}};const q=spots[p.pos]||{x:baseX,y:50};p._x=q.x;p._y=q.y;p._tx=q.x;p._ty=q.y;const el=document.getElementById("liveP_"+p.id);if(el){el.style.left=q.x+"%";el.style.top=q.y+"%"}});
   const ball=document.getElementById("liveBall");if(ball){ball.style.left=(m.possHome?1:99)+"%";ball.style.top="50%";ball.classList.add("is-airborne")}
-  liveComment("득점! 상대 팀이 엔드라인 밖에서 인바운드 패스로 경기를 재개합니다.");
+  liveComment("득점 인정! 상대 팀은 엔드라인 밖에서 인바운드 패스로 재개합니다.","score");
   m.ballInFlight=true;setTimeout(()=>{if(window.liveMatch!==m||m.ended)return;const el=document.getElementById("liveP_"+guard.id),to=el?livePoint(el):{x:baseX,y:50};animateBallArc({x:m.possHome?1:99,y:50},to,650,5,()=>{if(window.liveMatch!==m||m.ended)return;m.ballInFlight=false;const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne")})},420);
  }else if(guard){const x=m.possHome?28:72;moveLivePlayer(guard,x,50,"dribble");const ball=document.getElementById("liveBall");if(ball){ball.style.left=x+"%";ball.style.top="49%"}}
  updateLiveScoreboard();
@@ -768,26 +768,34 @@ function updateLiveScoreboard(){const m=window.liveMatch;if(!m)return;const el=i
 function positionJumpBall(m){
  const teams=[{line:m.homeLine,home:true},{line:m.awayLine,home:false}];
  teams.forEach(({line,home})=>{
-  const spots={C:{x:home?46:54,y:50},PG:{x:home?39:61,y:25},SG:{x:home?39:61,y:75},PF:{x:home?34:66,y:37},SF:{x:home?34:66,y:63}};
+  const spots={C:{x:home?47:53,y:50},PG:{x:home?35:65,y:27},SG:{x:home?35:65,y:73},PF:{x:home?29:71,y:38},SF:{x:home?29:71,y:62}};
   line.forEach((p,i)=>{const q=spots[p.pos]||{x:home?30:70,y:20+i*15};p._x=q.x;p._y=q.y;p._tx=q.x;p._ty=q.y;moveLivePlayer(p,q.x,q.y,p.pos==="C"?"jump":"set")});
  });
  const ball=document.getElementById("liveBall");if(ball){ball.style.left="50%";ball.style.top="48%";ball.classList.remove("is-airborne")}
 }function startBroadcast(m){
  if(window.broadcastTimer)clearInterval(window.broadcastTimer);
- m.jumpBallUntil=Date.now()+1550;m.jumpBallDone=false;m.ballHandlerId=null;m.ballInFlight=true;
+ m.jumpBallUntil=Date.now()+1500;m.jumpBallDone=false;m.ballHandlerId=null;m.ballInFlight=true;
  positionJumpBall(m);
- animateBallArc({x:50,y:48},{x:50,y:29},460,17,()=>animateBallArc({x:50,y:29},{x:50,y:48},520,4,()=>{m.ballInFlight=false}));
  window.broadcastTimer=setInterval(()=>liveMatchTick(),50);
- liveComment("심판의 점프볼! 센터 두 명이 센터 서클에서 맞붙습니다.");
+ liveComment("심판의 점프볼! 양 팀 센터가 중앙에서 공을 향해 뛰어오릅니다.");
+ animateBallArc({x:50,y:48},{x:50,y:34},430,15,()=>{
+  if(window.liveMatch!==m||m.ended)return;
+  const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0];
+  if(!guard){m.ballInFlight=false;return}
+  m.ballHandlerId=guard.id;
+  liveComment((m.possHome?teamName(m.g.home):teamName(m.g.away))+" 점프볼 승리! 센터가 공을 쳐내고 가드가 받아냅니다.");
+  const el=document.getElementById("liveP_"+guard.id),to=el?livePoint(el):{x:m.possHome?35:65,y:27};
+  animateBallArc({x:50,y:34},to,620,7,()=>{
+   if(window.liveMatch!==m||m.ended)return;
+   m.ballInFlight=false;m.jumpBallDone=true;
+   const ball=document.getElementById("liveBall");if(ball)ball.classList.remove("is-airborne");
+   liveComment(guard.name+"이(가) 점프볼을 받아 드리블로 첫 공격을 시작합니다.");
+  });
+ });
 }function liveMatchTick(){
  const m=window.liveMatch;if(!m||m.paused||m.ended)return;
  if(m.shotInFlight&&m.shotInFlightSince&&Date.now()-m.shotInFlightSince>2600&&!m.shotResolved){m.shotResolved=true;m.shotInFlight=false;const o=m.possHome?m.homeLine:m.awayLine,d=m.possHome?m.awayLine:m.homeLine;resolveLiveShot(m,o,d)}
  if(m.jumpBallUntil&&Date.now()<m.jumpBallUntil)return;
- if(m.jumpBallUntil&&!m.jumpBallDone){
-  m.jumpBallDone=true;m.ballInFlight=false;const line=m.possHome?m.homeLine:m.awayLine,guard=line.find(p=>p.pos==="PG")||line[0];
-  m.ballHandlerId=guard.id;guard._x=50;guard._y=50;guard._tx=m.possHome?55:45;guard._ty=50;
-  liveComment("점프볼 승리! 가드가 공을 받아 곧바로 공격을 전개합니다.");
- }
  [...m.homeLine,...m.awayLine].forEach(p=>{
   if(!Number.isFinite(p._x)){p._x=50;p._y=50;p._tx=50;p._ty=50}
   const dx=(p._tx??p._x)-p._x,dy=(p._ty??p._y)-p._y,dist=Math.hypot(dx,dy),step=17*.05;
@@ -854,9 +862,9 @@ function animateBallArc(from,to,duration=620,height=8,done){
 function animateLiveShot(shooter,defender,done){
  const ball=document.getElementById("liveBall"),s=document.getElementById("liveP_"+shooter.id),d=document.getElementById("liveP_"+defender.id);
  if(!ball||!s){done();return}
- const start=livePoint(s),m=window.liveMatch,target={x:m?.possHome?95:5,y:50};
+ const start=livePoint(s),m=window.liveMatch,target={x:m?.possHome?93:7,y:50};
  if(d)d.classList.add("is-blocking");ball.classList.add("is-shot");
- animateBallArc({x:start.x,y:start.y+1},target,1050,18,()=>{ball.classList.remove("is-shot");if(d)d.classList.remove("is-blocking");done()});
+ animateBallArc({x:start.x,y:start.y-1},target,900,15,()=>{ball.classList.remove("is-shot");if(d)d.classList.remove("is-blocking");done()});
 }function runLivePhase(m,offense,defense,phase){
  const handler=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0];
  if(phase===0){m.ballHandlerId=handler.id;liveComment(handler.name+"이(가) 드리블로 공격을 시작합니다.");}
@@ -888,7 +896,8 @@ function animateLiveShot(shooter,defender,done){
 }function animateBallPass(from,to){
  const m=window.liveMatch,a=document.getElementById("liveP_"+from.id),b=document.getElementById("liveP_"+to.id);if(!a||!b)return;
  if(m)m.ballInFlight=true;
- animateBallArc(livePoint(a),livePoint(b),620,8,()=>{if(m)m.ballInFlight=false});
+ const start=livePoint(a),end=livePoint(b);
+ animateBallArc({x:start.x,y:start.y-1},{x:end.x,y:end.y-1},520,5,()=>{if(m)m.ballInFlight=false});
 }function resolveLiveShot(m,offense,defense){
  if(m.ended||m._resolvingShot)return;m._resolvingShot=true;m.shotInFlight=false;m.shotInFlightSince=0;
  const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],attrs=shooter.attrs||{},defAttrs=defender.attrs||{};
@@ -910,10 +919,10 @@ function animateLiveShot(shooter,defender,done){
  const blocked=Math.random()<Math.max(.025,Math.min(.3,.055+(Number(defAttrs.block||10)-rating)*.012));
  const rim={x:rimX,y:50};
  if(blocked){m.stats[defender.id].blk++;liveComment(defender.name+"의 블록! "+type+" 시도를 쳐냅니다.","highlight")}
- else if(hit){const pts=isThree?3:2;stats.pts+=pts;stats.fgm++;if(isThree)stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;const passer=offense.find(p=>p.id!==shooter.id);if(passer&&Math.random()<.48)m.stats[passer.id].ast++;liveComment(shooter.name+"의 "+type+" 성공! "+pts+"점을 추가합니다.","score");updateLiveScoreboard();m._resolvingShot=false;resetLivePossession(m,false,true);return}
+ else if(hit){const pts=isThree?3:2;stats.pts+=pts;stats.fgm++;if(isThree)stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;const passer=offense.find(p=>p.id!==shooter.id);if(passer&&Math.random()<.48)m.stats[passer.id].ast++;liveComment(shooter.name+"의 "+type+" 성공! "+pts+"점! 공이 림을 통과했습니다.","score");updateLiveScoreboard();m._resolvingShot=false;resetLivePossession(m,false,true);return}
  else liveComment(shooter.name+"의 "+type+"이(가) 림을 맞고 나옵니다. 선수들이 리바운드 위치를 잡습니다.");
  const rebounders=[...offense,...defense].sort((a,b)=>((Number(b.attrs?.rebound)||10)+Math.random()*4)-((Number(a.attrs?.rebound)||10)+Math.random()*4));
- const rebounder=rebounders[0],isOffense=offense.some(p=>p.id===rebounder.id),target={x:50+(Math.random()-.5)*9,y:50+(Math.random()-.5)*22};
+ const rebounder=rebounders[0],isOffense=offense.some(p=>p.id===rebounder.id),dir=m.possHome?1:-1,target={x:rim.x-dir*(2+Math.random()*3),y:50+(Math.random()-.5)*16};
  moveLivePlayer(rebounder,target.x,target.y,"rebound");const from={x:rim.x,y:rim.y};
  animateBallArc(from,target,850,13,()=>{if(window.liveMatch!==m||m.ended)return;m.stats[rebounder.id].reb++;m.ballInFlight=false;m._resolvingShot=false;
   if(isOffense){liveComment(rebounder.name+" 공격 리바운드! 공격권을 유지합니다.");m.shotClock=14;m.possessionElapsed=0;m.phase=-1;m.shotInFlight=false;m.shotResolved=false;m.ballHandlerId=rebounder.id;const ball=document.getElementById("liveBall");if(ball){ball.style.left=target.x+"%";ball.style.top=target.y+"%"}}
