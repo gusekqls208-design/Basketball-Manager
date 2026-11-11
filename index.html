@@ -2569,4 +2569,37 @@ function bmRenderQuarterBreakV2(){
 }
 function bmFormationCoords(n){const f={"4-Out 1-In":[[50,68],[17,47],[83,47],[17,23],[50,24]],"5-Out":[[50,72],[16,51],[84,51],[18,18],[82,18]],"3-Out 2-In":[[50,68],[18,48],[82,48],[40,25],[60,25]],"Horns":[[50,68],[18,48],[82,48],[40,38],[60,38]],"1-4 High":[[50,68],[16,54],[38,54],[62,54],[84,54]]};return f[n]||f["4-Out 1-In"]}
 
+
+function finishQuarterGame(){
+ const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),home=club(g.home),away=club(g.away);
+ g.played=true;g.hs=m.homeScore;g.as=m.awayScore;g.boxscore={home:m.homeBox,away:m.awayBox,homeLine:m.homeLine,awayLine:m.awayLine,quarters:m.quarters,version:3,engine:"possession-by-possession"};
+ home.pf+=g.hs;home.pa+=g.as;away.pf+=g.as;away.pa+=g.hs;
+ if(g.hs>g.as){home.w++;away.l++}else{away.w++;home.l++}
+ for(const team of [home,away]){
+  const box=team===home?m.homeBox:m.awayBox;
+  for(const p of team.players){
+   const st=box[p.id]||simMakeStats(p);p.pts=(Number(p.pts)||0)+st.pts;p.reb=(Number(p.reb)||0)+st.reb;p.ast=(Number(p.ast)||0)+st.ast;
+   p.seasonStats=p.seasonStats||{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0,tov:0};
+   p.careerStats=p.careerStats||{gp:Number(p.seasonStats.gp)||0,pts:Number(p.pts)||0,reb:Number(p.reb)||0,ast:Number(p.ast)||0,stl:Number(p.seasonStats.stl)||0,blk:Number(p.seasonStats.blk)||0,tov:Number(p.seasonStats.tov)||0,min:Number(p.minutes)||0};
+   if(!st.dnp&&st.min>0){
+    p.seasonStats.gp++;for(const k of ["pts","reb","ast","stl","blk","tov"])p.seasonStats[k]=(p.seasonStats[k]||0)+(st[k]||0);
+    p.careerStats.gp++;for(const k of ["pts","reb","ast","stl","blk","tov"])p.careerStats[k]=(p.careerStats[k]||0)+(st[k]||0);
+    p.minutes=(Number(p.minutes)||0)+st.min;p.careerStats.min=(p.careerStats.min||0)+st.min;
+   }else{p.fatigue=Math.max(0,(Number(p.fatigue)||0)-2);p.condition=simClamp((Number(p.condition)||75)+1,40,100)}
+  }
+ }
+ state.gameCount=(state.gameCount||0)+1;state.round=g.round;state.log.unshift({text:teamName(g.home)+" "+g.hs+" - "+g.as+" "+teamName(g.away),round:g.round});
+ for(const p of club(state.teamId).players)delete p.gameInstruction;
+ delete state.gameInProgress;delete state.matchSetup;persist();showGame(g.id);
+}
+const bmOriginalEditPlayerCareer=editPlayer;
+editPlayer=function(id){
+ bmOriginalEditPlayerCareer(id);
+ const owner=state.clubs.find(t=>t.players.some(x=>String(x.id)===String(id))),p=owner?.players.find(x=>String(x.id)===String(id)),root=document.querySelector(".profile-overlay .profile-shell");if(!p||!root)return;
+ const st=p.careerStats||p.seasonStats||{},gp=Number(st.gp)||0,avg=k=>gp?(Number(st[k])||0)/gp:0;
+ const panel=document.createElement("div");panel.className="profile-section";panel.innerHTML='<h3>CAREER PER-GAME AVERAGES</h3><div class="stat-cards">'+[["GP",gp],["PTS",avg("pts")],["REB",avg("reb")],["AST",avg("ast")],["STL",avg("stl")],["BLK",avg("blk")],["TO",avg("tov")],["MIN",gp?(Number(st.min??p.minutes)||0)/gp:0]].map(x=>'<div><span>'+x[0]+'</span><b>'+Number(x[1]).toFixed(x[0]==="GP"?0:1)+'</b></div>').join("")+'</div>';
+ const career=[...root.querySelectorAll(".profile-section")].find(x=>x.textContent.includes("CAREER HISTORY"));if(career)career.appendChild(panel);else root.appendChild(panel);
+}
+function openBoxPlayerProfile(pid,tid){const t=club(tid);if(t?.players.some(p=>String(p.id)===String(pid)))editPlayer(pid)}
+
 </script></body></html>
