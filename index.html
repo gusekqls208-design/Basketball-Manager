@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#11100e"><title>BASKETBALL MANAGER</title>
 <style>
+.nba-live-club{position:relative}.nba-goal-tag{display:none;font-weight:900;letter-spacing:1.5px;color:#b8f1ff;text-shadow:0 0 12px #49cfff;font-size:clamp(12px,2vw,20px);margin:0 8px}.nba-goal-tag.show{display:inline-block;animation:nbaGoalFlash .35s ease-out 3}@keyframes nbaGoalFlash{50%{transform:scale(1.22);opacity:.5}}
+
 :root{--bg:#11100e;--panel:#1b1916;--panel2:#26221d;--line:#39332b;--muted:#aaa196;--text:#f5f1e9;--ice:#f28a2e;--green:#86b99a;--red:#d97765;--gold:#d9b56d}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;overscroll-behavior:none}body{overflow:hidden}button,select,input{font:inherit}button{cursor:pointer;color:inherit}#app{height:100dvh;display:flex;flex-direction:column;max-width:1600px;margin:auto;background:radial-gradient(ellipse at 80% -20%,#3a2718 0,transparent 40%),var(--bg)}header{height:66px;flex:none;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#171512ef}.brand{font-weight:950;letter-spacing:3px;font-size:16px}.brand span{color:var(--ice)}.season-tag{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px}.headright{display:flex;gap:18px;align-items:center;font-size:12px;color:var(--muted)}.headright b{color:var(--text);font-size:14px}.layout{display:flex;min-height:0;flex:1}.side{width:210px;flex:none;border-right:1px solid var(--line);padding:20px 12px;background:#171512}.navlabel{font-size:9px;color:#827568;letter-spacing:2px;padding:12px 12px 7px}.nav{width:100%;border:0;background:none;text-align:left;padding:12px;border-radius:8px;color:#b8afa3;font-size:13px;display:flex;gap:11px;align-items:center;margin:2px 0}.nav.active,.nav:hover{background:#30271f;color:#fff}.nav.active{box-shadow:inset 2px 0 var(--ice)}.nav .ico{width:18px;text-align:center;color:var(--ice)}main{min-width:0;flex:1;overflow:auto;padding:26px 30px 50px}.pagehead{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px}.eyebrow{font-size:9px;letter-spacing:2px;color:var(--ice);font-weight:800}.pagehead h1{font-size:25px;letter-spacing:-.7px;margin:6px 0 0}.muted{color:var(--muted)}.small{font-size:11px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:linear-gradient(145deg,#26221d,#1a1815);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}.card h3{margin:0 0 13px;font-size:12px;letter-spacing:.5px}.metric{font-size:27px;font-weight:850;letter-spacing:-1px}.metric-sub{font-size:10px;color:var(--muted);margin-top:5px}.section{margin-top:16px}.sectionbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}.sectionbar h2{font-size:13px;margin:0;letter-spacing:.5px}.btn{background:#39291d;border:1px solid #694528;padding:9px 13px;border-radius:7px;font-size:11px;font-weight:750}.btn.primary{background:#f28a2e;color:#17120d;border-color:#f28a2e}.btn.ghost{background:transparent;border-color:var(--line);color:#c5b9a9}.btn.danger{border-color:#704238;color:#f0a090;background:#2b1b18}.btn:disabled{opacity:.4;cursor:not-allowed}.teamgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.teamtile{background:#211e19;border:1px solid var(--line);border-radius:9px;padding:12px;text-align:left;min-height:76px}.teamtile:hover,.teamtile.selected{border-color:var(--ice);background:#33271e}.teamtile b{display:block;font-size:12px}.teamtile small{color:var(--muted);font-size:9px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap}th{text-align:left;color:#b8afa3;font-weight:650;background:#26221d;padding:11px 12px;position:sticky;top:0}td{padding:10px 12px;border-top:1px solid #39332b}tr:hover td{background:#29241e}.rating{font-weight:850;color:var(--ice)}.pill{font-size:9px;padding:4px 7px;border-radius:20px;background:#453b30;color:#e3d2bc}.pill.good{color:var(--green);background:#24382d}.pill.warn{color:var(--gold);background:#3b2c1b}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tab{padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:#211e19;color:#b8afa3;font-size:10px}.tab.active{border-color:var(--ice);color:var(--ice);background:#33271e}.matchbox{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;padding:24px;background:linear-gradient(120deg,#352719,#1d1915);border:1px solid #79502c;border-radius:12px;text-align:center}.matchbox .club{font-size:19px;font-weight:900}.score{font-size:34px;font-weight:900;letter-spacing:2px}.log{height:280px;overflow:auto;background:#151310;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:11px;line-height:1.8}.log p{margin:0;border-bottom:1px solid #39332b;padding:3px 0}.formrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}select,input{background:#211e19;border:1px solid #494034;color:var(--text);border-radius:6px;padding:9px;font-size:11px}.empty{padding:35px;text-align:center;color:var(--muted);font-size:12px}.notice{border:1px solid #59452c;background:#2b241b;color:#e8d5a7;padding:11px 13px;border-radius:8px;font-size:10px;line-height:1.6;margin-bottom:15px}.hidden{display:none!important}.setup{max-width:1100px;margin:0 auto}.setupintro{padding:28px 0}.setupintro h1{font-size:34px;letter-spacing:-1.5px;margin:9px 0}.setupintro p{font-size:12px;color:var(--muted);max-width:620px;line-height:1.7}.mobilebar{display:none}.playerdetail{display:grid;grid-template-columns:260px 1fr;gap:14px}.attrgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.attr{background:#2b241b;padding:9px;border-radius:6px}.attr span{display:block;font-size:9px;color:var(--muted)}.attr b{font-size:15px}.progress{height:5px;background:#453b30;border-radius:5px;margin-top:6px;overflow:hidden}.progress i{display:block;height:100%;background:var(--ice)}@media(max-width:850px){header{height:55px;padding:0 14px}.headright{gap:8px;font-size:10px}.side{width:62px;padding:10px 6px}.nav{justify-content:center;padding:13px 4px;font-size:0}.nav .ico{font-size:16px}.navlabel{display:none}main{padding:18px 13px 35px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.teamgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.pagehead h1{font-size:21px}.playerdetail{grid-template-columns:1fr}.attrgrid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.teamgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.matchbox{gap:7px;padding:15px}.matchbox .club{font-size:13px}.score{font-size:25px}.grid{gap:8px}.card{padding:12px}.metric{font-size:22px}}
 
 /* NBA-inspired courtside visual system */
@@ -701,7 +703,7 @@ function showGame(id){
  const m=window.liveMatch;if(!m)return;if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;m.paused=false;m.speed=.2;document.body.classList.add("broadcast-mode");
  const main=document.getElementById("main"),homeName=teamName(m.g.home),awayName=teamName(m.g.away);
  main.innerHTML='<div class="nba-live-shell"><div class="nba-live-top"><div class="nba-live-brand">NBA <b>LIVE</b> · GAME CENTER</div><details class="nba-tactics-menu"><summary>전술 / 타임아웃</summary><div class="nba-tactics-panel"><b>공격 전술</b><select onchange="changeLiveTactic(this.value)"><option>균형</option><option>3점슛 중심</option><option>픽앤롤 중심</option><option>포스트업 중심</option><option>빠른 공격</option></select><b>수비 전술</b><select onchange="changeLiveDefense(this.value)"><option>맨투맨</option><option>2-3 지역방어</option><option>3-2 지역방어</option><option>스위치 수비</option><option>압박 수비</option></select><button class="btn" onclick="callTimeout()">타임아웃</button></div></details><div class="nba-top-right"><button class="btn ghost" id="broadcastPause" onclick="toggleBroadcast()">Ⅱ 일시정지</button><label>속도 <select id="liveSpeed" onchange="setBroadcastSpeed(this.value)"><option value="0.12">0.5x</option><option value="0.2" selected>1x</option><option value="0.3">1.5x</option><option value="0.45">2x</option></select></label><button class="btn ghost" onclick="exitBroadcast()">나가기</button></div></div>'+
- '<div class="nba-live-score"><div class="nba-live-club home"><div class="nba-team-label"><small>HOME</small><b>'+bmEsc(homeName)+'</b></div><strong id="liveHomeScore">0</strong></div><div class="nba-live-mid"><b id="livePeriod">1ST QUARTER</b><strong id="liveClock">12:00</strong><small>SHOT CLOCK <span id="liveShotClock">24</span></small></div><div class="nba-live-club away"><strong id="liveAwayScore">0</strong><div class="nba-team-label"><small>AWAY</small><b>'+bmEsc(awayName)+'</b></div></div></div>'+
+ '<div class="nba-live-score"><div class="nba-live-club home"><div class="nba-team-label"><small>HOME</small><b>'+bmEsc(homeName)+'</b></div><strong id="liveHomeScore">0</strong><span class="nba-goal-tag">GOAL!</span></div><div class="nba-live-mid"><b id="livePeriod">1ST QUARTER</b><strong id="liveClock">12:00</strong><small>SHOT CLOCK <span id="liveShotClock">24</span></small></div><div class="nba-live-club away"><strong id="liveAwayScore">0</strong><span class="nba-goal-tag">GOAL!</span><div class="nba-team-label"><small>AWAY</small><b>'+bmEsc(awayName)+'</b></div></div></div>'+
  '<div class="nba-live-court-wrap"><div class="nba-live-court"><svg class="nba-court-markings" viewBox="0 0 940 500" preserveAspectRatio="none"><g fill="none" stroke="#f7e7d0" stroke-width="3"><rect x="10" y="10" width="920" height="480"/><path d="M470 10V490"/><circle cx="470" cy="250" r="60"/><circle cx="200" cy="250" r="60" stroke-dasharray="7 5"/><circle cx="740" cy="250" r="60" stroke-dasharray="7 5"/><rect x="10" y="170" width="190" height="160"/><rect x="740" y="170" width="190" height="160"/><path d="M200 170 A80 80 0 0 1 200 330 M740 170 A80 80 0 0 0 740 330"/><path d="M52.5 13V487 M887.5 13V487" stroke-width="2"/><path d="M52.5 250 m0 -237 a237 237 0 0 1 0 474 M887.5 250 m0 -237 a237 237 0 0 0 0 474"/><path d="M230 95V405 M710 95V405 M52.5 210 A40 40 0 0 1 52.5 290 M887.5 210 A40 40 0 0 0 887.5 290"/></g></svg><div id="livePlayers"></div><div id="liveBall" class="nba-ball"></div><div class="nba-hoop left"><i class="nba-backboard"></i><i class="nba-rim"></i><i class="nba-net"></i><i class="nba-hoop-post"></i></div><div class="nba-hoop right"><i class="nba-backboard"></i><i class="nba-rim"></i><i class="nba-net"></i><i class="nba-hoop-post"></i></div></div></div>'+
  '<div class="nba-live-commentbar"><b id="liveStatus">LIVE</b><span id="broadcastDialogue">심판이 점프볼을 준비합니다.</span></div><div class="nba-live-lineup"><button class="nba-bench-toggle" onclick="toggleLiveBench()">후보 선수</button><div id="liveStarters" class="nba-starters"></div></div><div id="liveBenchPanel" class="nba-bench-panel" hidden></div><div id="livePlayerPanel" class="nba-player-panel" hidden></div></div>';
  renderLivePlayers();refreshLiveLineup();updateLiveScoreboard();startBroadcast(m);
@@ -841,16 +843,19 @@ function positionJumpBall(m){
  const ball=document.getElementById("liveBall");if(ball&&!m.shotInFlight&&!m.ballInFlight){const x=handler._x??50,y=handler._y??50,bounce=(Math.sin(Date.now()/105)+1)*1.2;ball.style.left=x+"%";ball.style.top=(y+2+bounce)+"%"}
 }
 function assignLiveMatchups(m,offense,defense){
- if(m._matchupPossession===m.possHome&&defense.every(d=>offense.some(o=>o.id===d._matchup)))return;
- m._matchupPossession=m.possHome;const unused=[...offense],order=["PG","SG","SF","PF","C"];
- defense.forEach(d=>{
-  const pool=unused.length?unused:offense,same=pool.filter(o=>o.pos===d.pos),candidates=same.length?same:pool;
-  candidates.sort((a,b)=>{
-   const pa=(m.defTactic==="스위치"?0:Math.abs(order.indexOf(a.pos)-order.indexOf(d.pos))*10)+Math.abs((a.height||200)-(d.height||200))*.2;
-   const pb=(m.defTactic==="스위치"?0:Math.abs(order.indexOf(b.pos)-order.indexOf(d.pos))*10)+Math.abs((b.height||200)-(d.height||200))*.2;return pa-pb;
+ const tactic=m.defTactic||"맨투맨",order=["PG","SG","SF","PF","C"];
+ if(tactic==="스위치 수비"||tactic==="압박 수비"||tactic==="풀코트 프레스") {
+  const unused=[...offense];
+  defense.forEach(d=>{
+   const pool=unused.length?unused:offense;
+   pool.sort((a,b)=>Math.hypot((a._x||50)-(d._x||50),(a._y||50)-(d._y||50))-Math.hypot((b._x||50)-(d._x||50),(b._y||50)-(d._y||50)));
+   const chosen=pool[0];d._matchup=chosen.id;const i=unused.findIndex(p=>p.id===chosen.id);if(i>=0)unused.splice(i,1);
   });
-  const chosen=candidates[0]||offense[0];d._matchup=chosen.id;const ix=unused.findIndex(o=>o.id===chosen.id);if(ix>=0)unused.splice(ix,1);
- });
+  return;
+ }
+ if(m._matchupPossession===m.possHome&&defense.every(d=>offense.some(o=>o.id===d._matchup)))return;
+ m._matchupPossession=m.possHome;const unused=[...offense];
+ defense.forEach(d=>{const same=unused.filter(o=>o.pos===d.pos),pool=same.length?same:unused.length?unused:offense;pool.sort((a,b)=>Math.abs(order.indexOf(a.pos)-order.indexOf(d.pos))-Math.abs(order.indexOf(b.pos)-order.indexOf(d.pos)));const chosen=pool[0]||offense[0];d._matchup=chosen.id;const i=unused.findIndex(o=>o.id===chosen.id);if(i>=0)unused.splice(i,1)});
 }function livePoint(el){return {x:parseFloat(el?.style.left)||50,y:parseFloat(el?.style.top)||50}}
 function animateBallArc(from,to,duration=620,height=8,done){
  const ball=document.getElementById("liveBall");if(!ball)return done?.();
@@ -902,35 +907,38 @@ function animateLiveShot(shooter,defender,done){
  animateBallArc({x:start.x,y:start.y-1},{x:end.x,y:end.y-1},520,5,()=>{if(m)m.ballInFlight=false});
 }function resolveLiveShot(m,offense,defense){
  if(m.ended||m._resolvingShot)return;m._resolvingShot=true;m.shotInFlight=false;m.shotInFlightSince=0;
- const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense.find(p=>p.pos==="PG")||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],attrs=shooter.attrs||{},defAttrs=defender.attrs||{};
- const rimX=m.possHome?95:5,px=Number(shooter._x)||50,py=Number(shooter._y)||50,dist=Math.hypot(rimX-px,(50-py)*.72);
- const threeChance=Math.max(0,Math.min(.85,(Number(attrs.three)||10)/20*.72+(m.tactic==="3점슛 중심"?.2:0)));
- const closeChance=Math.max(0,Math.min(.9,(Number(attrs.close)||10)/20*.48+(Number(attrs.layup)||10)/20*.25+(Number(attrs.dunk)||10)/20*.22));
- let type;
- if(dist>18&&Math.random()<Math.min(.92,threeChance+(m.tactic==="모션 오펜스"?.08:0)))type="3점슛";
- else if(dist<13){const choices=[["덩크",Number(attrs.dunk)||10],["레이업",Number(attrs.layup)||10],["골밑슛",Number(attrs.close)||10],["훅슛",Number(attrs.post)||10]];type=choices.sort((a,b)=>b[1]-a[1])[Math.floor(Math.random()*Math.min(3,choices.length))][0];if(Math.random()<.22)type="레이업"}
- else if(dist<23){const r=Math.random(),post=Number(attrs.post)||10,lay=Number(attrs.layup)||10,mid=Number(attrs.mid)||10;type=r<.18+(lay/20)*.22?"레이업":r<.36+(post/20)*.18?"훅슛":r<.72?"골밑슛":"미들슛";if(m.tactic==="포스트업"&&post>lay&&Math.random()<.6)type="훅슛";}
- else if(dist<34)type=Math.random()<.7?"미들슛":"골밑슛";
- else type="3점슛";
- if(m.tactic==="3점슛 중심"&&dist>16&&Math.random()<.62)type="3점슛";
- if(m.tactic==="포스트업"&&dist<28&&["C","PF"].includes(shooter.pos)&&Math.random()<.62)type=(Number(attrs.post)||10)>15?"훅슛":"골밑슛";
- if(m.tactic==="골밑 공략"&&dist<31&&Math.random()<.65)type=(Number(attrs.dunk)||0)>=(Number(attrs.layup)||0)?"덩크":"레이업";
- const isThree=type==="3점슛",rating=Number(isThree?attrs.three:type==="미들슛"?attrs.mid:type==="훅슛"?attrs.post:type==="덩크"?attrs.dunk:type==="레이업"?attrs.layup:attrs.close)||10;
- const defenseRating=Number(defAttrs.perimeter??defAttrs.interior??10),hit=Math.random()<Math.max(.16,Math.min(.78,.36+(rating-10)*.017-(defenseRating-10)*.009+(m.tactic==="3점슛 중심"&&isThree?.06:0)));
- const stats=m.stats[shooter.id],side=m.possHome?"home":"away";stats.fga++;if(isThree)stats.threeA++;
- const blocked=Math.random()<Math.max(.025,Math.min(.3,.055+(Number(defAttrs.block||10)-rating)*.012));
- const rim={x:rimX,y:50};
- if(blocked){m.stats[defender.id].blk++;liveComment(defender.name+"의 블록! "+type+" 시도를 쳐냅니다.","highlight")}
- else if(hit){const pts=isThree?3:2;stats.pts+=pts;stats.fgm++;if(isThree)stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;const passer=offense.find(p=>p.id!==shooter.id);if(passer&&Math.random()<.48)m.stats[passer.id].ast++;liveComment(shooter.name+"의 "+type+" 성공! "+pts+"점! 공이 림을 통과했습니다.","score");updateLiveScoreboard();m._resolvingShot=false;resetLivePossession(m,false,true);return}
- else liveComment(shooter.name+"의 "+type+"이(가) 림을 맞고 나옵니다. 선수들이 리바운드 위치를 잡습니다.");
- const rebounders=[...offense,...defense].sort((a,b)=>((Number(b.attrs?.rebound)||10)+Math.random()*4)-((Number(a.attrs?.rebound)||10)+Math.random()*4));
- const rebounder=rebounders[0],isOffense=offense.some(p=>p.id===rebounder.id),dir=m.possHome?1:-1,target={x:rim.x-dir*(2+Math.random()*3),y:50+(Math.random()-.5)*16};
- moveLivePlayer(rebounder,target.x,target.y,"rebound");const from={x:rim.x,y:rim.y};
- animateBallArc(from,target,850,13,()=>{if(window.liveMatch!==m||m.ended)return;m.stats[rebounder.id].reb++;m.ballInFlight=false;m._resolvingShot=false;
-  if(isOffense){liveComment(rebounder.name+" 공격 리바운드! 공격권을 유지합니다.");m.shotClock=14;m.possessionElapsed=0;m.phase=-1;m.shotInFlight=false;m.shotResolved=false;m.ballHandlerId=rebounder.id;const ball=document.getElementById("liveBall");if(ball){ball.style.left=target.x+"%";ball.style.top=target.y+"%"}}
-  else{liveComment(rebounder.name+" 수비 리바운드! 공을 확보해 반대편으로 전개합니다.");resetLivePossession(m,false)}
+ const shooter=offense.find(p=>p.id===m.ballHandlerId)||offense[0],defender=defense.find(p=>p._matchup===shooter.id)||defense[0],attrs=shooter.attrs||{},da=defender?.attrs||{};
+ const rimX=m.possHome?93:7,px=Number(shooter._x)||50,py=Number(shooter._y)||50,dist=Math.hypot(rimX-px,(50-py)*.72);
+ const typePool=dist>31?[["3점슛",attrs.three],["미들슛",attrs.mid]]:dist>18?[["미들슛",attrs.mid],["3점슛",attrs.three],["레이업",attrs.layup]]:[["레이업",attrs.layup],["덩크",attrs.dunk],["골밑슛",attrs.close],["훅슛",attrs.post]];
+ const weighted=typePool.map(([n,v])=>[n,Math.max(1,Number(v)||10)]),total=weighted.reduce((a,x)=>a+x[1],0);let pick=Math.random()*total,type=weighted[0][0];for(const [n,w] of weighted){pick-=w;if(pick<=0){type=n;break}}
+ if(m.tactic==="3점슛 중심"&&dist>20&&Math.random()<.55)type="3점슛";
+ if(m.tactic==="포스트업 중심"&&dist<25&&["C","PF"].includes(shooter.pos)&&Math.random()<.55)type="훅슛";
+ if(m.tactic==="빠른 공격"&&dist<25&&Math.random()<.5)type=(Number(attrs.dunk)||0)>(Number(attrs.layup)||0)?"덩크":"레이업";
+ const rating=Number(type==="3점슛"?attrs.three:type==="미들슛"?attrs.mid:type==="훅슛"?attrs.post:type==="덩크"?attrs.dunk:type==="레이업"?attrs.layup:attrs.close)||10;
+ const defRating=Number(da.perimeter??da.interior??10),hit=Math.random()<Math.max(.16,Math.min(.78,.37+(rating-10)*.017-(defRating-10)*.009));
+ const blocked=Math.random()<Math.max(.025,Math.min(.28,.04+(Number(da.block||10)-rating)*.012));
+ const stats=m.stats[shooter.id],side=m.possHome?"home":"away",ball=document.getElementById("liveBall");
+ stats.fga++;if(type==="3점슛")stats.threeA++;
+ if(blocked){if(defender&&m.stats[defender.id])m.stats[defender.id].blk++;liveComment(defender.name+"의 블록! 슛을 쳐냅니다.","highlight")}
+ else if(hit){
+  const pts=type==="3점슛"?3:2;stats.pts+=pts;stats.fgm++;if(type==="3점슛")stats.threeM++;if(side==="home")m.homeScore+=pts;else m.awayScore+=pts;
+  const clubEl=document.querySelector(".nba-live-club."+(side==="home"?"home":"away"));if(clubEl){const tag=clubEl.querySelector(".nba-goal-tag");if(tag){tag.textContent="GOAL!";tag.classList.add("show");setTimeout(()=>tag.classList.remove("show"),2400)}}
+  liveComment(shooter.name+"의 "+type+" 성공! "+pts+"점 득점!","score");updateLiveScoreboard();m._resolvingShot=false;resetLivePossession(m,false,true);return;
+ }else liveComment(shooter.name+"의 "+type+" 실패! 림을 맞고 튀어나옵니다. 리바운드 경합!");
+ // Keep the rebound at the rim; players, not the ball, travel to it.
+ m.ballInFlight=true;const target={x:rimX+(m.possHome?-2.2:2.2),y:50+(Math.random()-.5)*7};
+ [...offense,...defense].forEach((p,i)=>{const lane=i%2?1:-1;moveLivePlayer(p,target.x+(i%3-1)*3,target.y+lane*(2+Math.floor(i/3)*2),"rebound")});
+ const start={x:rimX,y:50};
+ const t0=performance.now(),duration=520;
+ const frame=now=>{if(window.liveMatch!==m||m.ended)return;const t=Math.min(1,(now-t0)/duration);if(ball){ball.style.left=(start.x+(target.x-start.x)*t)+"%";ball.style.top=(start.y+(target.y-start.y)*t-2*Math.sin(Math.PI*t))+"%"}if(t<1)requestAnimationFrame(frame);else{
+  const rebounders=[...offense,...defense].map(p=>({p,score:(Number(p.attrs?.rebound)||10)+Math.random()*5})).sort((a,b)=>b.score-a.score);
+  const rebounder=rebounders[0].p,isOffense=offense.some(p=>p.id===rebounder.id);
+  m.stats[rebounder.id].reb++;m.ballInFlight=false;m._resolvingShot=false;m.ballHandlerId=rebounder.id;
+  if(ball){ball.style.left=target.x+"%";ball.style.top=target.y+"%";ball.classList.remove("is-airborne")}
+  if(isOffense){liveComment(rebounder.name+"이(가) 공격 리바운드를 잡았습니다! 세컨드 찬스.");m.shotClock=14;m.possessionElapsed=0;m.actionWait=.4}
+  else{liveComment(rebounder.name+"이(가) 수비 리바운드를 잡아 공격권을 가져옵니다.");resetLivePossession(m,false)}
   updateLiveScoreboard();
- });
+ }};requestAnimationFrame(frame);
 }
 function finishLiveMatch(){const m=window.liveMatch;if(!m||m.ended)return;m.ended=true;if(window.broadcastTimer)clearInterval(window.broadcastTimer);window.broadcastTimer=null;const g=m.g;g.played=true;g.hs=m.homeScore;g.as=m.awayScore;g.logs=m.logs;if(g.hs===g.as){g.hs+=2;m.homeScore=g.hs}m.home.pf+=g.hs;m.home.pa+=g.as;m.away.pf+=g.as;m.away.pa+=g.hs;if(g.hs>g.as){m.home.w++;m.away.l++}else{m.away.w++;m.home.l++}
  for(const team of [m.home,m.away])for(const p of team.players){const st=m.stats[p.id]||{};p.pts+=st.pts||0;p.reb+=st.reb||0;p.ast+=st.ast||0;p.seasonStats=p.seasonStats||{gp:0,pts:0,reb:0,ast:0,stl:0,blk:0};p.seasonStats.gp++;p.seasonStats.pts+=st.pts||0;p.seasonStats.reb+=st.reb||0;p.seasonStats.ast+=st.ast||0;p.minutes+=st.min||0;p.fatigue=Math.min(100,p.fatigue+rnd(6,15));p.condition=Math.max(45,p.condition-rnd(1,5))}
