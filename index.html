@@ -1883,7 +1883,7 @@ function runNextQuarter(){
  try{simLine=t=>t.id===user.id?ul:ol;simDistributeMinutes=l=>bmQuarterMinutes(l);const r=simulateBoxScore(home,away),hs=Math.round(r.homeScore/4),as=Math.round(r.awayScore/4),hb=bmQuarterBox(r.homeBox,home,r.homeMinutes||bmQuarterMinutes(hl),hl),ab=bmQuarterBox(r.awayBox,away,r.awayMinutes||bmQuarterMinutes(al),al);bmReconcilePoints(hb,home,hs);bmReconcilePoints(ab,away,as);bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);m.liveMinutes=m.liveMinutes||{};for(const [id,x] of Object.entries(m.userIsHome?hb:ab))m.liveMinutes[id]=(m.liveMinutes[id]||0)+x.min;m.homeScore+=hs;m.awayScore+=as;const q={home:hs,away:as,homeBox:hb,awayBox:ab};q.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(q);m.homeLine=hl.starters.map(p=>p.id);m.awayLine=al.starters.map(p=>p.id);m.quarter++}finally{simLine=old;simDistributeMinutes=oldm}persist();renderQuarterBreak();
 }
 function bmRenderQuarterBreakV2(){
- const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),h=club(g.home),a=club(g.away),n=m.quarter,end=n>=4,q=m.quarters[n-1],v=q?.mvp,ad=q?bmCoachAdvice(q,h,a,m.userIsHome):[];
+ const m=state.gameInProgress;if(!m)return;const g=state.schedule.find(x=>x.id===m.gameId),h=club(g.home),a=club(g.away),n=m.quarter,end=n>=4&&m.homeScore!==m.awayScore,q=m.quarters[n-1],v=q?.mvp,ad=q?bmCoachAdvice(q,h,a,m.userIsHome):[];
  const score=m.quarters.map((x,i)=>'<tr><td>'+(i+1)+'Q</td><td>'+x.home+'</td><td>'+x.away+'</td></tr>').join("");const autoNotes=(m.autoSubNotes||[]).map(x=>'<div><b>자동 교체</b><br>'+bmEsc(x)+'</div>').join("");
  const mv=v?'<div class="q-mvp">'+boxPhoto(v.player,56)+'<div><small>QUARTER MVP · '+n+'Q</small><b>'+bmEsc(v.player.name)+'</b><br><small>'+bmEsc(v.team.name)+' · '+v.stats.pts+' PTS / '+v.stats.reb+' REB / '+v.stats.ast+' AST / '+v.stats.stl+' STL / '+v.stats.blk+' BLK</small></div></div>':'';
  const tbl=(box,team)=>'<div style="overflow:auto"><table class="q-player-table"><thead><tr><th>선수</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>FG</th><th>3P</th><th>PF</th></tr></thead><tbody>'+bmQuarterRows(box,team)+'</tbody></table></div>';
@@ -2255,6 +2255,43 @@ function beginQuarterGame(){
  user.players.forEach(p=>p.gameInstruction=(c.instructions||{})[p.id]||"기본 역할");user.tactics={...c.tactics};
  state.gameInProgress={gameId:g.id,userIsHome:c.userIsHome,quarter:0,quarters:[],homeBox:{},awayBox:{},homeLine:[],awayLine:[],homeScore:0,awayScore:0,userStarters:c.starters.slice(),userBench:c.bench.slice(),userExcluded:(c.excluded||[]).slice(),userTactics:{...c.tactics},userInstructions:{...(c.instructions||{})},scope:c.scope||"all",oneGamePlan:c.oneGamePlan||null};
  persist();runNextQuarter();
+}
+
+
+/* NBA pace calibration: about 24 possessions per team per regulation quarter. */
+function bmInitQuarter(m,home,away){
+ const user=club(state.teamId),opp=m.userIsHome?away:home,oLine=simLine(opp);
+ const uLine={starters:m.userStarters.slice(),bench:m.userBench.slice()};
+ const hLine=m.userIsHome?uLine:{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)};
+ const aLine=m.userIsHome?{starters:oLine.starters.map(p=>p.id),bench:oLine.rotation.filter(p=>!oLine.starters.includes(p)).map(p=>p.id)}:uLine;
+ return {hbox:bmBlankTeamBox(home),abox:bmBlankTeamBox(away),hscore:0,ascore:0,step:0,possessions:m.quarter>=4?10:24,hLine,aLine,home,away,homeTeam:home,awayTeam:away,minutes:{home:{},away:{}},userHome:m.userIsHome};
+}
+function bmEmergencyReason(team,box,mins,p){
+ const x=box[p.id]||{},fat=(Number(p.fatigue)||0)+(mins[p.id]||0);
+ if(p.injured||p.injury)return "부상";
+ if((x.pf||0)>=6)return "6반칙 퇴장";
+ if(fat>=98)return "체력 고갈";
+ return "";
+}
+function bmRunQuarterLoop(){
+ const m=state.gameInProgress,q=m.liveQuarter;if(!m||!q)return;const home=q.home,away=q.away,user=club(state.teamId),limit=q.possessions;
+ for(;q.step<limit;q.step++){
+  const segment=Math.floor(q.step/3),hfive=bmQuarterActiveFive(home,q.hLine.starters,q.hLine.bench,segment),afive=bmQuarterActiveFive(away,q.aLine.starters,q.aLine.bench,segment);
+  for(const p of hfive){q.minutes.home[p.id]=(q.minutes.home[p.id]||0)+.5;q.hbox[p.id].min+=.5}
+  for(const p of afive){q.minutes.away[p.id]=(q.minutes.away[p.id]||0)+.5;q.abox[p.id].min+=.5}
+  if(Math.random()<.5){q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox);q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox)}
+  else{q.ascore+=bmPossession(away,home,afive,hfive,q.abox,q.hbox);q.hscore+=bmPossession(home,away,hfive,afive,q.hbox,q.abox)}
+  const userBox=m.userIsHome?q.hbox:q.abox,userMins=m.userIsHome?q.minutes.home:q.minutes.away,activeIds=[...m.userStarters,...m.userBench];
+  const danger=user.players.map(p=>({p,reason:bmEmergencyReason(user,userBox,userMins,p)})).filter(x=>x.reason&&activeIds.some(id=>String(id)===String(x.p.id))&&userMins[x.p.id]>0);
+  if(danger.length){q.step++;m.pendingEmergency=danger.map(x=>({id:x.p.id,name:x.p.name,reason:x.reason}));persist();bmShowEmergency();return}
+ }
+ const hb=q.hbox,ab=q.abox;
+ for(const p of home.players){hb[p.id].dnp=!(hb[p.id].min>0);hb[p.id].starter=q.hLine.starters.some(id=>String(id)===String(p.id));hb[p.id].min=Math.round(hb[p.id].min*10)/10}
+ for(const p of away.players){ab[p.id].dnp=!(ab[p.id].min>0);ab[p.id].starter=q.aLine.starters.some(id=>String(id)===String(p.id));ab[p.id].min=Math.round(ab[p.id].min*10)/10}
+ m.homeScore+=q.hscore;m.awayScore+=q.ascore;bmMergeBox(m.homeBox,hb);bmMergeBox(m.awayBox,ab);
+ const quarter={home:q.hscore,away:q.ascore,homeBox:hb,awayBox:ab};quarter.mvp=bmQuarterMvp(hb,ab,home,away);m.quarters.push(quarter);m.homeLine=q.hLine.starters.slice();m.awayLine=q.aLine.starters.slice();m.liveQuarter=null;m.pendingEmergency=null;m.quarter++;
+ for(const [team,box] of [[home,hb],[away,ab]])for(const p of team.players){const st=box[p.id];if(st.min>0){p.fatigue=simClamp((p.fatigue||0)+Math.round(st.min*.65),0,100);p.condition=simClamp((p.condition||75)-Math.max(1,Math.round(st.min/16)),40,100)}}
+ persist();renderQuarterBreak();
 }
 
 </script></body></html>
