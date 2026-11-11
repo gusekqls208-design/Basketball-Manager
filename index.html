@@ -3040,7 +3040,6 @@ bmCoachPointerDown=function(e,id){if(e.button!==undefined&&e.button!==0)return;c
 bmAutoLineup=(function(old){return function(){old();const pre=window.bmCoachMode==="pre",c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId);if(!c||!t)return;const ids=pre?c.starters:c.userStarters,all=t.players.filter(p=>!ids.some(id=>String(id)===String(p.id))).map(p=>p.id);if(pre){c.bench=all;c.excluded=[]}else{c.userBench=all;c.userExcluded=[]}bmCoachBoard(pre?"pre":"quarter")}})(bmAutoLineup);
 bmConfirmCoach=function(pre){const c=pre?state.matchSetup:state.gameInProgress,t=club(state.teamId),ids=pre?c.starters:c.userStarters;if(new Set(ids.map(String)).size!==5||ids.some(id=>!t.players.some(p=>String(p.id)===String(id)))){alert("서로 다른 선수를 선발로 지정해주세요.");return}const raw=pre?(c.bench||[]):(c.userBench||[]),bench=raw.filter((id,i,a)=>!ids.some(x=>String(x)===String(id))&&a.findIndex(x=>String(x)===String(id))===i&&t.players.some(p=>String(p.id)===String(id)));const instructions={};ids.forEach((id,i)=>instructions[id]=document.getElementById("fmInst"+i).value);const tactics={formation:document.getElementById("fmFormation").value,off:document.getElementById("fmOff").value,def:document.getElementById("fmDef").value,tempo:document.getElementById("fmTempo").value},plan={starters:ids.slice(),bench,excluded:[],tactics,instructions};if(pre){c.starters=ids.slice();c.bench=bench;c.excluded=[];c.instructions=instructions;c.tactics=tactics;if(c.scope!=="one")bmPersistPlan(t,plan);else{c.oneGamePlan=plan;persist()}beginQuarterGame();return}c.userStarters=ids.slice();c.userBench=bench;c.userExcluded=[];c.userInstructions=instructions;c.userTactics=tactics;t.players.forEach(p=>p.gameInstruction=instructions[p.id]||"기본 역할");t.tactics={...tactics};state.tactics={...state.tactics,...tactics};if(c.scope!=="one")bmPersistPlan(t,plan);persist();if(window.bmCoachMode==="emergency")bmResumeEmergency();else runNextQuarter()};
 
-</script></body></html>
 (function(){
  const st=document.createElement("style");st.id="bmCoachFinalCompactAndDrag";
  st.textContent=`
@@ -3256,3 +3255,4 @@ bmCoachPointerDown=function(e,id){
  document.addEventListener("pointerup",up,{once:true});
  document.addEventListener("pointercancel",cancel,{once:true});
 };
+</script></body></html>
